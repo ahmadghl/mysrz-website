@@ -27,11 +27,11 @@
         "queryParameters": {
           "parameters": [
             { "name": "engine", "value": "google_trends" },
-            { "name": "q", "value": "Pakistan travel,Hunza,Skardu,Lahore food,Karachi,Pakistan tourism" },
+            { "name": "q", "value": "={{ ['Pakistan travel','Pakistan tourism','Hunza valley','Skardu','Lahore food','Karachi food','Gilgit-Baltistan'][Math.floor(Math.random() * 7)] }}" },
             { "name": "geo", "value": "PK" },
             { "name": "date", "value": "today 1-m" },
             { "name": "data_type", "value": "RELATED_QUERIES" },
-            { "name": "api_key", "value": "={{$credentials.serpapi.apiKey}}" }
+            { "name": "api_key", "value": "={{ $env.SERPAPI_KEY }}" }
           ]
         },
         "options": {}
