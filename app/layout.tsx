@@ -22,7 +22,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Explore Pakistan's Hidden Gems`,
+    default: `${SITE.name} - Explore Pakistan's Hidden Gems`,
     template: `%s | ${SITE.name}`,
   },
   description: SITE.description,
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     locale: 'en_PK',
     siteName: SITE.name,
     url: SITE.url,
-    title: `${SITE.name} — Explore Pakistan's Hidden Gems`,
+    title: `${SITE.name} - Explore Pakistan's Hidden Gems`,
     description: SITE.description,
     images: [
       {
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     site: '@mySRZ',
-    title: `${SITE.name} — Explore Pakistan's Hidden Gems`,
+    title: `${SITE.name} - Explore Pakistan's Hidden Gems`,
     description: SITE.description,
     images: ['/og-image.jpg'],
   },

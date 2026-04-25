@@ -8,7 +8,7 @@ import type { Category } from '@/lib/types';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Pakistan Travel Blog — Tips, Guides & Stories',
+  title: 'Pakistan Travel Blog - Tips, Guides & Stories',
   description:
     'Read in-depth Pakistan travel guides, destination stories, food discoveries and adventure tips written by local expert Ahmad Fraz.',
   alternates: { canonical: '/blog' },

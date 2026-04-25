@@ -5,9 +5,9 @@ import { MapPin } from 'lucide-react';
 import { DESTINATIONS } from '@/lib/destinations';
 
 export const metadata: Metadata = {
-  title: 'Pakistan Destinations — Mountains, Cities & Culture',
+  title: 'Pakistan Destinations - Mountains, Cities & Culture',
   description:
-    "Explore Pakistan's most stunning destinations — Hunza Valley, Skardu, Swat, Lahore, Karachi and more. Detailed guides for every traveller.",
+    "Explore Pakistan's most stunning destinations - Hunza Valley, Skardu, Swat, Lahore, Karachi and more. Detailed guides for every traveller.",
   alternates: { canonical: '/destinations' },
   keywords: [
     'Pakistan destinations',
@@ -29,7 +29,7 @@ export default function DestinationsPage() {
           <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">Explore Pakistan</span>
           <h1 className="text-5xl font-bold mt-3 mb-4">All Destinations</h1>
           <p className="text-white/60 max-w-2xl text-lg">
-            From the world&apos;s highest mountain ranges to ancient civilizations — Pakistan is one of the most diverse travel destinations on Earth.
+            From the world&apos;s highest mountain ranges to ancient civilizations - Pakistan is one of the most diverse travel destinations on Earth.
           </p>
         </div>
       </div>

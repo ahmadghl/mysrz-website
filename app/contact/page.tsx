@@ -4,7 +4,7 @@ import { ContactForm } from '@/components/ContactForm';
 import { SITE } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Contact mySRZ — Book a Pakistan Tour',
+  title: 'Contact mySRZ - Book a Pakistan Tour',
   description:
     'Get in touch with mySRZ Travel & Tourism to plan your Pakistan trip. Call +92-301-2432222 or send us a message. We reply within 24 hours.',
   alternates: { canonical: '/contact' },
@@ -34,7 +34,7 @@ export default function ContactPage() {
           <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">We&apos;d Love to Hear From You</span>
           <h1 className="text-5xl font-bold mt-3 mb-4">Get in Touch</h1>
           <p className="text-white/60 max-w-xl text-lg">
-            Planning a trip, have a question, or want to collaborate? Reach out — we typically respond within 24 hours.
+            Planning a trip, have a question, or want to collaborate? Reach out - we typically respond within 24 hours.
           </p>
         </div>
       </div>

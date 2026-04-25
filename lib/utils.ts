@@ -15,7 +15,7 @@ export const SITE = {
   name: 'mySRZ Travel & Tourism',
   url: 'https://www.mysrztourism.com',
   description:
-    "Pakistan's trusted travel guide — expert articles, destination guides, and trip planning by Ahmad Fraz.",
+    "Pakistan's trusted travel guide - expert articles, destination guides, and trip planning by Ahmad Fraz.",
   phone: '+92-301-2432222',
   phoneDisplay: '+92 301 2432222',
   phoneLink: 'tel:+923012432222',

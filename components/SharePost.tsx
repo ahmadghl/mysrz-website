@@ -14,7 +14,7 @@ export function SharePost({ title, slug }: Props) {
   }, []);
 
   const url = `${origin}/blog/${slug}`;
-  const text = encodeURIComponent(`${title} — mySRZ`);
+  const text = encodeURIComponent(`${title} - mySRZ`);
   const links = [
     { name: 'WhatsApp', color: 'bg-green-600', href: `https://wa.me/?text=${text}%20${encodeURIComponent(url)}` },
     { name: 'Facebook', color: 'bg-blue-600', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },

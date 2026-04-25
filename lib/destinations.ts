@@ -32,7 +32,7 @@ export const DESTINATIONS: Destination[] = [
     name: 'Swat Valley',
     slug: 'swat-valley',
     region: 'KPK',
-    desc: 'Called the "Switzerland of the East" — lush green valleys, waterfalls and Buddhist ruins.',
+    desc: 'Called the "Switzerland of the East" - lush green valleys, waterfalls and Buddhist ruins.',
     best: 'Apr–Oct',
     image: 'https://picsum.photos/seed/swat-full/1200/800',
     tags: ['Nature', 'History', 'Scenic'],

@@ -44,7 +44,7 @@ export default async function HomePage() {
               Pakistan
             </h1>
             <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-lg">
-              From the Karakoram peaks to ancient Mughal cities — your complete guide to Pakistan&apos;s most extraordinary destinations, food, and culture.
+              From the Karakoram peaks to ancient Mughal cities - your complete guide to Pakistan&apos;s most extraordinary destinations, food, and culture.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link

@@ -5,16 +5,16 @@ import { Heart, Award, Users, Phone, Mail } from 'lucide-react';
 import { SITE } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'About mySRZ — Pakistan Travel Experts',
+  title: 'About mySRZ - Pakistan Travel Experts',
   description:
-    "Learn about mySRZ Travel & Tourism — Pakistan's trusted travel guide founded by Ahmad Fraz. Our mission, team, and travel philosophy.",
+    "Learn about mySRZ Travel & Tourism - Pakistan's trusted travel guide founded by Ahmad Fraz. Our mission, team, and travel philosophy.",
   alternates: { canonical: '/about' },
 };
 
 const VALUES = [
   { icon: Heart, title: 'Authentic Coverage', desc: "We write from real experience. Every destination we cover, we've personally visited and vetted." },
   { icon: Award, title: 'Responsible Travel', desc: "We promote sustainable tourism that benefits local communities and preserves Pakistan's natural heritage." },
-  { icon: Users, title: 'Community First', desc: 'We connect travelers with local guides, guesthouses, and businesses — keeping tourism money in local hands.' },
+  { icon: Users, title: 'Community First', desc: 'We connect travelers with local guides, guesthouses, and businesses - keeping tourism money in local hands.' },
 ];
 
 const STATS = [
@@ -42,9 +42,9 @@ export default function AboutPage() {
           <div>
             <h2 className="text-3xl font-bold text-brand-primary mb-6">Why We Started</h2>
             <div className="space-y-4 text-brand-primary/70 leading-relaxed">
-              <p>Pakistan is one of the most stunning, culturally rich, and historically layered countries on Earth — yet it remains deeply underrepresented in mainstream travel media. We started mySRZ to change that.</p>
+              <p>Pakistan is one of the most stunning, culturally rich, and historically layered countries on Earth - yet it remains deeply underrepresented in mainstream travel media. We started mySRZ to change that.</p>
               <p>Our team has trekked to K2 base camp, eaten street food in every major city, slept under the stars in Deosai, and explored ruins that predate Rome. We share everything we&apos;ve learned to help you travel Pakistan with confidence.</p>
-              <p>Whether you&apos;re a Pakistani looking to explore your own incredible country, or an international visitor planning your first trip — we&apos;re here to be your trusted guide.</p>
+              <p>Whether you&apos;re a Pakistani looking to explore your own incredible country, or an international visitor planning your first trip - we&apos;re here to be your trusted guide.</p>
             </div>
             <div className="mt-8 flex gap-4">
               <Link href="/contact" className="bg-brand-accent text-brand-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-brand-accent/90 transition-all">
