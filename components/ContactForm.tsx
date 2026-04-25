@@ -61,12 +61,12 @@ export function ContactForm() {
 
       {sent && (
         <div className="bg-brand-paper border border-brand-accent/30 rounded-xl p-4 mb-6 flex items-center gap-3">
-          <div className="w-8 h-8 bg-emerald-700 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-sm">✓</span>
+          <div className="w-8 h-8 bg-brand-accent text-brand-primary rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-brand-primary text-sm font-bold">✓</span>
           </div>
           <div>
-            <div className="font-semibold text-emerald-800">Message sent successfully!</div>
-            <div className="text-sm text-emerald-700">We&apos;ll get back to you within 24 hours.</div>
+            <div className="font-semibold text-brand-primary">Message sent successfully!</div>
+            <div className="text-sm text-brand-primary">We&apos;ll get back to you within 24 hours.</div>
           </div>
         </div>
       )}
@@ -137,7 +137,7 @@ export function ContactForm() {
         </div>
         <button
           type="submit"
-          className="w-full bg-emerald-700 text-white py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-emerald-800 transition-all flex items-center justify-center gap-2"
+          className="w-full bg-brand-accent text-brand-primary py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all flex items-center justify-center gap-2"
         >
           <Send size={16} /> Send Message
         </button>

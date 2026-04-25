@@ -10,7 +10,7 @@ export default function NotFound() {
         We couldn&apos;t find that page. It may have moved, or you&apos;re following an outdated link.
       </p>
       <div className="flex flex-wrap gap-3 justify-center">
-        <Link href="/" className="bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-emerald-800 transition-all">
+        <Link href="/" className="bg-brand-accent text-brand-primary px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all">
           Back to home
         </Link>
         <Link href="/blog" className="border border-stone-300 text-brand-primary px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all">

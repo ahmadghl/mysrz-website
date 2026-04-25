@@ -51,7 +51,7 @@ export function PostCard({ post, showMeta = true, priority = false }: Props) {
             </span>
           </div>
         )}
-        <h3 className="font-bold text-brand-primary leading-tight mb-2 text-lg group-hover:text-emerald-800 transition-colors">
+        <h3 className="font-bold text-brand-primary leading-tight mb-2 text-lg group-hover:text-brand-primary transition-colors">
           {post.title}
         </h3>
         <p className="text-brand-primary/50 text-sm line-clamp-2 leading-relaxed mb-4">{post.excerpt}</p>

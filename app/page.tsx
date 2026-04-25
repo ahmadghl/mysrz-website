@@ -35,7 +35,7 @@ export default async function HomePage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white w-full">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-px bg-emerald-400" />
+              <div className="w-8 h-px bg-brand-accent" />
               <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-semibold">Explore Pakistan</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-[1.05]">
@@ -136,7 +136,7 @@ export default async function HomePage() {
                   </div>
                   <div className="flex-grow min-w-0">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{post.category}</span>
-                    <h3 className="text-sm font-bold text-brand-primary leading-tight mt-1 line-clamp-2 group-hover:text-emerald-800 transition-colors">{post.title}</h3>
+                    <h3 className="text-sm font-bold text-brand-primary leading-tight mt-1 line-clamp-2 group-hover:text-brand-primary transition-colors">{post.title}</h3>
                     <div className="flex items-center gap-3 text-xs text-brand-primary/40 mt-2">
                       <span className="flex items-center gap-1"><Clock size={10} /> {post.read_time} min</span>
                       <span className="flex items-center gap-1"><Eye size={10} /> {post.views.toLocaleString()}</span>
@@ -199,7 +199,7 @@ export default async function HomePage() {
           <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-4">Plan Your Pakistan Journey</h2>
           <p className="text-white/60 max-w-xl mx-auto mb-8">Have questions about traveling in Pakistan? We&apos;re here to help you plan an unforgettable trip.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/contact" className="bg-emerald-700 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-emerald-800 transition-all">
+            <Link href="/contact" className="bg-brand-accent text-brand-primary px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all">
               Contact Us
             </Link>
             <a href={SITE.phoneLink} className="border border-stone-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all flex items-center gap-2">

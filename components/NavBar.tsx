@@ -54,7 +54,7 @@ export function NavBar() {
               ))}
               <Link
                 href="/contact"
-                className="ml-3 bg-brand-primary text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-800 transition-all shadow-sm"
+                className="ml-3 bg-brand-primary text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-brand-accent/90 transition-all shadow-sm"
               >
                 Plan a Trip
               </Link>

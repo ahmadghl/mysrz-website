@@ -50,7 +50,7 @@ export default function ContactPage() {
               <h3 className="font-bold text-lg mb-5">Direct Contact</h3>
               <div className="space-y-4">
                 <a href={SITE.phoneLink} className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-800 transition-all">
+                  <div className="w-10 h-10 bg-brand-accent text-brand-primary rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-brand-accent/90 transition-all">
                     <Phone size={16} />
                   </div>
                   <div>
@@ -59,7 +59,7 @@ export default function ContactPage() {
                   </div>
                 </a>
                 <a href={`mailto:${SITE.email}`} className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-800 transition-all">
+                  <div className="w-10 h-10 bg-brand-accent text-brand-primary rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-brand-accent/90 transition-all">
                     <Mail size={16} />
                   </div>
                   <div>
@@ -68,7 +68,7 @@ export default function ContactPage() {
                   </div>
                 </a>
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-brand-accent text-brand-primary rounded-xl flex items-center justify-center flex-shrink-0">
                     <MapPin size={16} />
                   </div>
                   <div>
@@ -77,7 +77,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-brand-accent text-brand-primary rounded-xl flex items-center justify-center flex-shrink-0">
                     <Clock size={16} />
                   </div>
                   <div>
@@ -90,7 +90,7 @@ export default function ContactPage() {
 
             <div className="bg-brand-paper border border-brand-accent/20 rounded-2xl p-6">
               <h3 className="font-bold text-brand-primary mb-3 flex items-center gap-2">
-                <MessageCircle size={16} className="text-emerald-700" /> WhatsApp Us
+                <MessageCircle size={16} className="text-brand-primary" /> WhatsApp Us
               </h3>
               <p className="text-brand-primary/70 text-sm mb-4">For quick queries, message us directly on WhatsApp.</p>
               <a

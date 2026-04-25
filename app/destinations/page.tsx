@@ -59,7 +59,7 @@ export default function DestinationsPage() {
                 </div>
               </div>
               <div className="p-5">
-                <h3 className="text-xl font-bold text-brand-primary group-hover:text-emerald-800 transition-colors mb-2">{dest.name}</h3>
+                <h3 className="text-xl font-bold text-brand-primary group-hover:text-brand-primary transition-colors mb-2">{dest.name}</h3>
                 <p className="text-brand-primary/50 text-sm leading-relaxed mb-4">{dest.desc}</p>
                 <div className="flex flex-wrap gap-2">
                   {dest.tags.map((tag) => (

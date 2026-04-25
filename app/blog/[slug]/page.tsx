@@ -163,7 +163,7 @@ export default async function PostPage({ params }: Props) {
                         </div>
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{r.category}</span>
-                          <h4 className="text-sm font-semibold text-stone-800 group-hover:text-emerald-800 transition-colors line-clamp-2 mt-0.5">{r.title}</h4>
+                          <h4 className="text-sm font-semibold text-stone-800 group-hover:text-brand-primary transition-colors line-clamp-2 mt-0.5">{r.title}</h4>
                           <span className="text-xs text-brand-primary/40">{r.read_time} min read</span>
                         </div>
                       </Link>
@@ -180,7 +180,7 @@ export default async function PostPage({ params }: Props) {
                   <p className="text-white/60 text-sm mb-4">Need help planning your visit? Contact us for personalized advice.</p>
                   <a
                     href={SITE.phoneLink}
-                    className="flex items-center gap-2 bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-800 transition-all mb-2 w-full justify-center"
+                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center"
                   >
                     <Phone size={14} /> Call Us Now
                   </a>
