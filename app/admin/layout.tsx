@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
-import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase-server';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { supabaseAdmin } from '@/lib/supabase';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import type { ReactNode } from 'react';
 
