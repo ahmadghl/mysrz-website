@@ -1,0 +1,117 @@
+
+networks:
+  crawler_network:
+    driver: bridge
+  traefik_network:
+    external: true
+    name: root_default
+
+volumes:
+  redis_data:
+  playwright_cache:
+
+services:
+
+  crawler_redis:
+    image: redis:7-alpine
+    container_name: crawler_redis
+    restart: unless-stopped
+    networks:
+      - crawler_network
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  crawler_api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crawler_api
+    restart: unless-stopped
+    networks:
+      - crawler_network
+      - traefik_network
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://crawler_redis:6379/0
+    depends_on:
+      crawler_redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.crawler-api.rule=Host(`crawler.nokhaizfareed.online`)
+      - traefik.http.routers.crawler-api.tls=true
+      - traefik.http.routers.crawler-api.tls.certresolver=mytlschallenge
+      - traefik.http.routers.crawler-api.entrypoints=web,websecure
+      - traefik.http.services.crawler-api.loadbalancer.server.port=8000
+      - "traefik.http.middlewares.crawler-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.crawler-api.middlewares=crawler-headers"
+      - "traefik.http.routers.crawler-api.middlewares=crawler-headers"
+
+  crawler_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - crawler_network
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://crawler_redis:6379/0
+    depends_on:
+      crawler_redis:
+        condition: service_healthy
+      crawler_api:
+        condition: service_healthy
+    volumes:
+      - playwright_cache:/root/.cache/ms-playwright
+    command: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 -Q crawl_queue,default
+
+  crawler_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crawler_beat
+    restart: unless-stopped
+    networks:
+      - crawler_network
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://crawler_redis:6379/0
+    depends_on:
+      crawler_redis:
+        condition: service_healthy
+    command: celery -A app.core.celery_app beat --loglevel=info
+
+  crawler_flower:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crawler_flower
+    restart: unless-stopped
+    networks:
+      - crawler_network
+    ports:
+      - "127.0.0.1:5555:5555"
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://crawler_redis:6379/0
+    depends_on:
+      - crawler_redis
+    command: celery -A app.core.celery_app flower --port=5555
