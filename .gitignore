@@ -1,16 +1,53 @@
-node_modules/
-.next/
-out/
+# ── Python ──────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
 dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# ── Node / React ─────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.next/
+*.local
+
+# ── Environment ──────────────────────────────────
 .env
 .env.local
-.env*.local
-.vercel
+.env.production
+.env.*.local
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# ── Docker ───────────────────────────────────────
+*.log
+
+# ── Editor ───────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
 .DS_Store
-next-env.d.ts
-*.tsbuildinfo
-mysrz-seo/
-mysrz-seo-updated.zip
-*.png
-*.zip
-supabase_schema.sql
+Thumbs.db
+
+# ── Playwright ───────────────────────────────────
+/test-results/
+/playwright-report/
+
+# ── Redis / DB snapshots ─────────────────────────
+*.rdb
+backups/
+
+# ── Celery ───────────────────────────────────────
+celerybeat-schedule
+celerybeat.pid

@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #1a1a1a;
+  --color-accent:  #d4af37;
+  --color-paper:   #faf9f6;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Markdown */
+.markdown-body { line-height: 1.85; font-size: 1.05rem; color: #1a1a1a; }
+.markdown-body h1,.markdown-body h2,.markdown-body h3 { font-family: 'Playfair Display', serif; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; line-height: 1.3; }
+.markdown-body h1 { font-size: 2.25rem; }
+.markdown-body h2 { font-size: 1.75rem; }
+.markdown-body h3 { font-size: 1.35rem; }
+.markdown-body p  { margin-bottom: 1.25rem; color: rgba(26,26,26,0.75); }
+.markdown-body ul,.markdown-body ol { margin: 1rem 0 1.25rem 1.5rem; color: rgba(26,26,26,0.75); }
+.markdown-body li { margin-bottom: 0.4rem; }
+.markdown-body blockquote { border-left: 3px solid #d4af37; padding-left: 1.25rem; margin: 1.5rem 0; font-style: italic; color: rgba(26,26,26,0.6); }
+.markdown-body strong { font-weight: 700; color: #1a1a1a; }
+.markdown-body a { color: #d4af37; text-decoration: underline; }
+.markdown-body code { background: rgba(0,0,0,0.06); padding: .2rem .4rem; border-radius: .25rem; font-size: .875rem; }
+.markdown-body img { width: 100%; border-radius: 1rem; margin: 1.5rem 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+
+/* Prose override */
+.prose { max-width: none; }
+
+footer .text-brand-primary\/40,
+footer .text-brand-primary\/70 {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+footer .text-brand-primary\/50 {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
