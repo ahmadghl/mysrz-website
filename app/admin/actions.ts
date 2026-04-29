@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase';
+import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase-server';
 import crypto from 'crypto';
 
 // ── Types ──────────────────────────────────────────────────────────────────
