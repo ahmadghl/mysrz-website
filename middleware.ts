@@ -25,22 +25,20 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
   const isLoginPage = request.nextUrl.pathname === '/admin/login';
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
 
-  // Not logged in → redirect to login
-  if (isAdminRoute && !isLoginPage && !session) {
+  // Not logged in + trying to access admin → redirect to login
+  if (isAdminRoute && !isLoginPage && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/admin/login';
     return NextResponse.redirect(url);
   }
 
-  // Already logged in → don't show login page again
-  if (isLoginPage && session) {
+  // Logged in + on login page → redirect to dashboard
+  if (isLoginPage && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/admin/dashboard';
     return NextResponse.redirect(url);
@@ -50,5 +48,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/admin/login'],
 };
