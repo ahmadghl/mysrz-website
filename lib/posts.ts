@@ -43,7 +43,7 @@ async function fetchFromSupabase(): Promise<Post[] | null> {
   const apiUrl =
     `${url}/rest/v1/blog_posts` +
     `?select=id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views` +
-    `&published=eq.true` +
+    `&status=eq.published` +
     `&order=created_at.desc` +
     `&limit=200`;
 
