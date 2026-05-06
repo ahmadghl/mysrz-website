@@ -182,7 +182,7 @@ export default async function PostPage({ params }: Props) {
                     {related.map((r) => (
                       <Link href={`/blog/${r.slug}`} key={r.id} className="flex gap-3 group">
                         <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                          <Image src={r.image_url} alt={r.title} fill sizes="80px" className="object-cover" />
+                          <Image src={resolveImageUrl(r.image_url)} alt={r.title} fill sizes="80px" className="object-cover" />
                         </div>
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{r.category}</span>
