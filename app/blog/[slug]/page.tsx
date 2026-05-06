@@ -10,6 +10,7 @@ import {
 import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
 import { SITE } from '@/lib/utils';
+import { resolveImageUrl } from '@/lib/image-utils';
 
 export const revalidate = 60;
 
@@ -63,6 +64,7 @@ export default async function PostPage({ params }: Props) {
 
   const related = await getRelatedPosts(post.slug, 4);
   const contentIsHTML = isHTML(post.content);
+  const heroImage = resolveImageUrl(post.image_url);
 
   const articleJsonLd = {
     '@context': 'https://schema.org',
@@ -107,7 +109,7 @@ export default async function PostPage({ params }: Props) {
       <article>
         {/* Hero */}
         <div className="relative h-[60vh] overflow-hidden">
-          <Image src={post.image_url} alt={post.title} fill priority sizes="100vw" className="object-cover" />
+          <Image src={heroImage} alt={post.title} fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end">
             <div className="max-w-4xl mx-auto px-4 pb-12 w-full text-white">
