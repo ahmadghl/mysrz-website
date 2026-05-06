@@ -16,6 +16,10 @@ interface SupabasePostRow {
   created_at: string | null;
   read_time: number | null;
   views: number | null;
+  image_credit_name: string | null;
+  image_credit_instagram: string | null;
+  image_credit_twitter: string | null;
+  image_credit_website: string | null;
 }
 
 function normalize(row: SupabasePostRow): Post {
@@ -32,6 +36,10 @@ function normalize(row: SupabasePostRow): Post {
     created_at: row.created_at ?? new Date().toISOString(),
     read_time: row.read_time ?? 5,
     views: row.views ?? 0,
+    image_credit_name: row.image_credit_name ?? null,
+    image_credit_instagram: row.image_credit_instagram ?? null,
+    image_credit_twitter: row.image_credit_twitter ?? null,
+    image_credit_website: row.image_credit_website ?? null,
   };
 }
 
@@ -42,7 +50,7 @@ async function fetchFromSupabase(): Promise<Post[] | null> {
 
   const apiUrl =
     `${url}/rest/v1/blog_posts` +
-    `?select=id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views` +
+    `?select=id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website` +
     `&status=eq.published` +
     `&order=created_at.desc` +
     `&limit=200`;
