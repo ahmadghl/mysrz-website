@@ -51,12 +51,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// Detect if content is HTML or Markdown
+function isHTML(content: string): boolean {
+  return /<\/?[a-z][\s\S]*>/i.test(content);
+}
+
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
   const related = await getRelatedPosts(post.slug, 4);
+  const contentIsHTML = isHTML(post.content);
 
   const articleJsonLd = {
     '@context': 'https://schema.org',
@@ -95,32 +101,18 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       <article>
+        {/* Hero */}
         <div className="relative h-[60vh] overflow-hidden">
-          <Image
-            src={post.image_url}
-            alt={post.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
+          <Image src={post.image_url} alt={post.title} fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end">
             <div className="max-w-4xl mx-auto px-4 pb-12 w-full text-white">
-              <Link
-                href="/blog"
-                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest"
-              >
+              <Link href="/blog"
+                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest">
                 <ArrowRight className="rotate-180" size={16} /> All Articles
               </Link>
               <span className="bg-brand-primary/90 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block">
@@ -140,9 +132,44 @@ export default async function PostPage({ params }: Props) {
         <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="flex flex-col lg:flex-row gap-12">
             <div className="flex-grow min-w-0">
-              <div className="markdown-body">
-                <Markdown>{post.content}</Markdown>
-              </div>
+
+              {/* Image credit */}
+              {post.image_credit_name && (
+                <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-brand-primary/40">
+                  <span>Photo by</span>
+                  <span className="font-semibold text-brand-primary/60">{post.image_credit_name}</span>
+                  {post.image_credit_instagram && (
+                    <a href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="font-semibold hover:underline" style={{ color: '#e1306c' }}>
+                      Instagram
+                    </a>
+                  )}
+                  {post.image_credit_twitter && (
+                    <a href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="font-semibold hover:underline" style={{ color: '#1da1f2' }}>
+                      Twitter/X
+                    </a>
+                  )}
+                  {post.image_credit_website && (
+                    <a href={post.image_credit_website.startsWith('http') ? post.image_credit_website : `https://${post.image_credit_website}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="font-semibold text-brand-primary/50 hover:underline">
+                      Website
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {/* Content — HTML or Markdown */}
+              {contentIsHTML ? (
+                <div className="markdown-body" dangerouslySetInnerHTML={{ __html: post.content }} />
+              ) : (
+                <div className="markdown-body">
+                  <Markdown>{post.content}</Markdown>
+                </div>
+              )}
 
               <SharePost title={post.title} slug={post.slug} />
 
@@ -153,13 +180,7 @@ export default async function PostPage({ params }: Props) {
                     {related.map((r) => (
                       <Link href={`/blog/${r.slug}`} key={r.id} className="flex gap-3 group">
                         <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                          <Image
-                            src={r.image_url}
-                            alt={r.title}
-                            fill
-                            sizes="80px"
-                            className="object-cover"
-                          />
+                          <Image src={r.image_url} alt={r.title} fill sizes="80px" className="object-cover" />
                         </div>
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{r.category}</span>
@@ -178,16 +199,12 @@ export default async function PostPage({ params }: Props) {
                 <div className="bg-brand-primary text-white p-5 rounded-2xl">
                   <h4 className="font-bold text-lg mb-2">Plan This Trip</h4>
                   <p className="text-white/60 text-sm mb-4">Need help planning your visit? Contact us for personalized advice.</p>
-                  <a
-                    href={SITE.phoneLink}
-                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center"
-                  >
+                  <a href={SITE.phoneLink}
+                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center">
                     <Phone size={14} /> Call Us Now
                   </a>
-                  <a
-                    href={`mailto:${SITE.email}`}
-                    className="flex items-center gap-2 border border-white/10 text-white/70 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-brand-accent transition-all w-full justify-center"
-                  >
+                  <a href={`mailto:${SITE.email}`}
+                    className="flex items-center gap-2 border border-white/10 text-white/70 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-brand-accent transition-all w-full justify-center">
                     <Mail size={14} /> Email Us
                   </a>
                 </div>
