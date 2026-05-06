@@ -3,17 +3,6 @@ import { revalidateTag, revalidatePath } from 'next/cache';
 
 export const runtime = 'nodejs';
 
-/**
- * POST /api/revalidate?secret=YOUR_SECRET
- *
- * Call this from a Supabase database webhook (Database → Webhooks) on
- * INSERT/UPDATE/DELETE of `blog_posts`. It instantly invalidates the
- * cached posts list and the affected post's page so changes appear live
- * without waiting for the 60s revalidation window.
- *
- * Set REVALIDATE_SECRET in Vercel env vars and pass it as ?secret=...
- * (or in the Authorization header) when calling this endpoint.
- */
 export async function POST(req: Request) {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) {
@@ -32,6 +21,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 
+  const path = url.searchParams.get('path') ?? '/';
+
   let slug: string | undefined;
   try {
     const body = (await req.json().catch(() => null)) as
@@ -43,14 +34,27 @@ export async function POST(req: Request) {
     console.error('[api/revalidate] body parse failed', err);
   }
 
+  // Always revalidate both tags
   revalidateTag('posts');
+  revalidateTag('destinations');
+
+  // Revalidate common paths
   revalidatePath('/');
   revalidatePath('/blog');
+  revalidatePath('/destinations');
   revalidatePath('/sitemap.xml');
+
+  // Revalidate specific path if provided
+  if (path && path !== '/') revalidatePath(path);
   if (slug) revalidatePath(`/blog/${slug}`);
 
   return NextResponse.json({
     ok: true,
-    revalidated: { tag: 'posts', slug: slug ?? null, at: new Date().toISOString() },
+    revalidated: {
+      tags: ['posts', 'destinations'],
+      path,
+      slug: slug ?? null,
+      at: new Date().toISOString()
+    },
   });
 }
