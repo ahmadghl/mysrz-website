@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Calendar, Clock, Eye, ChevronRight, User, Mountain, Camera, Utensils, Leaf } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Post, Category } from '@/lib/types';
-import { resolveImageUrl } from '@/lib/image-utils';
 
 const CATEGORY_ICONS: Record<Exclude<Category, 'All'>, typeof Mountain> = {
   Adventure: Mountain,
@@ -20,7 +19,6 @@ interface Props {
 
 export function PostCard({ post, showMeta = true, priority = false }: Props) {
   const Icon = CATEGORY_ICONS[post.category];
-  const imageUrl = resolveImageUrl(post.image_url);
 
   return (
     <Link
@@ -29,7 +27,7 @@ export function PostCard({ post, showMeta = true, priority = false }: Props) {
     >
       <div className="relative h-52 overflow-hidden">
         <Image
-          src={imageUrl}
+          src={post.image_url}
           alt={post.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
