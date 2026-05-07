@@ -10,7 +10,6 @@ import {
 import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
 import { SITE } from '@/lib/utils';
-import { resolveImageUrl } from '@/lib/image-utils';
 
 export const revalidate = 60;
 
@@ -64,7 +63,7 @@ export default async function PostPage({ params }: Props) {
 
   const related = await getRelatedPosts(post.slug, 4);
   const contentIsHTML = isHTML(post.content);
-  const heroImage = resolveImageUrl(post.image_url);
+  const heroImage = post.image_url; // already resolved in lib/posts.ts normalize()
 
   const articleJsonLd = {
     '@context': 'https://schema.org',
