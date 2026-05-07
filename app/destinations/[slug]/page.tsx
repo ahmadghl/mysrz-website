@@ -8,8 +8,6 @@ import { SITE } from '@/lib/utils';
 import { resolveImageUrl } from '@/lib/image-utils';
 
 export const revalidate = 3600;
-
-interface Destination {
   id: string;
   name: string;
   slug: string;
@@ -37,7 +35,11 @@ async function getDestinations(): Promise<Destination[]> {
       }
     );
     if (!res.ok) return [];
-    return await res.json();
+    const data = await res.json();
+    return data.map((d: Destination) => ({
+      ...d,
+      image_url: resolveImageUrl(d.image_url || '/images/placeholder.jpg'),
+    }));
   } catch { return []; }
 }
 
@@ -80,7 +82,7 @@ export default async function DestinationPage({ params }: Props) {
     )
     .slice(0, 3);
 
-  const heroImage = resolveImageUrl(dest.image_url);
+  const heroImage = dest.image_url; // already resolved at fetch time
 
   const destinationJsonLd = {
     '@context': 'https://schema.org',
@@ -183,7 +185,7 @@ export default async function DestinationPage({ params }: Props) {
                 <Link href={`/blog/${post.slug}`} key={post.id} className="group">
                   <div className="relative h-40 rounded-xl overflow-hidden mb-3">
                     <Image
-                      src={resolveImageUrl(post.image_url)}
+                      src={post.image_url}
                       alt={post.title}
                       fill
                       sizes="300px"
