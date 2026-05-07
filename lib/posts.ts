@@ -1,6 +1,7 @@
 import type { Post } from './types';
 import { STATIC_POSTS } from './static-posts';
 import { slugify } from './utils';
+import { resolveImageUrl } from './image-utils';
 
 const REVALIDATE_SECONDS = 60;
 
@@ -32,7 +33,7 @@ function normalize(row: SupabasePostRow): Post {
     title: row.title,
     excerpt: row.excerpt ?? '',
     content: row.content ?? '',
-    image_url: row.image_url || '/images/placeholder.jpg',
+    image_url: resolveImageUrl(row.image_url || '/images/placeholder.jpg'),
     category: (row.category as Post['category']) ?? 'Adventure',
     author: row.author ?? 'Ahmad Fraz',
     created_at: row.created_at ?? new Date().toISOString(),
