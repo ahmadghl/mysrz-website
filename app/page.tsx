@@ -7,7 +7,6 @@ import {
 import { getAllPosts } from '@/lib/posts';
 import { PostCard } from '@/components/PostCard';
 import { SITE } from '@/lib/utils';
-import { resolveImageUrl } from '@/lib/image-utils';
 
 export const revalidate = 60;
 
@@ -124,7 +123,7 @@ export default async function HomePage() {
             {heroPost && (
               <Link href={`/blog/${heroPost.slug}`} className="lg:col-span-3 group">
                 <article className="relative h-80 lg:h-96 rounded-2xl overflow-hidden">
-                  <Image src={resolveImageUrl(heroPost.image_url)} alt={heroPost.title} fill
+                  <Image src={heroPost.image_url} alt={heroPost.title} fill
                     sizes="(max-width: 1024px) 100vw, 60vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -146,7 +145,7 @@ export default async function HomePage() {
               {sidePosts.map((post) => (
                 <Link href={`/blog/${post.slug}`} key={post.id} className="group flex gap-4 bg-brand-paper rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                   <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
-                    <Image src={resolveImageUrl(post.image_url)} alt={post.title} fill sizes="96px"
+                    <Image src={post.image_url} alt={post.title} fill sizes="96px"
                       className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <div className="flex-grow min-w-0">
