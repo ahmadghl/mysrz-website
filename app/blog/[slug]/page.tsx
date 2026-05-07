@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(slug);
   if (!post) return { title: 'Article not found' };
   return {
-    title: post.title,
-    description: post.excerpt.slice(0, 160),
+    title: post.meta_title || post.title,
+    description: (post.meta_description || post.excerpt).slice(0, 160),
     alternates: { canonical: `/blog/${post.slug}` },
     keywords: [post.category, 'Pakistan travel', post.title],
     openGraph: {
