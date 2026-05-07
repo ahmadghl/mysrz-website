@@ -85,7 +85,7 @@ export default async function DestinationsPage() {
             {destinations.map((dest) => (
               <Link
                 key={dest.slug}
-                href="/blog"
+                href={`/destinations/${dest.slug}`}
                 className="group bg-brand-paper rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="relative h-52 overflow-hidden">
