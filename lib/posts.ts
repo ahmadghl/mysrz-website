@@ -16,6 +16,8 @@ interface SupabasePostRow {
   created_at: string | null;
   read_time: number | null;
   views: number | null;
+  meta_title: string | null;
+  meta_description: string | null;
   image_credit_name: string | null;
   image_credit_instagram: string | null;
   image_credit_twitter: string | null;
@@ -30,12 +32,14 @@ function normalize(row: SupabasePostRow): Post {
     title: row.title,
     excerpt: row.excerpt ?? '',
     content: row.content ?? '',
-    image_url: row.image_url || `https://picsum.photos/seed/${slug}/1200/800`,
+    image_url: row.image_url || '/images/placeholder.jpg',
     category: (row.category as Post['category']) ?? 'Adventure',
     author: row.author ?? 'Ahmad Fraz',
     created_at: row.created_at ?? new Date().toISOString(),
     read_time: row.read_time ?? 5,
     views: row.views ?? 0,
+    meta_title: row.meta_title ?? null,
+    meta_description: row.meta_description ?? null,
     image_credit_name: row.image_credit_name ?? null,
     image_credit_instagram: row.image_credit_instagram ?? null,
     image_credit_twitter: row.image_credit_twitter ?? null,
@@ -50,7 +54,7 @@ async function fetchFromSupabase(): Promise<Post[] | null> {
 
   const apiUrl =
     `${url}/rest/v1/blog_posts` +
-    `?select=id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website` +
+    `?select=id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views,meta_title,meta_description,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website` +
     `&status=eq.published` +
     `&order=created_at.desc` +
     `&limit=200`;
