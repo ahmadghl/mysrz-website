@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/image-utils';
 
 export const revalidate = 3600;
 
@@ -53,7 +54,12 @@ async function getDestinations(): Promise<Destination[]> {
       }
     );
     if (!res.ok) return [];
-    return await res.json();
+    const data = await res.json();
+    // Resolve image URLs at fetch time — works for Google Drive and any other URL
+    return data.map((d: Destination) => ({
+      ...d,
+      image_url: resolveImageUrl(d.image_url || '/images/placeholder.jpg'),
+    }));
   } catch {
     return [];
   }
