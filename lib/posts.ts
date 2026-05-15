@@ -1,5 +1,4 @@
 import type { Post } from './types';
-import { STATIC_POSTS } from './static-posts';
 import { slugify } from './utils';
 import { resolveImageUrl } from './image-utils';
 
@@ -33,7 +32,7 @@ function normalize(row: SupabasePostRow): Post {
     title: row.title,
     excerpt: row.excerpt ?? '',
     content: row.content ?? '',
-    image_url: resolveImageUrl(row.image_url || '/images/placeholder.jpg'),
+    image_url: resolveImageUrl(row.image_url ?? ''),
     category: (row.category as Post['category']) ?? 'Adventure',
     author: row.author ?? 'Ahmad Fraz',
     created_at: row.created_at ?? new Date().toISOString(),
@@ -48,17 +47,21 @@ function normalize(row: SupabasePostRow): Post {
   };
 }
 
-async function fetchFromSupabase(): Promise<Post[] | null> {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_ANON_KEY;
+async function fetchFromSupabase(slug?: string): Promise<Post[] | null> {
+  const url =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
   if (!url || !key) return null;
 
-  const apiUrl =
-    `${url}/rest/v1/blog_posts` +
-    `?select=id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views,meta_title,meta_description,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website` +
-    `&status=eq.published` +
-    `&order=created_at.desc` +
-    `&limit=200`;
+  const select =
+    'id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views,' +
+    'meta_title,meta_description,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
+  const filter = slug
+    ? `&slug=eq.${encodeURIComponent(slug)}`
+    : '&order=created_at.desc&limit=200';
+
+  const apiUrl = `${url}/rest/v1/blog_posts?select=${select}&published=eq.true${filter}`;
 
   try {
     const r = await fetch(apiUrl, {
@@ -70,30 +73,37 @@ async function fetchFromSupabase(): Promise<Post[] | null> {
       next: { revalidate: REVALIDATE_SECONDS, tags: ['posts'] },
     });
     if (!r.ok) {
-      console.error('Supabase fetch failed', r.status, await r.text().catch(() => ''));
+      console.error(
+        '[posts] Supabase fetch failed',
+        r.status,
+        await r.text().catch(() => ''),
+      );
       return null;
     }
     const rows = (await r.json()) as SupabasePostRow[];
-    if (!Array.isArray(rows) || rows.length === 0) return null;
+    if (!Array.isArray(rows)) return null;
     return rows.map(normalize);
   } catch (err) {
-    console.error('Supabase fetch error', err);
+    console.error('[posts] fetch error', err);
     return null;
   }
 }
 
 export async function getAllPosts(): Promise<Post[]> {
-  const remote = await fetchFromSupabase();
-  if (remote && remote.length > 0) return remote;
-  return STATIC_POSTS;
+  return (await fetchFromSupabase()) ?? [];
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const all = await getAllPosts();
-  return all.find((p) => p.slug === slug) ?? null;
+  const rows = await fetchFromSupabase(slug);
+  return rows?.[0] ?? null;
 }
 
 export async function getRelatedPosts(slug: string, limit = 4): Promise<Post[]> {
   const all = await getAllPosts();
   return all.filter((p) => p.slug !== slug).slice(0, limit);
+}
+
+export async function getPostSlugs(): Promise<string[]> {
+  const all = await getAllPosts();
+  return all.map((p) => p.slug);
 }

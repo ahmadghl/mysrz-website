@@ -3,28 +3,41 @@ import { BookOpen } from 'lucide-react';
 import { getAllPosts } from '@/lib/posts';
 import { PostCard } from '@/components/PostCard';
 import { BlogFilters } from '@/components/BlogFilters';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import type { Category } from '@/lib/types';
 
 export const revalidate = 60;
-
-export const metadata: Metadata = {
-  title: 'Pakistan Travel Blog - Tips, Guides & Stories',
-  description:
-    'Read in-depth Pakistan travel guides, destination stories, food discoveries and adventure tips written by local expert Ahmad Fraz.',
-  alternates: { canonical: '/blog' },
-  keywords: [
-    'Pakistan travel blog',
-    'Pakistan travel guide',
-    'Hunza guide',
-    'Skardu guide',
-    'Pakistan adventure travel',
-  ],
-};
 
 const CATEGORIES: Category[] = ['All', 'Adventure', 'Culture', 'Food', 'Nature'];
 
 interface PageProps {
   searchParams: Promise<{ category?: string; q?: string }>;
+}
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const sp = await searchParams;
+  const requested = (sp.category as Category) ?? 'All';
+  const activeCategory: Category = CATEGORIES.includes(requested) ? requested : 'All';
+  const query = (sp.q ?? '').trim();
+  // Noindex any filtered variant so Google only indexes the canonical /blog
+  // page. The category and search forms are user-facing controls, not
+  // content surfaces we want crawled separately.
+  const isFiltered = activeCategory !== 'All' || query.length > 0;
+
+  return {
+    title: 'Pakistan Travel Blog — Tips, Guides & Stories',
+    description:
+      'Read in-depth Pakistan travel guides, destination stories, food discoveries and adventure tips written by local expert Ahmad Fraz.',
+    alternates: { canonical: '/blog' },
+    keywords: [
+      'Pakistan travel blog',
+      'Pakistan travel guide',
+      'Hunza guide',
+      'Skardu guide',
+      'Pakistan adventure travel',
+    ],
+    robots: isFiltered ? { index: false, follow: true } : undefined,
+  };
 }
 
 export default async function BlogPage({ searchParams }: PageProps) {
@@ -46,6 +59,14 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
   return (
     <>
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Blog' },
+        ]}
+        hideVisual
+      />
+
       <div className="bg-brand-primary text-white py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">Travel Guides & Stories</span>

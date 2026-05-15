@@ -7,11 +7,13 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { getSiteSettings } from '@/lib/site-settings';
+import { SITE } from '@/lib/utils';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
-  title: 'About mySRZ - Pakistan Travel Experts',
+  title: 'About mySRZ — Pakistan Travel Experts',
   description:
-    "Learn about mySRZ Travel & Tourism - Pakistan's trusted travel guide founded by Ahmad Fraz. Our mission, team, and travel philosophy.",
+    "Learn about mySRZ Travel & Tourism — Pakistan's trusted travel guide founded by Ahmad Fraz. Our mission, team, and travel philosophy.",
   alternates: { canonical: '/about' },
 };
 
@@ -22,8 +24,53 @@ const VALUE_ICONS: Record<string, LucideIcon> = {
 export default async function AboutPage() {
   const settings = await getSiteSettings();
 
+  const founderName = settings.founder_name || SITE.founder;
+  const siteUrl = settings.site_url || SITE.url;
+  const siteName = settings.site_name || SITE.name;
+
+  const sameAs = [
+    settings.instagram_url || SITE.social.instagram,
+    settings.twitter_url || SITE.social.twitter,
+    settings.facebook_url || SITE.social.facebook,
+  ].filter(Boolean);
+
+  const personJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${siteUrl}/about#ahmad-fraz`,
+    name: founderName,
+    url: `${siteUrl}/about`,
+    jobTitle: settings.founder_role || 'Travel writer and founder',
+    worksFor: {
+      '@type': 'Organization',
+      name: siteName,
+      url: siteUrl,
+    },
+    sameAs,
+    knowsAbout: [
+      'Pakistan travel',
+      'Hunza Valley',
+      'Skardu',
+      'Karakoram',
+      'Pakistani cuisine',
+      'cultural tourism',
+    ],
+    nationality: { '@type': 'Country', name: 'Pakistan' },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'About' },
+        ]}
+        hideVisual
+      />
       <div className="bg-brand-primary text-white py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">{settings.about_kicker}</span>
@@ -92,7 +139,7 @@ export default async function AboutPage() {
               {settings.founder_image_url ? (
                 <Image
                   src={settings.founder_image_url}
-                  alt={settings.founder_name}
+                  alt={founderName}
                   width={128}
                   height={128}
                   className="w-32 h-32 rounded-full object-cover mx-auto mb-5 shadow-lg"
@@ -102,7 +149,7 @@ export default async function AboutPage() {
                   {settings.founder_initials}
                 </div>
               )}
-              <h3 className="text-xl font-bold text-brand-primary">{settings.founder_name}</h3>
+              <h3 className="text-xl font-bold text-brand-primary">{founderName}</h3>
               <p className="text-brand-primary font-semibold text-sm mb-3">{settings.founder_role}</p>
               <p className="text-brand-primary/50 text-sm leading-relaxed mb-4">
                 {settings.founder_bio}

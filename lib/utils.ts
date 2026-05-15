@@ -13,7 +13,7 @@ export function slugify(input: string): string {
 
 export const SITE = {
   name: 'mySRZ Travel & Tourism',
-  url: 'https://www.mysrztourism.com',
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.mysrztourism.com',
   description:
     "Pakistan's trusted travel guide - expert articles, destination guides, and trip planning by Ahmad Fraz.",
   phone: '+92-301-2432222',
