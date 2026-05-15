@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
 import { getAllDestinations } from '@/lib/destinations';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 export const revalidate = 60;
 
@@ -28,6 +29,13 @@ export default async function DestinationsPage() {
 
   return (
     <>
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Destinations' },
+        ]}
+        hideVisual
+      />
       <div className="bg-brand-primary text-white py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">

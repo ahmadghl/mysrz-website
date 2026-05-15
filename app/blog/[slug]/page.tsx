@@ -2,20 +2,29 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import Markdown from 'react-markdown';
 import { format } from 'date-fns';
 import {
   ArrowRight, User, Calendar, Clock, Eye, Phone, Mail,
 } from 'lucide-react';
-import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/lib/posts';
+import { getPostBySlug, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { SITE } from '@/lib/utils';
 
-export const revalidate = 60;
+// Render dynamically so unknown slugs return a real 404 status code.
+// Supabase fetches are still cached via the `posts` tag and invalidated
+// by /api/revalidate when the admin publishes.
+export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((p) => ({ slug: p.slug }));
+function truncateDescription(input: string, max: number) {
+  if (input.length <= max) return input;
+  const cut = input.lastIndexOf(' ', max - 1);
+  const idx = cut > max * 0.6 ? cut : max - 1;
+  return `${input.slice(0, idx).trimEnd()}…`;
+}
+
+function wordCount(html: string) {
+  return html.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
 }
 
 interface Props {
@@ -28,13 +37,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Article not found' };
   return {
     title: post.title,
-    description: post.excerpt.slice(0, 160),
+    description: truncateDescription(post.excerpt, 160),
     alternates: { canonical: `/blog/${post.slug}` },
     keywords: [post.category, 'Pakistan travel', post.title],
     openGraph: {
       type: 'article',
       title: post.title,
-      description: post.excerpt.slice(0, 160),
+      description: truncateDescription(post.excerpt, 160),
       url: `/blog/${post.slug}`,
       images: [{ url: post.image_url, width: 1200, height: 800, alt: post.title }],
       publishedTime: post.created_at,
@@ -45,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.excerpt.slice(0, 160),
+      description: truncateDescription(post.excerpt, 160),
       images: [post.image_url],
     },
   };
@@ -68,7 +77,7 @@ export default async function PostPage({ params }: Props) {
     datePublished: post.created_at,
     dateModified: post.created_at,
     articleSection: post.category,
-    wordCount: post.content.split(/\s+/).length,
+    wordCount: wordCount(post.content),
     timeRequired: `PT${post.read_time}M`,
     author: {
       '@type': 'Person',
@@ -83,25 +92,20 @@ export default async function PostPage({ params }: Props) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE.url}/blog/${post.slug}` },
   };
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE.url}/blog` },
-      { '@type': 'ListItem', position: 3, name: post.title, item: `${SITE.url}/blog/${post.slug}` },
-    ],
-  };
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Blog', href: '/blog' },
+          { label: post.title },
+        ]}
+        hideVisual
       />
 
       <article>
@@ -140,9 +144,14 @@ export default async function PostPage({ params }: Props) {
         <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="flex flex-col lg:flex-row gap-12">
             <div className="flex-grow min-w-0">
-              <div className="markdown-body">
-                <Markdown>{post.content}</Markdown>
-              </div>
+              {/* post.content is Tiptap-authored HTML from the admin panel.
+                  Tailwind Typography `prose` styles it. Sanitization is not
+                  applied because only authenticated admins can write to
+                  blog_posts; revisit if any untrusted source is ever added. */}
+              <div
+                className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
 
               <SharePost title={post.title} slug={post.slug} />
 

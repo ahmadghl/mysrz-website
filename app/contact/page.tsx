@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Phone, Mail, MapPin, Clock, MessageCircle } from 'lucide-react';
 import { ContactForm } from '@/components/ContactForm';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { SITE } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -29,6 +30,13 @@ const HELP_LIST = [
 export default function ContactPage() {
   return (
     <>
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Contact' },
+        ]}
+        hideVisual
+      />
       <div className="bg-brand-primary text-white py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">We&apos;d Love to Hear From You</span>

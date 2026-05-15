@@ -3,12 +3,41 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, Award, Users, Phone, Mail } from 'lucide-react';
 import { SITE } from '@/lib/utils';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
-  title: 'About mySRZ - Pakistan Travel Experts',
+  title: 'About mySRZ — Pakistan Travel Experts',
   description:
-    "Learn about mySRZ Travel & Tourism - Pakistan's trusted travel guide founded by Ahmad Fraz. Our mission, team, and travel philosophy.",
+    "Learn about mySRZ Travel & Tourism — Pakistan's trusted travel guide founded by Ahmad Fraz. Our mission, team, and travel philosophy.",
   alternates: { canonical: '/about' },
+};
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${SITE.url}/about#ahmad-fraz`,
+  name: SITE.founder,
+  url: `${SITE.url}/about`,
+  jobTitle: 'Travel writer and founder',
+  worksFor: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+  },
+  sameAs: [
+    SITE.social.instagram,
+    SITE.social.twitter,
+    SITE.social.facebook,
+  ],
+  knowsAbout: [
+    'Pakistan travel',
+    'Hunza Valley',
+    'Skardu',
+    'Karakoram',
+    'Pakistani cuisine',
+    'cultural tourism',
+  ],
+  nationality: { '@type': 'Country', name: 'Pakistan' },
 };
 
 const VALUES = [
@@ -27,6 +56,17 @@ const STATS = [
 export default function AboutPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'About' },
+        ]}
+        hideVisual
+      />
       <div className="bg-brand-primary text-white py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">Our Story</span>
