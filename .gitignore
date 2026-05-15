@@ -49,3 +49,22 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
+
+# Playwright
+/test-results/
+/playwright-report/
+
+# Redis / DB snapshots
+*.rdb
+backups/
+
+# Stray scratch files at repo root — put images in /public/
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.gif
+/*.zip
+/*.tar
+/*.tar.gz
+/*.bak

@@ -27,6 +27,12 @@ function wordCount(html: string) {
   return html.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
 }
 
+// Best-effort detection of HTML-shaped content. If false, we treat the
+// content as plain text and wrap it in <p> tags inside prose.
+function isHTML(content: string): boolean {
+  return /<\/?[a-z][\s\S]*>/i.test(content);
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -35,15 +41,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: 'Article not found' };
+  const seoTitle = post.meta_title || post.title;
+  const seoDesc = truncateDescription(post.meta_description || post.excerpt, 160);
   return {
-    title: post.title,
-    description: truncateDescription(post.excerpt, 160),
+    title: seoTitle,
+    description: seoDesc,
     alternates: { canonical: `/blog/${post.slug}` },
     keywords: [post.category, 'Pakistan travel', post.title],
     openGraph: {
       type: 'article',
-      title: post.title,
-      description: truncateDescription(post.excerpt, 160),
+      title: seoTitle,
+      description: seoDesc,
       url: `/blog/${post.slug}`,
       images: [{ url: post.image_url, width: 1200, height: 800, alt: post.title }],
       publishedTime: post.created_at,
@@ -53,8 +61,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: truncateDescription(post.excerpt, 160),
+      title: seoTitle,
+      description: seoDesc,
       images: [post.image_url],
     },
   };
@@ -66,6 +74,9 @@ export default async function PostPage({ params }: Props) {
   if (!post) notFound();
 
   const related = await getRelatedPosts(post.slug, 4);
+  const contentIsHTML = isHTML(post.content);
+  // image_url is already resolved through resolveImageUrl in lib/posts.ts
+  const heroImage = post.image_url;
 
   const articleJsonLd = {
     '@context': 'https://schema.org',
@@ -111,7 +122,7 @@ export default async function PostPage({ params }: Props) {
       <article>
         <div className="relative h-[60vh] overflow-hidden">
           <Image
-            src={post.image_url}
+            src={heroImage}
             alt={post.title}
             fill
             priority
@@ -144,14 +155,61 @@ export default async function PostPage({ params }: Props) {
         <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="flex flex-col lg:flex-row gap-12">
             <div className="flex-grow min-w-0">
+              {/* Image credit */}
+              {post.image_credit_name && (
+                <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-brand-primary/40">
+                  <span>Photo by</span>
+                  <span className="font-semibold text-brand-primary/60">{post.image_credit_name}</span>
+                  {post.image_credit_instagram && (
+                    <a
+                      href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold hover:underline"
+                      style={{ color: '#e1306c' }}
+                    >
+                      Instagram
+                    </a>
+                  )}
+                  {post.image_credit_twitter && (
+                    <a
+                      href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold hover:underline"
+                      style={{ color: '#1da1f2' }}
+                    >
+                      Twitter/X
+                    </a>
+                  )}
+                  {post.image_credit_website && (
+                    <a
+                      href={post.image_credit_website.startsWith('http') ? post.image_credit_website : `https://${post.image_credit_website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-brand-primary/50 hover:underline"
+                    >
+                      Website
+                    </a>
+                  )}
+                </div>
+              )}
+
               {/* post.content is Tiptap-authored HTML from the admin panel.
                   Tailwind Typography `prose` styles it. Sanitization is not
                   applied because only authenticated admins can write to
-                  blog_posts; revisit if any untrusted source is ever added. */}
-              <div
-                className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
+                  blog_posts; revisit if any untrusted source is ever added.
+                  If content is not HTML (plain text fallback), wrap in <p>. */}
+              {contentIsHTML ? (
+                <div
+                  className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+              ) : (
+                <div className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary">
+                  <p>{post.content}</p>
+                </div>
+              )}
 
               <SharePost title={post.title} slug={post.slug} />
 

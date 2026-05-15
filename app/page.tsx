@@ -3,18 +3,24 @@ import Link from 'next/link';
 import {
   ArrowRight, ChevronDown, ChevronRight, Clock, Eye,
   MapPin, BookOpen, Users, Star, Phone,
+  type LucideIcon,
 } from 'lucide-react';
 import { getAllPosts } from '@/lib/posts';
 import { getAllDestinations } from '@/lib/destinations';
 import { PostCard } from '@/components/PostCard';
-import { SITE } from '@/lib/utils';
+import { getSiteSettings } from '@/lib/site-settings';
 
 export const revalidate = 60;
 
+const STAT_ICONS: Record<string, LucideIcon> = {
+  MapPin, BookOpen, Users, Star,
+};
+
 export default async function HomePage() {
-  const [posts, allDestinations] = await Promise.all([
+  const [posts, allDestinations, settings] = await Promise.all([
     getAllPosts(),
     getAllDestinations(),
+    getSiteSettings(),
   ]);
   // Hero is the featured/first post; side and grid posts don't reuse it.
   const heroPost = posts[0];
@@ -27,7 +33,7 @@ export default async function HomePage() {
       <section className="relative h-[92vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://picsum.photos/seed/pakistan-mountains-hero/1920/1080"
+            src={settings.hero_image_url}
             alt="Pakistan mountains"
             fill
             priority
@@ -40,28 +46,30 @@ export default async function HomePage() {
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-px bg-brand-accent" />
-              <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-semibold">Explore Pakistan</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-semibold">
+                {settings.hero_kicker}
+              </span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-[1.05]">
-              Discover the<br />
-              <span className="text-brand-accent">Soul of</span><br />
-              Pakistan
+              {settings.hero_title_line_1}<br />
+              <span className="text-brand-accent">{settings.hero_title_line_2}</span><br />
+              {settings.hero_title_line_3}
             </h1>
             <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-lg">
-              From the Karakoram peaks to ancient Mughal cities - your complete guide to Pakistan&apos;s most extraordinary destinations, food, and culture.
+              {settings.hero_subtitle}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                href="/destinations"
+                href={settings.hero_cta_primary_href}
                 className="bg-brand-primary text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-brand-primary/90 transition-all shadow-lg"
               >
-                Explore Destinations
+                {settings.hero_cta_primary_text}
               </Link>
               <Link
-                href="/blog"
+                href={settings.hero_cta_secondary_href}
                 className="border border-white/30 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-all"
               >
-                Read the Blog
+                {settings.hero_cta_secondary_text}
               </Link>
             </div>
           </div>
@@ -73,18 +81,16 @@ export default async function HomePage() {
 
       <section className="bg-brand-primary text-white py-10">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            { value: '50+', label: 'Destinations Covered', icon: MapPin },
-            { value: '100+', label: 'Travel Guides', icon: BookOpen },
-            { value: '10K+', label: 'Monthly Readers', icon: Users },
-            { value: '5★', label: 'Reader Rating', icon: Star },
-          ].map(({ value, label, icon: Icon }) => (
-            <div key={label} className="text-center">
-              <Icon size={20} className="mx-auto mb-2 text-brand-accent/80" />
-              <div className="text-3xl font-bold">{value}</div>
-              <div className="text-xs uppercase tracking-wider text-brand-accent/60 mt-1">{label}</div>
-            </div>
-          ))}
+          {settings.homepage_stats.map(({ value, label, icon }) => {
+            const Icon = (icon && STAT_ICONS[icon]) || MapPin;
+            return (
+              <div key={label} className="text-center">
+                <Icon size={20} className="mx-auto mb-2 text-brand-accent/80" />
+                <div className="text-3xl font-bold">{value}</div>
+                <div className="text-xs uppercase tracking-wider text-brand-accent/60 mt-1">{label}</div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -166,35 +172,51 @@ export default async function HomePage() {
             <h2 className="text-4xl font-bold text-brand-primary mt-2">Top Destinations</h2>
             <p className="text-brand-primary/50 mt-3 max-w-xl mx-auto">From northern peaks to ancient cities, Pakistan has something extraordinary for every kind of traveler.</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {previewDestinations.map((dest) => (
-              <Link key={dest.slug} href={`/destinations/${dest.slug}`} className="group relative rounded-2xl overflow-hidden shadow-sm">
-                <div className="relative h-44 md:h-56">
-                  {dest.image_url && (
-                    <Image
-                      src={dest.image_url}
-                      alt={dest.name}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  {dest.tags[0] && (
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-brand-accent text-brand-primary text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{dest.tags[0]}</span>
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                    <div className="font-bold text-lg leading-tight">{dest.name}</div>
-                    {dest.region && (
-                      <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5"><MapPin size={10} />{dest.region}</div>
+          {previewDestinations.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {previewDestinations.map((dest) => (
+                <Link key={dest.slug} href={`/destinations/${dest.slug}`} className="group relative rounded-2xl overflow-hidden shadow-sm">
+                  <div className="relative h-44 md:h-56">
+                    {dest.image_url ? (
+                      <Image
+                        src={dest.image_url}
+                        alt={dest.name}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0"
+                        style={{
+                          background:
+                            'radial-gradient(at 30% 20%, rgba(212,175,55,0.3), transparent 55%), #1a1a1a',
+                        }}
+                      />
                     )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    {dest.tags[0] && (
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-brand-accent text-brand-primary text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{dest.tags[0]}</span>
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                      <div className="font-bold text-lg leading-tight">{dest.name}</div>
+                      {dest.region && (
+                        <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5"><MapPin size={10} />{dest.region}</div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-brand-primary/30">
+              <MapPin size={36} className="mx-auto mb-3 opacity-30" />
+              <p>Destinations coming soon.</p>
+            </div>
+          )}
           <div className="text-center mt-10">
             <Link href="/destinations" className="inline-block bg-brand-primary text-white px-8 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-primary/90 transition-all">
               See All Destinations
@@ -212,15 +234,15 @@ export default async function HomePage() {
             <Link href="/contact" className="bg-brand-accent text-brand-primary px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all">
               Contact Us
             </Link>
-            <a href={SITE.phoneLink} className="border border-stone-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all flex items-center gap-2">
-              <Phone size={16} /> {SITE.phoneDisplay}
+            <a href={settings.phone_link} className="border border-stone-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all flex items-center gap-2">
+              <Phone size={16} /> {settings.phone_display}
             </a>
           </div>
         </div>
       </section>
 
       <a
-        href={SITE.whatsapp}
+        href={settings.whatsapp_url}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"

@@ -1,4 +1,5 @@
 import type { Destination } from './types';
+import { resolveImageUrl } from './image-utils';
 
 const REVALIDATE_SECONDS = 60;
 
@@ -32,7 +33,7 @@ function normalize(row: DestinationRow): Destination {
     region: row.region ?? '',
     description: row.description ?? '',
     best_time: row.best_time ?? '',
-    image_url: row.image_url ?? '',
+    image_url: resolveImageUrl(row.image_url ?? ''),
     tags,
     sort_order: row.sort_order ?? 0,
     image_credit:

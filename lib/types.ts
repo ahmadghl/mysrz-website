@@ -12,6 +12,14 @@ export interface Post {
   created_at: string;
   read_time: number;
   views: number;
+  // SEO
+  meta_title?: string | null;
+  meta_description?: string | null;
+  // Image credit (optional)
+  image_credit_name?: string | null;
+  image_credit_instagram?: string | null;
+  image_credit_twitter?: string | null;
+  image_credit_website?: string | null;
 }
 
 export interface Destination {

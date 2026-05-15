@@ -11,7 +11,7 @@ export const runtime = 'nodejs';
 //      header (preferred) or `&secret=...` (deprecated — still accepted
 //      so the live admin doesn't break during the migration).
 //   2. A Supabase Database Webhook on insert/update/delete of
-//      `blog_posts` or `destinations`. Pattern: JSON body
+//      `blog_posts`, `destinations`, or `site_settings`. Pattern: JSON body
 //      `{ record: { slug }, table: 'blog_posts' }` with the secret in
 //      the `Authorization: Bearer` or `x-webhook-secret` header.
 //
@@ -56,6 +56,9 @@ export async function POST(req: Request) {
     revalidatePath(path);
     if (path.startsWith('/blog')) revalidateTag('posts');
     if (path.startsWith('/destinations')) revalidateTag('destinations');
+    if (path === '/about' || path === '/contact' || path === '/') {
+      revalidateTag('site_settings');
+    }
     if (path === '/') {
       revalidateTag('posts');
       revalidateTag('destinations');
@@ -97,6 +100,11 @@ export async function POST(req: Request) {
     revalidateTag('destinations');
     revalidatePath('/destinations');
     if (slug) revalidatePath(`/destinations/${slug}`);
+  }
+  if (!table || table === 'site_settings') {
+    revalidateTag('site_settings');
+    revalidatePath('/about');
+    revalidatePath('/contact');
   }
 
   return NextResponse.json({

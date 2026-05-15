@@ -1,5 +1,6 @@
 import type { Post } from './types';
 import { slugify } from './utils';
+import { resolveImageUrl } from './image-utils';
 
 const REVALIDATE_SECONDS = 60;
 
@@ -15,6 +16,12 @@ interface SupabasePostRow {
   created_at: string | null;
   read_time: number | null;
   views: number | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  image_credit_name: string | null;
+  image_credit_instagram: string | null;
+  image_credit_twitter: string | null;
+  image_credit_website: string | null;
 }
 
 function normalize(row: SupabasePostRow): Post {
@@ -25,12 +32,18 @@ function normalize(row: SupabasePostRow): Post {
     title: row.title,
     excerpt: row.excerpt ?? '',
     content: row.content ?? '',
-    image_url: row.image_url ?? '',
+    image_url: resolveImageUrl(row.image_url ?? ''),
     category: (row.category as Post['category']) ?? 'Adventure',
     author: row.author ?? 'Ahmad Fraz',
     created_at: row.created_at ?? new Date().toISOString(),
     read_time: row.read_time ?? 5,
     views: row.views ?? 0,
+    meta_title: row.meta_title ?? null,
+    meta_description: row.meta_description ?? null,
+    image_credit_name: row.image_credit_name ?? null,
+    image_credit_instagram: row.image_credit_instagram ?? null,
+    image_credit_twitter: row.image_credit_twitter ?? null,
+    image_credit_website: row.image_credit_website ?? null,
   };
 }
 
@@ -42,7 +55,8 @@ async function fetchFromSupabase(slug?: string): Promise<Post[] | null> {
   if (!url || !key) return null;
 
   const select =
-    'id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views';
+    'id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views,' +
+    'meta_title,meta_description,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
   const filter = slug
     ? `&slug=eq.${encodeURIComponent(slug)}`
     : '&order=created_at.desc&limit=200';

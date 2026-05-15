@@ -19,6 +19,7 @@ interface Props {
 
 export function PostCard({ post, showMeta = true, priority = false }: Props) {
   const Icon = CATEGORY_ICONS[post.category];
+
   return (
     <Link
       href={`/blog/${post.slug}`}
