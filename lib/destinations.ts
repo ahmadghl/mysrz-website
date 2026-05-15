@@ -1,4 +1,4 @@
-import type { Destination } from './types';
+import type { Destination, FaqItem } from './types';
 import { resolveImageUrl } from './image-utils';
 
 const REVALIDATE_SECONDS = 60;
@@ -13,10 +13,25 @@ interface DestinationRow {
   image_url: string | null;
   tags: string[] | string | null;
   sort_order: number | null;
+  updated_at: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  faqs: unknown;
   image_credit_name: string | null;
   image_credit_instagram: string | null;
   image_credit_twitter: string | null;
   image_credit_website: string | null;
+}
+
+function normalizeFaqs(raw: unknown): FaqItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((it): it is { q: unknown; a: unknown } => typeof it === 'object' && it !== null)
+    .map((it) => ({
+      q: typeof it.q === 'string' ? it.q.trim() : '',
+      a: typeof it.a === 'string' ? it.a.trim() : '',
+    }))
+    .filter((it) => it.q.length > 0 && it.a.length > 0);
 }
 
 function normalize(row: DestinationRow): Destination {
@@ -36,6 +51,10 @@ function normalize(row: DestinationRow): Destination {
     image_url: resolveImageUrl(row.image_url ?? ''),
     tags,
     sort_order: row.sort_order ?? 0,
+    updated_at: row.updated_at ?? null,
+    meta_title: row.meta_title ?? null,
+    meta_description: row.meta_description ?? null,
+    faqs: normalizeFaqs(row.faqs),
     image_credit:
       row.image_credit_name ||
       row.image_credit_instagram ||
@@ -59,7 +78,8 @@ async function fetchFromSupabase(slug?: string): Promise<Destination[] | null> {
   if (!url || !key) return null;
 
   const select =
-    'id,slug,name,region,description,best_time,image_url,tags,sort_order,' +
+    'id,slug,name,region,description,best_time,image_url,tags,sort_order,updated_at,' +
+    'meta_title,meta_description,faqs,' +
     'image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
   const filter = slug
     ? `&slug=eq.${encodeURIComponent(slug)}`

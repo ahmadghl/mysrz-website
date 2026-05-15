@@ -9,7 +9,14 @@ import {
 import { getPostBySlug, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { FaqSection } from '@/components/FaqSection';
+import { AuthorCard } from '@/components/AuthorCard';
 import { SITE } from '@/lib/utils';
+
+// Single canonical Person entity referenced from every BlogPosting's
+// `author`. The Person itself lives on /about (Person JSON-LD on
+// app/about/page.tsx).
+const AUTHOR_ID = `${SITE.url}/about#ahmad-fraz`;
 
 // Render dynamically so unknown slugs return a real 404 status code.
 // Supabase fetches are still cached via the `posts` tag and invalidated
@@ -86,15 +93,14 @@ export default async function PostPage({ params }: Props) {
     image: post.image_url,
     url: `${SITE.url}/blog/${post.slug}`,
     datePublished: post.created_at,
-    dateModified: post.created_at,
+    dateModified: post.updated_at ?? post.created_at,
     articleSection: post.category,
     wordCount: wordCount(post.content),
     timeRequired: `PT${post.read_time}M`,
-    author: {
-      '@type': 'Person',
-      name: post.author,
-      url: `${SITE.url}/about`,
-    },
+    // Reference the canonical Person entity emitted on /about by @id
+    // rather than inlining. Lets Google build a single connected
+    // author entity across every post.
+    author: { '@id': AUTHOR_ID },
     publisher: {
       '@type': 'Organization',
       name: SITE.name,
@@ -144,7 +150,10 @@ export default async function PostPage({ params }: Props) {
               <h1 className="text-3xl md:text-5xl font-bold mb-5 leading-tight">{post.title}</h1>
               <div className="flex flex-wrap items-center gap-5 text-sm text-white/70">
                 <span className="flex items-center gap-2"><User size={14} /> {post.author}</span>
-                <span className="flex items-center gap-2"><Calendar size={14} /> {format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
+                <span className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  <time dateTime={post.created_at}>{format(new Date(post.created_at), 'MMMM d, yyyy')}</time>
+                </span>
                 <span className="flex items-center gap-2"><Clock size={14} /> {post.read_time} min read</span>
                 <span className="flex items-center gap-2"><Eye size={14} /> {post.views.toLocaleString()} views</span>
               </div>
@@ -211,7 +220,23 @@ export default async function PostPage({ params }: Props) {
                 </div>
               )}
 
+              {post.updated_at &&
+                post.updated_at !== post.created_at &&
+                new Date(post.updated_at).getTime() - new Date(post.created_at).getTime() > 86_400_000 && (
+                  <p className="mt-6 text-xs text-brand-primary/40">
+                    Last updated{' '}
+                    <time dateTime={post.updated_at}>
+                      {format(new Date(post.updated_at), 'MMMM d, yyyy')}
+                    </time>
+                    .
+                  </p>
+                )}
+
               <SharePost title={post.title} slug={post.slug} />
+
+              <FaqSection faqs={post.faqs ?? []} />
+
+              <AuthorCard name={post.author} />
 
               {related.length > 0 && (
                 <div className="mt-12">
