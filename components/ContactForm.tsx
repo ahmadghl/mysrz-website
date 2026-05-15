@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { Send } from 'lucide-react';
-import { SITE } from '@/lib/utils';
+import type { SubjectOption } from '@/lib/site-settings';
 
 interface State {
   name: string;
@@ -14,39 +14,52 @@ interface State {
 
 const initial: State = { name: '', email: '', phone: '', subject: '', message: '' };
 
-export function ContactForm() {
+const FALLBACK_SUBJECTS: SubjectOption[] = [
+  { value: 'trip-planning', label: 'Trip Planning' },
+  { value: 'destination-query', label: 'Destination Query' },
+  { value: 'collaboration', label: 'Collaboration / Partnership' },
+  { value: 'guest-post', label: 'Guest Post Submission' },
+  { value: 'general', label: 'General Inquiry' },
+];
+
+export function ContactForm({ subjects }: { subjects?: SubjectOption[] }) {
   const [form, setForm] = useState<State>(initial);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const subjectOptions = subjects && subjects.length > 0 ? subjects : FALLBACK_SUBJECTS;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSubmitting(true);
     try {
-      await fetch(SITE.contactWebhook, {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          form_name: 'Contact Form',
-          form_source: SITE.name,
-          website: SITE.url,
-          submitted_at: new Date().toISOString(),
-          contact: {
-            full_name: form.name,
-            email: form.email,
-            phone: form.phone || null,
-            subject: form.subject,
-            message: form.message,
-          },
-          meta: {
-            page_url: window.location.href,
-            referrer: document.referrer || 'Direct',
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            language: navigator.language,
-          },
+          full_name: form.name,
+          email: form.email,
+          phone: form.phone || null,
+          subject: form.subject,
+          message: form.message,
+          page_url: window.location.href,
+          referrer: document.referrer || 'Direct',
         }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setError(data?.error ?? 'Something went wrong. Please try again or email us directly.');
+        setSubmitting(false);
+        return;
+      }
     } catch {
-      /* silent */
+      setError("Couldn't reach the server. Please check your connection.");
+      setSubmitting(false);
+      return;
     }
+    setSubmitting(false);
     setSent(true);
     setForm(initial);
     setTimeout(() => setSent(false), 6000);
@@ -68,6 +81,12 @@ export function ContactForm() {
             <div className="font-semibold text-brand-primary">Message sent successfully!</div>
             <div className="text-sm text-brand-primary">We&apos;ll get back to you within 24 hours.</div>
           </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 mb-6 text-sm">
+          {error}
         </div>
       )}
 
@@ -116,11 +135,9 @@ export function ContactForm() {
               className="w-full border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-accent bg-white focus:ring-1 focus:ring-brand-accent transition-all"
             >
               <option value="">Select a subject</option>
-              <option value="trip-planning">Trip Planning</option>
-              <option value="destination-query">Destination Query</option>
-              <option value="collaboration">Collaboration / Partnership</option>
-              <option value="guest-post">Guest Post Submission</option>
-              <option value="general">General Inquiry</option>
+              {subjectOptions.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -137,9 +154,10 @@ export function ContactForm() {
         </div>
         <button
           type="submit"
-          className="w-full bg-brand-accent text-brand-primary py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all flex items-center justify-center gap-2"
+          disabled={submitting}
+          className="w-full bg-brand-accent text-brand-primary py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
         >
-          <Send size={16} /> Send Message
+          <Send size={16} /> {submitting ? 'Sending…' : 'Send Message'}
         </button>
       </form>
     </div>

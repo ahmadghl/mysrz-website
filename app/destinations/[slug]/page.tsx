@@ -8,6 +8,8 @@ import { SITE } from '@/lib/utils';
 import { resolveImageUrl } from '@/lib/image-utils';
 
 export const revalidate = 3600;
+
+interface Destination {
   id: string;
   name: string;
   slug: string;
