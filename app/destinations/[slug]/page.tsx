@@ -120,8 +120,8 @@ export default async function DestinationDetailPage({ params }: Props) {
       />
 
       <article>
-        <div className="relative h-[55vh] overflow-hidden mt-4">
-          {dest.image_url && (
+        <div className="relative h-[55vh] overflow-hidden mt-4 bg-brand-primary">
+          {dest.image_url ? (
             <Image
               src={dest.image_url}
               alt={dest.name}
@@ -129,6 +129,19 @@ export default async function DestinationDetailPage({ params }: Props) {
               priority
               sizes="100vw"
               className="object-cover"
+            />
+          ) : (
+            // Fallback when no hero image is set in the admin. Uses brand
+            // colors plus a soft radial highlight so the hero doesn't look
+            // empty. The admin should still require an image on publish —
+            // tracking that as a Phase 3 finding.
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(at 30% 20%, rgba(212,175,55,0.35), transparent 55%), radial-gradient(at 80% 100%, rgba(212,175,55,0.15), transparent 60%), #1a1a1a',
+              }}
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />

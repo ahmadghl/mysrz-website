@@ -75,14 +75,23 @@ export default async function DestinationsPage() {
                 href={`/destinations/${dest.slug}`}
                 className="group bg-brand-paper rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="relative h-52 overflow-hidden">
-                  {dest.image_url && (
+                <div className="relative h-52 overflow-hidden bg-brand-primary">
+                  {dest.image_url ? (
                     <Image
                       src={dest.image_url}
                       alt={dest.name}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'radial-gradient(at 30% 20%, rgba(212,175,55,0.3), transparent 55%), #1a1a1a',
+                      }}
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
