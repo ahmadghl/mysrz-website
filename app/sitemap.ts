@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/posts';
+import { getAllDestinations } from '@/lib/destinations';
 import { SITE } from '@/lib/utils';
 
 export const revalidate = 3600;
@@ -15,7 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE.url}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
   ];
 
-  const posts = await getAllPosts();
+  const [posts, destinations] = await Promise.all([
+    getAllPosts(),
+    getAllDestinations(),
+  ]);
+
   const postRoutes: MetadataRoute.Sitemap = posts.map((p) => ({
     url: `${SITE.url}/blog/${p.slug}`,
     lastModified: new Date(p.created_at),
@@ -23,5 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...postRoutes];
+  const destinationRoutes: MetadataRoute.Sitemap = destinations.map((d) => ({
+    url: `${SITE.url}/destinations/${d.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...postRoutes, ...destinationRoutes];
 }

@@ -15,11 +15,19 @@ export interface Post {
 }
 
 export interface Destination {
-  name: string;
+  id: string;
   slug: string;
+  name: string;
   region: string;
-  desc: string;
-  best: string;
-  image: string;
+  description: string;
+  best_time: string;
+  image_url: string;
   tags: string[];
+  sort_order: number;
+  image_credit?: {
+    name?: string;
+    instagram?: string;
+    twitter?: string;
+    website?: string;
+  };
 }

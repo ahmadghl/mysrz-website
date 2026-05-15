@@ -5,18 +5,22 @@ import {
   MapPin, BookOpen, Users, Star, Phone,
 } from 'lucide-react';
 import { getAllPosts } from '@/lib/posts';
-import { DESTINATIONS } from '@/lib/destinations';
+import { getAllDestinations } from '@/lib/destinations';
 import { PostCard } from '@/components/PostCard';
 import { SITE } from '@/lib/utils';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const posts = await getAllPosts();
-  const heroPost = posts[2] ?? posts[0];
-  const sidePosts = posts.slice(0, 2);
+  const [posts, allDestinations] = await Promise.all([
+    getAllPosts(),
+    getAllDestinations(),
+  ]);
+  // Hero is the featured/first post; side and grid posts don't reuse it.
+  const heroPost = posts[0];
+  const sidePosts = posts.slice(1, 3);
   const gridPosts = posts.slice(3, 6);
-  const previewDestinations = DESTINATIONS.slice(0, 6);
+  const previewDestinations = allDestinations.slice(0, 6);
 
   return (
     <>
@@ -164,22 +168,28 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {previewDestinations.map((dest) => (
-              <Link key={dest.slug} href="/destinations" className="group relative rounded-2xl overflow-hidden shadow-sm">
+              <Link key={dest.slug} href={`/destinations/${dest.slug}`} className="group relative rounded-2xl overflow-hidden shadow-sm">
                 <div className="relative h-44 md:h-56">
-                  <Image
-                    src={dest.image}
-                    alt={dest.name}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
+                  {dest.image_url && (
+                    <Image
+                      src={dest.image_url}
+                      alt={dest.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-brand-accent text-brand-primary text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{dest.tags[0]}</span>
-                  </div>
+                  {dest.tags[0] && (
+                    <div className="absolute top-3 left-3">
+                      <span className="bg-brand-accent text-brand-primary text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{dest.tags[0]}</span>
+                    </div>
+                  )}
                   <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                     <div className="font-bold text-lg leading-tight">{dest.name}</div>
-                    <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5"><MapPin size={10} />{dest.region}</div>
+                    {dest.region && (
+                      <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5"><MapPin size={10} />{dest.region}</div>
+                    )}
                   </div>
                 </div>
               </Link>
