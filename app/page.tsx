@@ -6,52 +6,27 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { getAllPosts } from '@/lib/posts';
+import { getAllDestinations } from '@/lib/destinations';
 import { PostCard } from '@/components/PostCard';
 import { getSiteSettings } from '@/lib/site-settings';
 
 export const revalidate = 60;
-
-interface Destination {
-  id: string;
-  name: string;
-  slug: string;
-  region: string;
-  image_url: string;
-  tags: string[];
-}
-
-async function getPreviewDestinations(): Promise<Destination[]> {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_ANON_KEY;
-  if (!url || !key) return [];
-  try {
-    const res = await fetch(
-      `${url}/rest/v1/destinations?select=id,name,slug,region,image_url,tags&published=eq.true&order=sort_order.asc&limit=6`,
-      {
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
-        next: { revalidate: 3600, tags: ['destinations'] },
-      }
-    );
-    if (!res.ok) return [];
-    return await res.json();
-  } catch {
-    return [];
-  }
-}
 
 const STAT_ICONS: Record<string, LucideIcon> = {
   MapPin, BookOpen, Users, Star,
 };
 
 export default async function HomePage() {
-  const [posts, previewDestinations, settings] = await Promise.all([
+  const [posts, allDestinations, settings] = await Promise.all([
     getAllPosts(),
-    getPreviewDestinations(),
+    getAllDestinations(),
     getSiteSettings(),
   ]);
-  const heroPost = posts[2] ?? posts[0];
-  const sidePosts = posts.slice(0, 2);
+  // Hero is the featured/first post; side and grid posts don't reuse it.
+  const heroPost = posts[0];
+  const sidePosts = posts.slice(1, 3);
   const gridPosts = posts.slice(3, 6);
+  const previewDestinations = allDestinations.slice(0, 6);
 
   return (
     <>
@@ -84,12 +59,16 @@ export default async function HomePage() {
               {settings.hero_subtitle}
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href={settings.hero_cta_primary_href}
-                className="bg-brand-primary text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-brand-primary/90 transition-all shadow-lg">
+              <Link
+                href={settings.hero_cta_primary_href}
+                className="bg-brand-primary text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-brand-primary/90 transition-all shadow-lg"
+              >
                 {settings.hero_cta_primary_text}
               </Link>
-              <Link href={settings.hero_cta_secondary_href}
-                className="border border-white/30 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-all">
+              <Link
+                href={settings.hero_cta_secondary_href}
+                className="border border-white/30 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-all"
+              >
                 {settings.hero_cta_secondary_text}
               </Link>
             </div>
@@ -131,9 +110,13 @@ export default async function HomePage() {
             {heroPost && (
               <Link href={`/blog/${heroPost.slug}`} className="lg:col-span-3 group">
                 <article className="relative h-80 lg:h-96 rounded-2xl overflow-hidden">
-                  <Image src={heroPost.image_url} alt={heroPost.title} fill
+                  <Image
+                    src={heroPost.image_url}
+                    alt={heroPost.title}
+                    fill
                     sizes="(max-width: 1024px) 100vw, 60vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <span className="bg-brand-primary/90 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3 inline-block">
@@ -153,12 +136,17 @@ export default async function HomePage() {
               {sidePosts.map((post) => (
                 <Link href={`/blog/${post.slug}`} key={post.id} className="group flex gap-4 bg-brand-paper rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                   <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
-                    <Image src={post.image_url} alt={post.title} fill sizes="96px"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image
+                      src={post.image_url}
+                      alt={post.title}
+                      fill
+                      sizes="96px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
                   <div className="flex-grow min-w-0">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{post.category}</span>
-                    <h3 className="text-sm font-bold text-brand-primary leading-tight mt-1 line-clamp-2">{post.title}</h3>
+                    <h3 className="text-sm font-bold text-brand-primary leading-tight mt-1 line-clamp-2 group-hover:text-brand-primary transition-colors">{post.title}</h3>
                     <div className="flex items-center gap-3 text-xs text-brand-primary/40 mt-2">
                       <span className="flex items-center gap-1"><Clock size={10} /> {post.read_time} min</span>
                       <span className="flex items-center gap-1"><Eye size={10} /> {post.views.toLocaleString()}</span>
@@ -177,7 +165,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Destinations preview */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -188,28 +175,37 @@ export default async function HomePage() {
           {previewDestinations.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {previewDestinations.map((dest) => (
-                <Link key={dest.slug} href="/destinations" className="group relative rounded-2xl overflow-hidden shadow-sm">
+                <Link key={dest.slug} href={`/destinations/${dest.slug}`} className="group relative rounded-2xl overflow-hidden shadow-sm">
                   <div className="relative h-44 md:h-56">
                     {dest.image_url ? (
-                      <Image src={dest.image_url} alt={dest.name} fill
+                      <Image
+                        src={dest.image_url}
+                        alt={dest.name}
+                        fill
                         sizes="(max-width: 768px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
                     ) : (
-                      <div className="w-full h-full bg-brand-primary/10 flex items-center justify-center">
-                        <MapPin size={28} className="text-brand-primary/20" />
-                      </div>
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0"
+                        style={{
+                          background:
+                            'radial-gradient(at 30% 20%, rgba(212,175,55,0.3), transparent 55%), #1a1a1a',
+                        }}
+                      />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute top-3 left-3">
-                      {dest.tags?.[0] && (
-                        <span className="bg-brand-accent text-brand-primary text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
-                          {dest.tags[0]}
-                        </span>
-                      )}
-                    </div>
+                    {dest.tags[0] && (
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-brand-accent text-brand-primary text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{dest.tags[0]}</span>
+                      </div>
+                    )}
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                       <div className="font-bold text-lg leading-tight">{dest.name}</div>
-                      <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5"><MapPin size={10} />{dest.region}</div>
+                      {dest.region && (
+                        <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5"><MapPin size={10} />{dest.region}</div>
+                      )}
                     </div>
                   </div>
                 </Link>
@@ -222,8 +218,7 @@ export default async function HomePage() {
             </div>
           )}
           <div className="text-center mt-10">
-            <Link href="/destinations"
-              className="inline-block bg-brand-primary text-white px-8 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-primary/90 transition-all">
+            <Link href="/destinations" className="inline-block bg-brand-primary text-white px-8 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-primary/90 transition-all">
               See All Destinations
             </Link>
           </div>
@@ -236,20 +231,23 @@ export default async function HomePage() {
           <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-4">Plan Your Pakistan Journey</h2>
           <p className="text-white/60 max-w-xl mx-auto mb-8">Have questions about traveling in Pakistan? We&apos;re here to help you plan an unforgettable trip.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/contact"
-              className="bg-brand-accent text-brand-primary px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all">
+            <Link href="/contact" className="bg-brand-accent text-brand-primary px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all">
               Contact Us
             </Link>
-            <a href={settings.phone_link}
-              className="border border-stone-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all flex items-center gap-2">
+            <a href={settings.phone_link} className="border border-stone-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all flex items-center gap-2">
               <Phone size={16} /> {settings.phone_display}
             </a>
           </div>
         </div>
       </section>
 
-      <a href={settings.whatsapp_url} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp"
-        className="fixed bottom-6 right-6 z-40 bg-green-600 text-white p-3.5 rounded-full shadow-xl hover:bg-green-700 transition-all hover:scale-110">
+      <a
+        href={settings.whatsapp_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        className="fixed bottom-6 right-6 z-40 bg-green-600 text-white p-3.5 rounded-full shadow-xl hover:bg-green-700 transition-all hover:scale-110"
+      >
         <ChevronRight size={20} className="rotate-90 hidden" />
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>

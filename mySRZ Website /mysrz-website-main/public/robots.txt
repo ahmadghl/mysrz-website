@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-# Block API routes from indexing
-Disallow: /api/
-
-Sitemap: https://www.mysrztourism.com/sitemap.xml

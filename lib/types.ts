@@ -24,17 +24,18 @@ export interface Post {
 
 export interface Destination {
   id: string;
-  name: string;
   slug: string;
+  name: string;
   region: string;
   description: string;
   best_time: string;
   image_url: string;
   tags: string[];
-  published: boolean;
   sort_order: number;
-  image_credit_name?: string | null;
-  image_credit_instagram?: string | null;
-  image_credit_twitter?: string | null;
-  image_credit_website?: string | null;
+  image_credit?: {
+    name?: string;
+    instagram?: string;
+    twitter?: string;
+    website?: string;
+  };
 }

@@ -2,21 +2,35 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import Markdown from 'react-markdown';
 import { format } from 'date-fns';
 import {
   ArrowRight, User, Calendar, Clock, Eye, Phone, Mail,
 } from 'lucide-react';
-import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/lib/posts';
+import { getPostBySlug, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { SITE } from '@/lib/utils';
-import { resolveImageUrl } from '@/lib/image-utils';
 
-export const revalidate = 60;
+// Render dynamically so unknown slugs return a real 404 status code.
+// Supabase fetches are still cached via the `posts` tag and invalidated
+// by /api/revalidate when the admin publishes.
+export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((p) => ({ slug: p.slug }));
+function truncateDescription(input: string, max: number) {
+  if (input.length <= max) return input;
+  const cut = input.lastIndexOf(' ', max - 1);
+  const idx = cut > max * 0.6 ? cut : max - 1;
+  return `${input.slice(0, idx).trimEnd()}…`;
+}
+
+function wordCount(html: string) {
+  return html.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+}
+
+// Best-effort detection of HTML-shaped content. If false, we treat the
+// content as plain text and wrap it in <p> tags inside prose.
+function isHTML(content: string): boolean {
+  return /<\/?[a-z][\s\S]*>/i.test(content);
 }
 
 interface Props {
@@ -27,15 +41,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: 'Article not found' };
+  const seoTitle = post.meta_title || post.title;
+  const seoDesc = truncateDescription(post.meta_description || post.excerpt, 160);
   return {
-    title: post.meta_title || post.title,
-    description: (post.meta_description || post.excerpt).slice(0, 160),
+    title: seoTitle,
+    description: seoDesc,
     alternates: { canonical: `/blog/${post.slug}` },
     keywords: [post.category, 'Pakistan travel', post.title],
     openGraph: {
       type: 'article',
-      title: post.title,
-      description: post.excerpt.slice(0, 160),
+      title: seoTitle,
+      description: seoDesc,
       url: `/blog/${post.slug}`,
       images: [{ url: post.image_url, width: 1200, height: 800, alt: post.title }],
       publishedTime: post.created_at,
@@ -45,16 +61,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.excerpt.slice(0, 160),
+      title: seoTitle,
+      description: seoDesc,
       images: [post.image_url],
     },
   };
-}
-
-// Detect if content is HTML or Markdown
-function isHTML(content: string): boolean {
-  return /<\/?[a-z][\s\S]*>/i.test(content);
 }
 
 export default async function PostPage({ params }: Props) {
@@ -64,7 +75,8 @@ export default async function PostPage({ params }: Props) {
 
   const related = await getRelatedPosts(post.slug, 4);
   const contentIsHTML = isHTML(post.content);
-  const heroImage = post.image_url; // already resolved in lib/posts.ts normalize()
+  // image_url is already resolved through resolveImageUrl in lib/posts.ts
+  const heroImage = post.image_url;
 
   const articleJsonLd = {
     '@context': 'https://schema.org',
@@ -76,7 +88,7 @@ export default async function PostPage({ params }: Props) {
     datePublished: post.created_at,
     dateModified: post.created_at,
     articleSection: post.category,
-    wordCount: post.content.split(/\s+/).length,
+    wordCount: wordCount(post.content),
     timeRequired: `PT${post.read_time}M`,
     author: {
       '@type': 'Person',
@@ -91,30 +103,39 @@ export default async function PostPage({ params }: Props) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE.url}/blog/${post.slug}` },
   };
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE.url}/blog` },
-      { '@type': 'ListItem', position: 3, name: post.title, item: `${SITE.url}/blog/${post.slug}` },
-    ],
-  };
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Blog', href: '/blog' },
+          { label: post.title },
+        ]}
+        hideVisual
+      />
 
       <article>
-        {/* Hero */}
         <div className="relative h-[60vh] overflow-hidden">
-          <Image src={heroImage} alt={post.title} fill priority sizes="100vw" className="object-cover" />
+          <Image
+            src={heroImage}
+            alt={post.title}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end">
             <div className="max-w-4xl mx-auto px-4 pb-12 w-full text-white">
-              <Link href="/blog"
-                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest">
+              <Link
+                href="/blog"
+                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest"
+              >
                 <ArrowRight className="rotate-180" size={16} /> All Articles
               </Link>
               <span className="bg-brand-primary/90 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block">
@@ -134,42 +155,59 @@ export default async function PostPage({ params }: Props) {
         <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="flex flex-col lg:flex-row gap-12">
             <div className="flex-grow min-w-0">
-
               {/* Image credit */}
               {post.image_credit_name && (
                 <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-brand-primary/40">
                   <span>Photo by</span>
                   <span className="font-semibold text-brand-primary/60">{post.image_credit_name}</span>
                   {post.image_credit_instagram && (
-                    <a href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="font-semibold hover:underline" style={{ color: '#e1306c' }}>
+                    <a
+                      href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold hover:underline"
+                      style={{ color: '#e1306c' }}
+                    >
                       Instagram
                     </a>
                   )}
                   {post.image_credit_twitter && (
-                    <a href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="font-semibold hover:underline" style={{ color: '#1da1f2' }}>
+                    <a
+                      href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold hover:underline"
+                      style={{ color: '#1da1f2' }}
+                    >
                       Twitter/X
                     </a>
                   )}
                   {post.image_credit_website && (
-                    <a href={post.image_credit_website.startsWith('http') ? post.image_credit_website : `https://${post.image_credit_website}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="font-semibold text-brand-primary/50 hover:underline">
+                    <a
+                      href={post.image_credit_website.startsWith('http') ? post.image_credit_website : `https://${post.image_credit_website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-brand-primary/50 hover:underline"
+                    >
                       Website
                     </a>
                   )}
                 </div>
               )}
 
-              {/* Content — HTML or Markdown */}
+              {/* post.content is Tiptap-authored HTML from the admin panel.
+                  Tailwind Typography `prose` styles it. Sanitization is not
+                  applied because only authenticated admins can write to
+                  blog_posts; revisit if any untrusted source is ever added.
+                  If content is not HTML (plain text fallback), wrap in <p>. */}
               {contentIsHTML ? (
-                <div className="markdown-body" dangerouslySetInnerHTML={{ __html: post.content }} />
+                <div
+                  className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
               ) : (
-                <div className="markdown-body">
-                  <Markdown>{post.content}</Markdown>
+                <div className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary">
+                  <p>{post.content}</p>
                 </div>
               )}
 
@@ -182,7 +220,13 @@ export default async function PostPage({ params }: Props) {
                     {related.map((r) => (
                       <Link href={`/blog/${r.slug}`} key={r.id} className="flex gap-3 group">
                         <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                          <Image src={resolveImageUrl(r.image_url)} alt={r.title} fill sizes="80px" className="object-cover" />
+                          <Image
+                            src={r.image_url}
+                            alt={r.title}
+                            fill
+                            sizes="80px"
+                            className="object-cover"
+                          />
                         </div>
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{r.category}</span>
@@ -201,12 +245,16 @@ export default async function PostPage({ params }: Props) {
                 <div className="bg-brand-primary text-white p-5 rounded-2xl">
                   <h4 className="font-bold text-lg mb-2">Plan This Trip</h4>
                   <p className="text-white/60 text-sm mb-4">Need help planning your visit? Contact us for personalized advice.</p>
-                  <a href={SITE.phoneLink}
-                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center">
+                  <a
+                    href={SITE.phoneLink}
+                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center"
+                  >
                     <Phone size={14} /> Call Us Now
                   </a>
-                  <a href={`mailto:${SITE.email}`}
-                    className="flex items-center gap-2 border border-white/10 text-white/70 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-brand-accent transition-all w-full justify-center">
+                  <a
+                    href={`mailto:${SITE.email}`}
+                    className="flex items-center gap-2 border border-white/10 text-white/70 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-brand-accent transition-all w-full justify-center"
+                  >
                     <Mail size={14} /> Email Us
                   </a>
                 </div>

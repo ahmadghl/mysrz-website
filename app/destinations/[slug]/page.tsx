@@ -2,228 +2,317 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MapPin, Calendar, ArrowRight, Phone, Mail } from 'lucide-react';
-import { getAllPosts } from '@/lib/posts';
+import { ArrowRight, Calendar, MapPin, Phone, Mail, Camera } from 'lucide-react';
+import { getAllDestinations, getDestinationBySlug } from '@/lib/destinations';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { SITE } from '@/lib/utils';
-import { resolveImageUrl } from '@/lib/image-utils';
 
-export const revalidate = 3600;
+// Render dynamically so unknown slugs return a real 404 status code.
+// The underlying Supabase fetch is still cached via the `destinations`
+// tag (revalidated by /api/revalidate), so the DB is not hit on every
+// request — only the React render is per-request.
+export const dynamic = 'force-dynamic';
 
-interface Destination {
-  id: string;
-  name: string;
-  slug: string;
-  region: string;
-  description: string;
-  best_time: string;
-  image_url: string;
-  tags: string[];
-  image_credit_name?: string | null;
-  image_credit_instagram?: string | null;
-  image_credit_twitter?: string | null;
-  image_credit_website?: string | null;
+interface Props {
+  params: Promise<{ slug: string }>;
 }
-
-async function getDestinations(): Promise<Destination[]> {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_ANON_KEY;
-  if (!url || !key) return [];
-  try {
-    const res = await fetch(
-      `${url}/rest/v1/destinations?select=*&published=eq.true&order=sort_order.asc`,
-      {
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
-        next: { revalidate: 3600, tags: ['destinations'] },
-      }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.map((d: Destination) => ({
-      ...d,
-      image_url: resolveImageUrl(d.image_url || '/images/placeholder.jpg'),
-    }));
-  } catch { return []; }
-}
-
-export async function generateStaticParams() {
-  const dests = await getDestinations();
-  return dests.map((d) => ({ slug: d.slug }));
-}
-
-interface Props { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const dests = await getDestinations();
-  const dest = dests.find((d) => d.slug === slug);
+  const dest = await getDestinationBySlug(slug);
   if (!dest) return { title: 'Destination not found' };
+
+  const description =
+    dest.description.length > 160
+      ? `${dest.description.slice(0, dest.description.lastIndexOf(' ', 157))}…`
+      : dest.description;
+
   return {
-    title: `${dest.name} Travel Guide — Pakistan | ${SITE.name}`,
-    description: `Everything you need to visit ${dest.name}, ${dest.region}. Best time: ${dest.best_time}. ${dest.description}`.slice(0, 160),
+    title: `${dest.name} Travel Guide — ${dest.region}`,
+    description,
     alternates: { canonical: `/destinations/${dest.slug}` },
-    keywords: [dest.name, dest.region, 'Pakistan travel', ...dest.tags],
+    keywords: [
+      dest.name,
+      `${dest.name} travel guide`,
+      `${dest.name} Pakistan`,
+      'Pakistan destinations',
+      dest.region,
+      ...dest.tags,
+    ],
     openGraph: {
+      type: 'article',
       title: `${dest.name} Travel Guide`,
-      description: dest.description,
+      description,
       url: `/destinations/${dest.slug}`,
-      images: [{ url: resolveImageUrl(dest.image_url), width: 1200, height: 800, alt: dest.name }],
+      images: dest.image_url
+        ? [{ url: dest.image_url, width: 1200, height: 800, alt: dest.name }]
+        : undefined,
+      locale: 'en_US',
+      siteName: SITE.name,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${dest.name} Travel Guide`,
+      description,
+      images: dest.image_url ? [dest.image_url] : undefined,
     },
   };
 }
 
-export default async function DestinationPage({ params }: Props) {
+export default async function DestinationDetailPage({ params }: Props) {
   const { slug } = await params;
-  const [dests, allPosts] = await Promise.all([getDestinations(), getAllPosts()]);
-  const dest = dests.find((d) => d.slug === slug);
+  const dest = await getDestinationBySlug(slug);
   if (!dest) notFound();
 
-  const relatedPosts = allPosts
-    .filter((p) =>
-      p.title.toLowerCase().includes(dest.name.toLowerCase().split(' ')[0]) ||
-      dest.tags.some((t) => p.category.toLowerCase().includes(t.toLowerCase()))
-    )
+  const all = await getAllDestinations();
+  const related = all
+    .filter((d) => d.slug !== dest.slug && d.region === dest.region)
     .slice(0, 3);
 
-  const heroImage = dest.image_url; // already resolved at fetch time
+  const url = `${SITE.url}/destinations/${dest.slug}`;
 
-  const destinationJsonLd = {
+  const attractionJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'TouristDestination',
+    '@type': 'TouristAttraction',
     name: dest.name,
     description: dest.description,
-    url: `${SITE.url}/destinations/${dest.slug}`,
+    url,
+    ...(dest.image_url ? { image: dest.image_url } : {}),
+    address: {
+      '@type': 'PostalAddress',
+      addressRegion: dest.region,
+      addressCountry: 'PK',
+    },
     touristType: dest.tags,
-    includesAttraction: { '@type': 'TouristAttraction', name: dest.name },
+    isAccessibleForFree: true,
   };
 
-  const breadcrumbJsonLd = {
+  const placeJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: 'Destinations', item: `${SITE.url}/destinations` },
-      { '@type': 'ListItem', position: 3, name: dest.name, item: `${SITE.url}/destinations/${dest.slug}` },
-    ],
+    '@type': 'Place',
+    name: dest.name,
+    description: dest.description,
+    address: {
+      '@type': 'PostalAddress',
+      addressRegion: dest.region,
+      addressCountry: 'PK',
+    },
+    ...(dest.image_url ? { photo: dest.image_url } : {}),
   };
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(destinationJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(attractionJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
+      />
 
-      {/* Hero */}
-      <div className="relative h-[55vh] overflow-hidden">
-        <Image src={heroImage} alt={dest.name} fill priority sizes="100vw" className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-        <div className="absolute inset-0 flex flex-col justify-end">
-          <div className="max-w-4xl mx-auto px-4 pb-12 w-full text-white">
-            <Link href="/destinations"
-              className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest">
-              <ArrowRight className="rotate-180" size={16} /> All Destinations
-            </Link>
-            <div className="flex items-center gap-2 text-white/60 text-sm mb-3">
-              <MapPin size={14} /> {dest.region}
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">{dest.name}</h1>
-            <span className="inline-flex items-center gap-1.5 bg-brand-accent text-brand-primary text-xs font-bold px-3 py-1.5 rounded-full">
-              <Calendar size={12} /> Best time: {dest.best_time}
-            </span>
-          </div>
-        </div>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Destinations', href: '/destinations' },
+          { label: dest.name },
+        ]}
+      />
 
-      <div className="max-w-4xl mx-auto px-4 py-14">
-
-        {/* Image credit */}
-        {dest.image_credit_name && (
-          <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-brand-primary/40">
-            <span>Photo by</span>
-            <span className="font-semibold text-brand-primary/60">{dest.image_credit_name}</span>
-            {dest.image_credit_instagram && (
-              <a href={`https://instagram.com/${dest.image_credit_instagram.replace('@', '')}`}
-                target="_blank" rel="noopener noreferrer"
-                className="font-semibold hover:underline" style={{ color: '#e1306c' }}>
-                Instagram
-              </a>
-            )}
-            {dest.image_credit_twitter && (
-              <a href={`https://twitter.com/${dest.image_credit_twitter.replace('@', '')}`}
-                target="_blank" rel="noopener noreferrer"
-                className="font-semibold hover:underline" style={{ color: '#1da1f2' }}>
-                Twitter/X
-              </a>
-            )}
-            {dest.image_credit_website && (
-              <a href={dest.image_credit_website.startsWith('http') ? dest.image_credit_website : `https://${dest.image_credit_website}`}
-                target="_blank" rel="noopener noreferrer"
-                className="font-semibold text-brand-primary/50 hover:underline">
-                Website
-              </a>
-            )}
-          </div>
-        )}
-
-        {/* Overview */}
-        <p className="text-xl text-brand-primary/70 leading-relaxed mb-8">{dest.description}</p>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-14">
-          {dest.tags.map((tag) => (
-            <span key={tag}
-              className="bg-black/5 text-brand-primary/70 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full">
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Related posts */}
-        {relatedPosts.length > 0 && (
-          <div className="mb-14">
-            <h2 className="text-2xl font-bold text-brand-primary mb-6">
-              Travel guides for {dest.name}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedPosts.map((post) => (
-                <Link href={`/blog/${post.slug}`} key={post.id} className="group">
-                  <div className="relative h-40 rounded-xl overflow-hidden mb-3">
-                    <Image
-                      src={post.image_url}
-                      alt={post.title}
-                      fill
-                      sizes="300px"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">
-                    {post.category}
+      <article>
+        <div className="relative h-[55vh] overflow-hidden mt-4 bg-brand-primary">
+          {dest.image_url ? (
+            <Image
+              src={dest.image_url}
+              alt={dest.name}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          ) : (
+            // Fallback when no hero image is set in the admin. Uses brand
+            // colors plus a soft radial highlight so the hero doesn't look
+            // empty. The admin should still require an image on publish —
+            // tracking that as a Phase 3 finding.
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(at 30% 20%, rgba(212,175,55,0.35), transparent 55%), radial-gradient(at 80% 100%, rgba(212,175,55,0.15), transparent 60%), #1a1a1a',
+              }}
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+          <div className="absolute inset-0 flex flex-col justify-end">
+            <div className="max-w-5xl mx-auto px-4 pb-12 w-full text-white">
+              <Link
+                href="/destinations"
+                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest"
+              >
+                <ArrowRight className="rotate-180" size={16} /> All Destinations
+              </Link>
+              <div className="flex items-center gap-2 text-sm text-white/70 mb-3">
+                <MapPin size={14} className="text-brand-accent" />
+                {dest.region}
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
+                {dest.name}
+              </h1>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-white/70">
+                {dest.best_time && (
+                  <span className="flex items-center gap-2">
+                    <Calendar size={14} className="text-brand-accent" /> Best:{' '}
+                    {dest.best_time}
                   </span>
-                  <h3 className="text-sm font-semibold text-brand-primary group-hover:text-brand-accent transition-colors mt-1 line-clamp-2">
-                    {post.title}
-                  </h3>
-                </Link>
-              ))}
+                )}
+                {dest.tags.slice(0, 4).map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-white/10 px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-widest"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* CTA */}
-        <div className="bg-brand-primary text-white rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold mb-2">Planning a trip to {dest.name}?</h2>
-          <p className="text-white/60 mb-6">
-            Get personalised advice from our Pakistan travel experts.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/contact"
-              className="inline-block bg-brand-accent text-brand-primary font-bold px-6 py-3 rounded-xl hover:bg-brand-accent/90 transition-all">
-              Contact Us
-            </Link>
-            <a href={SITE.phoneLink}
-              className="inline-flex items-center gap-2 border border-white/20 text-white font-bold px-6 py-3 rounded-xl hover:border-brand-accent transition-all">
-              <Phone size={14} /> {SITE.phoneDisplay}
-            </a>
+        <div className="max-w-5xl mx-auto px-4 py-16">
+          <div className="flex flex-col lg:flex-row gap-12">
+            <div className="flex-grow min-w-0">
+              <p className="text-lg leading-relaxed text-brand-primary/80">
+                {dest.description}
+              </p>
+
+              {dest.tags.length > 0 && (
+                <section className="mt-10">
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">
+                    What to expect
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {dest.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-brand-paper border border-brand-accent/30 text-brand-primary text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {dest.image_credit?.name && (
+                <p className="mt-10 text-xs text-brand-primary/50 flex items-center gap-1.5">
+                  <Camera size={11} aria-hidden="true" />
+                  Photo by{' '}
+                  {dest.image_credit.instagram ||
+                  dest.image_credit.twitter ||
+                  dest.image_credit.website ? (
+                    <a
+                      href={
+                        dest.image_credit.instagram ||
+                        dest.image_credit.twitter ||
+                        dest.image_credit.website
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-brand-primary underline-offset-2 hover:underline"
+                    >
+                      {dest.image_credit.name}
+                    </a>
+                  ) : (
+                    <span>{dest.image_credit.name}</span>
+                  )}
+                </p>
+              )}
+
+              {related.length > 0 && (
+                <section className="mt-16 pt-10 border-t border-brand-primary/10">
+                  <h2 className="font-bold text-brand-primary text-xl mb-6">
+                    Other destinations in {dest.region}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {related.map((r) => (
+                      <Link
+                        key={r.slug}
+                        href={`/destinations/${r.slug}`}
+                        className="group relative rounded-2xl overflow-hidden shadow-sm"
+                      >
+                        <div className="relative h-44">
+                          {r.image_url && (
+                            <Image
+                              src={r.image_url}
+                              alt={r.name}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 33vw"
+                              className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                            <div className="font-bold leading-tight">{r.name}</div>
+                            {r.region && (
+                              <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5">
+                                <MapPin size={10} />
+                                {r.region}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+
+            <aside className="lg:w-72 flex-shrink-0">
+              <div className="sticky top-24 space-y-6">
+                <div className="bg-brand-primary text-white p-5 rounded-2xl">
+                  <h2 className="font-bold text-lg mb-2">Plan This Trip</h2>
+                  <p className="text-white/60 text-sm mb-4">
+                    Want a tailored itinerary for {dest.name}? Get in touch — we
+                    plan trips across Pakistan.
+                  </p>
+                  <a
+                    href={SITE.phoneLink}
+                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center"
+                  >
+                    <Phone size={14} /> Call Us Now
+                  </a>
+                  <a
+                    href={`mailto:${SITE.email}`}
+                    className="flex items-center gap-2 border border-white/10 text-white/70 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-brand-accent transition-all w-full justify-center"
+                  >
+                    <Mail size={14} /> Email Us
+                  </a>
+                </div>
+                <div className="bg-brand-paper p-5 rounded-2xl border border-brand-accent/20">
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">
+                    Quick Facts
+                  </h2>
+                  <dl className="space-y-2 text-sm text-brand-primary/70">
+                    <div className="flex justify-between gap-3">
+                      <dt className="font-medium">Region</dt>
+                      <dd className="text-right">{dest.region}</dd>
+                    </div>
+                    {dest.best_time && (
+                      <div className="flex justify-between gap-3">
+                        <dt className="font-medium">Best time</dt>
+                        <dd className="text-right">{dest.best_time}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
-      </div>
+      </article>
     </>
   );
 }

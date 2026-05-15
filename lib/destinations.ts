@@ -1,150 +1,110 @@
 import type { Destination } from './types';
+import { resolveImageUrl } from './image-utils';
 
-// Static fallback — no longer used by pages (they fetch from Supabase)
-// Kept here to avoid breaking any imports elsewhere
-export const DESTINATIONS: Destination[] = [
-  {
-    id: 'static-1',
-    name: 'Hunza Valley',
-    slug: 'hunza-valley',
-    region: 'Gilgit-Baltistan',
-    description: "Turquoise lakes, ancient forts, and Karakoram peaks. Pakistan's most beloved valley.",
-    best_time: 'Apr–Oct',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Scenic', 'Trekking', 'Culture'],
-    published: true,
-    sort_order: 1,
-  },
-  {
-    id: 'static-2',
-    name: 'Lahore',
-    slug: 'lahore',
-    region: 'Punjab',
-    description: 'Mughal monuments, world-class food, and the beating cultural heart of Pakistan.',
-    best_time: 'Oct–Mar',
-    image_url: '/images/placeholder.jpg',
-    tags: ['History', 'Food', 'Culture'],
-    published: true,
-    sort_order: 2,
-  },
-  {
-    id: 'static-3',
-    name: 'Skardu',
-    slug: 'skardu',
-    region: 'Gilgit-Baltistan',
-    description: 'Gateway to K2 and the Karakoram. Cold deserts, emerald lakes, and ancient rock carvings.',
-    best_time: 'May–Sep',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Adventure', 'Trekking', 'Scenic'],
-    published: true,
-    sort_order: 3,
-  },
-  {
-    id: 'static-4',
-    name: 'Swat Valley',
-    slug: 'swat-valley',
-    region: 'KPK',
-    description: 'Called the "Switzerland of the East" - lush green valleys, waterfalls and Buddhist ruins.',
-    best_time: 'Apr–Oct',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Nature', 'History', 'Scenic'],
-    published: true,
-    sort_order: 4,
-  },
-  {
-    id: 'static-5',
-    name: 'Karachi',
-    slug: 'karachi',
-    region: 'Sindh',
-    description: "The city of lights. Pakistan's largest city with incredible seafood and street food culture.",
-    best_time: 'Nov–Feb',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Food', 'Beach', 'Urban'],
-    published: true,
-    sort_order: 5,
-  },
-  {
-    id: 'static-6',
-    name: 'Peshawar',
-    slug: 'peshawar',
-    region: 'KPK',
-    description: "One of the world's oldest cities. Ancient bazaars, Pashtun culture, and the Khyber Pass.",
-    best_time: 'Oct–Mar',
-    image_url: '/images/placeholder.jpg',
-    tags: ['History', 'Culture', 'Food'],
-    published: true,
-    sort_order: 6,
-  },
-  {
-    id: 'static-7',
-    name: 'Fairy Meadows',
-    slug: 'fairy-meadows',
-    region: 'Gilgit-Baltistan',
-    description: 'Alpine meadow at 3,300m with Nanga Parbat as its dramatic backdrop.',
-    best_time: 'Jun–Sep',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Adventure', 'Scenic', 'Trekking'],
-    published: true,
-    sort_order: 7,
-  },
-  {
-    id: 'static-8',
-    name: 'Mohenjo-daro',
-    slug: 'mohenjo-daro',
-    region: 'Sindh',
-    description: 'Walk through a 5,000-year-old UNESCO World Heritage city of the Indus Civilization.',
-    best_time: 'Oct–Feb',
-    image_url: '/images/placeholder.jpg',
-    tags: ['History', 'UNESCO', 'Culture'],
-    published: true,
-    sort_order: 8,
-  },
-  {
-    id: 'static-9',
-    name: 'Deosai Plains',
-    slug: 'deosai-plains',
-    region: 'Gilgit-Baltistan',
-    description: "World's second-highest plateau. Vast wildflower meadows, Himalayan bears, and crystal streams.",
-    best_time: 'Jul–Sep',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Wildlife', 'Nature', 'Adventure'],
-    published: true,
-    sort_order: 9,
-  },
-  {
-    id: 'static-10',
-    name: 'Naran & Kaghan',
-    slug: 'naran-kaghan',
-    region: 'KPK',
-    description: 'The Kaghan Valley with Saiful Maluk lake and Babusar Pass is a summer paradise.',
-    best_time: 'May–Sep',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Scenic', 'Lakes', 'Trekking'],
-    published: true,
-    sort_order: 10,
-  },
-  {
-    id: 'static-11',
-    name: 'Islamabad',
-    slug: 'islamabad',
-    region: 'Federal Capital',
-    description: "Pakistan's clean, green capital with the Margalla Hills, Faisal Mosque, and great food.",
-    best_time: 'All Year',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Urban', 'Nature', 'Culture'],
-    published: true,
-    sort_order: 11,
-  },
-  {
-    id: 'static-12',
-    name: 'Makran Coast',
-    slug: 'makran-coast',
-    region: 'Balochistan',
-    description: 'Wild, dramatic coastline with golden beaches, hot springs, and the Princess of Hope rock.',
-    best_time: 'Nov–Mar',
-    image_url: '/images/placeholder.jpg',
-    tags: ['Beach', 'Adventure', 'Scenic'],
-    published: true,
-    sort_order: 12,
-  },
-];
+const REVALIDATE_SECONDS = 60;
+
+interface DestinationRow {
+  id: string;
+  slug: string;
+  name: string;
+  region: string | null;
+  description: string | null;
+  best_time: string | null;
+  image_url: string | null;
+  tags: string[] | string | null;
+  sort_order: number | null;
+  image_credit_name: string | null;
+  image_credit_instagram: string | null;
+  image_credit_twitter: string | null;
+  image_credit_website: string | null;
+}
+
+function normalize(row: DestinationRow): Destination {
+  const tags = Array.isArray(row.tags)
+    ? row.tags
+    : typeof row.tags === 'string'
+      ? row.tags.split(',').map((t) => t.trim()).filter(Boolean)
+      : [];
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    region: row.region ?? '',
+    description: row.description ?? '',
+    best_time: row.best_time ?? '',
+    image_url: resolveImageUrl(row.image_url ?? ''),
+    tags,
+    sort_order: row.sort_order ?? 0,
+    image_credit:
+      row.image_credit_name ||
+      row.image_credit_instagram ||
+      row.image_credit_twitter ||
+      row.image_credit_website
+        ? {
+            name: row.image_credit_name ?? undefined,
+            instagram: row.image_credit_instagram ?? undefined,
+            twitter: row.image_credit_twitter ?? undefined,
+            website: row.image_credit_website ?? undefined,
+          }
+        : undefined,
+  };
+}
+
+async function fetchFromSupabase(slug?: string): Promise<Destination[] | null> {
+  const url =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+
+  const select =
+    'id,slug,name,region,description,best_time,image_url,tags,sort_order,' +
+    'image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
+  const filter = slug
+    ? `&slug=eq.${encodeURIComponent(slug)}`
+    : '&order=sort_order.asc,name.asc&limit=200';
+
+  const apiUrl = `${url}/rest/v1/destinations?select=${select}&published=eq.true${filter}`;
+
+  try {
+    const r = await fetch(apiUrl, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+      },
+      next: { revalidate: REVALIDATE_SECONDS, tags: ['destinations'] },
+    });
+    if (!r.ok) {
+      console.error(
+        '[destinations] Supabase fetch failed',
+        r.status,
+        await r.text().catch(() => ''),
+      );
+      return null;
+    }
+    const rows = (await r.json()) as DestinationRow[];
+    if (!Array.isArray(rows)) return null;
+    return rows.map(normalize);
+  } catch (err) {
+    console.error('[destinations] fetch error', err);
+    return null;
+  }
+}
+
+export async function getAllDestinations(): Promise<Destination[]> {
+  return (await fetchFromSupabase()) ?? [];
+}
+
+export async function getDestinationBySlug(
+  slug: string,
+): Promise<Destination | null> {
+  const rows = await fetchFromSupabase(slug);
+  return rows?.[0] ?? null;
+}
+
+export async function getDestinationSlugs(): Promise<string[]> {
+  const all = await getAllDestinations();
+  return all.map((d) => d.slug);
+}
