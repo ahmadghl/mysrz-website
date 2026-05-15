@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase';
 import { SiteLogo } from '@/components/SiteLogo';
 import {
-  LayoutDashboard,
   FileText,
   PlusCircle,
   Globe,
@@ -14,7 +13,6 @@ import {
 } from 'lucide-react';
 
 const NAV = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/posts', label: 'Blog Posts', icon: FileText },
   { href: '/admin/posts/new', label: 'New Post', icon: PlusCircle },
   { href: '/', label: 'View Website', icon: Globe, external: true },
@@ -34,7 +32,7 @@ export function AdminSidebar({ userName }: { userName: string }) {
     <aside className="w-60 flex-shrink-0 bg-brand-primary min-h-screen flex flex-col">
       {/* Logo */}
       <div className="px-5 pt-7 pb-6 border-b border-white/10">
-        <Link href="/admin/dashboard" className="flex items-center gap-3">
+        <Link href="/admin/posts" className="flex items-center gap-3">
           <div className="w-9 h-9 bg-brand-accent/20 rounded-xl flex items-center justify-center">
             <SiteLogo size={20} />
           </div>
@@ -54,7 +52,7 @@ export function AdminSidebar({ userName }: { userName: string }) {
       {/* Nav */}
       <nav className="flex-1 px-3 py-5 space-y-0.5">
         {NAV.map(({ href, label, icon: Icon, external }) => {
-          const active = pathname === href || (href !== '/admin/dashboard' && pathname.startsWith(href) && href !== '/');
+          const active = pathname === href || (pathname.startsWith(href) && href !== '/');
           return (
             <Link
               key={href}
