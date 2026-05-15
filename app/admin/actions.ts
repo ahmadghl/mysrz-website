@@ -3,7 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
+import { SITE } from '@/lib/utils';
 import crypto from 'crypto';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -33,17 +34,19 @@ function generateSlug(title: string) {
 
 async function requireAdmin() {
   const supabase = await createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error('Unauthorized');
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const { data: adminUser } = await supabaseAdmin
     .from('admin_users')
     .select('id')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single();
 
   if (!adminUser) throw new Error('Forbidden');
-  return session;
+  return user;
 }
 
 // ── Signed n8n webhook trigger ─────────────────────────────────────────────
@@ -112,7 +115,7 @@ export async function createPost(data: PostFormData) {
       postId: post.id,
       title: post.title,
       slug: post.slug,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.mysrztourism.com'}/blog/${post.slug}`,
+      url: `${SITE.url}/blog/${post.slug}`,
       publishedAt: new Date().toISOString(),
     });
   }
@@ -155,7 +158,7 @@ export async function updatePost(id: string, data: PostFormData) {
       postId: post.id,
       title: post.title,
       slug: post.slug,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.mysrztourism.com'}/blog/${post.slug}`,
+      url: `${SITE.url}/blog/${post.slug}`,
       updatedAt: new Date().toISOString(),
     });
   }
@@ -205,7 +208,7 @@ export async function togglePublish(id: string, published: boolean) {
       postId: post.id,
       title: post.title,
       slug: post.slug,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.mysrztourism.com'}/blog/${post.slug}`,
+      url: `${SITE.url}/blog/${post.slug}`,
       publishedAt: new Date().toISOString(),
     });
   }

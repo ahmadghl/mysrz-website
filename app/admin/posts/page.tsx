@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { PostsTable } from '@/components/admin/PostsTable';
 import { PlusCircle } from 'lucide-react';
 async function getPosts() {

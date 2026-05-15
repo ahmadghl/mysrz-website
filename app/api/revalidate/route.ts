@@ -3,17 +3,12 @@ import { revalidateTag, revalidatePath } from 'next/cache';
 
 export const runtime = 'nodejs';
 
-/**
- * POST /api/revalidate?secret=YOUR_SECRET
- *
- * Call this from a Supabase database webhook (Database → Webhooks) on
- * INSERT/UPDATE/DELETE of `blog_posts`. It instantly invalidates the
- * cached posts list and the affected post's page so changes appear live
- * without waiting for the 60s revalidation window.
- *
- * Set REVALIDATE_SECRET in Vercel env vars and pass it as ?secret=...
- * (or in the Authorization header) when calling this endpoint.
- */
+// POST /api/revalidate
+//
+// Called from a Supabase database webhook on INSERT/UPDATE/DELETE of
+// `blog_posts`. Pass the secret via `Authorization: Bearer <secret>` or
+// `x-webhook-secret: <secret>`. Query-string secrets are NOT accepted
+// because they leak into upstream proxy and request logs.
 export async function POST(req: Request) {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) {
@@ -21,14 +16,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'not configured' }, { status: 500 });
   }
 
-  const url = new URL(req.url);
   const provided =
-    url.searchParams.get('secret') ||
     req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ||
     req.headers.get('x-webhook-secret') ||
     '';
 
-  if (provided !== secret) {
+  if (!provided || provided !== secret) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { PostEditorForm } from '@/components/admin/PostEditorForm';
 interface Props { params: Promise<{ id: string }>; }
 async function getPost(id: string) {
