@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { ArrowRight, Calendar, MapPin, Phone, Mail, Camera } from 'lucide-react';
 import { getAllDestinations, getDestinationBySlug } from '@/lib/destinations';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { FaqSection } from '@/components/FaqSection';
 import { SITE } from '@/lib/utils';
 
 // Render dynamically so unknown slugs return a real 404 status code.
@@ -22,13 +23,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const dest = await getDestinationBySlug(slug);
   if (!dest) return { title: 'Destination not found' };
 
+  // Prefer the admin-supplied SEO copy; fall back to the destination's
+  // own description, truncated at a word boundary.
+  const rawDescription = dest.meta_description?.trim() || dest.description;
   const description =
-    dest.description.length > 160
-      ? `${dest.description.slice(0, dest.description.lastIndexOf(' ', 157))}…`
-      : dest.description;
+    rawDescription.length > 160
+      ? `${rawDescription.slice(0, rawDescription.lastIndexOf(' ', 157))}…`
+      : rawDescription;
+
+  const title = dest.meta_title?.trim() || `${dest.name} Travel Guide — ${dest.region}`;
 
   return {
-    title: `${dest.name} Travel Guide — ${dest.region}`,
+    title,
     description,
     alternates: { canonical: `/destinations/${dest.slug}` },
     keywords: [
@@ -41,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ],
     openGraph: {
       type: 'article',
-      title: `${dest.name} Travel Guide`,
+      title,
       description,
       url: `/destinations/${dest.slug}`,
       images: dest.image_url
@@ -52,7 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${dest.name} Travel Guide`,
+      title,
       description,
       images: dest.image_url ? [dest.image_url] : undefined,
     },
@@ -229,6 +235,8 @@ export default async function DestinationDetailPage({ params }: Props) {
                   )}
                 </p>
               )}
+
+              <FaqSection faqs={dest.faqs ?? []} />
 
               {related.length > 0 && (
                 <section className="mt-16 pt-10 border-t border-brand-primary/10">

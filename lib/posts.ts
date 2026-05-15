@@ -1,4 +1,4 @@
-import type { Post } from './types';
+import type { Post, FaqItem } from './types';
 import { slugify } from './utils';
 import { resolveImageUrl } from './image-utils';
 
@@ -14,14 +14,27 @@ interface SupabasePostRow {
   category: Post['category'] | null;
   author: string | null;
   created_at: string | null;
+  updated_at: string | null;
   read_time: number | null;
   views: number | null;
   meta_title: string | null;
   meta_description: string | null;
+  faqs: unknown;
   image_credit_name: string | null;
   image_credit_instagram: string | null;
   image_credit_twitter: string | null;
   image_credit_website: string | null;
+}
+
+function normalizeFaqs(raw: unknown): FaqItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((it): it is { q: unknown; a: unknown } => typeof it === 'object' && it !== null)
+    .map((it) => ({
+      q: typeof it.q === 'string' ? it.q.trim() : '',
+      a: typeof it.a === 'string' ? it.a.trim() : '',
+    }))
+    .filter((it) => it.q.length > 0 && it.a.length > 0);
 }
 
 function normalize(row: SupabasePostRow): Post {
@@ -36,10 +49,12 @@ function normalize(row: SupabasePostRow): Post {
     category: (row.category as Post['category']) ?? 'Adventure',
     author: row.author ?? 'Ahmad Fraz',
     created_at: row.created_at ?? new Date().toISOString(),
+    updated_at: row.updated_at ?? null,
     read_time: row.read_time ?? 5,
     views: row.views ?? 0,
     meta_title: row.meta_title ?? null,
     meta_description: row.meta_description ?? null,
+    faqs: normalizeFaqs(row.faqs),
     image_credit_name: row.image_credit_name ?? null,
     image_credit_instagram: row.image_credit_instagram ?? null,
     image_credit_twitter: row.image_credit_twitter ?? null,
@@ -55,8 +70,8 @@ async function fetchFromSupabase(slug?: string): Promise<Post[] | null> {
   if (!url || !key) return null;
 
   const select =
-    'id,slug,title,excerpt,content,image_url,category,author,created_at,read_time,views,' +
-    'meta_title,meta_description,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
+    'id,slug,title,excerpt,content,image_url,category,author,created_at,updated_at,read_time,views,' +
+    'meta_title,meta_description,faqs,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
   const filter = slug
     ? `&slug=eq.${encodeURIComponent(slug)}`
     : '&order=created_at.desc&limit=200';

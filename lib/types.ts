@@ -1,5 +1,10 @@
 export type Category = 'All' | 'Adventure' | 'Culture' | 'Food' | 'Nature';
 
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
 export interface Post {
   id: string;
   slug: string;
@@ -10,11 +15,13 @@ export interface Post {
   category: Exclude<Category, 'All'>;
   author: string;
   created_at: string;
+  updated_at?: string | null;
   read_time: number;
   views: number;
   // SEO
   meta_title?: string | null;
   meta_description?: string | null;
+  faqs?: FaqItem[];
   // Image credit (optional)
   image_credit_name?: string | null;
   image_credit_instagram?: string | null;
@@ -32,6 +39,11 @@ export interface Destination {
   image_url: string;
   tags: string[];
   sort_order: number;
+  updated_at?: string | null;
+  // SEO
+  meta_title?: string | null;
+  meta_description?: string | null;
+  faqs?: FaqItem[];
   image_credit?: {
     name?: string;
     instagram?: string;
