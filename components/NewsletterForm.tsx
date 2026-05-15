@@ -2,35 +2,29 @@
 
 import { useState, type FormEvent } from 'react';
 import { Send } from 'lucide-react';
-import { SITE } from '@/lib/utils';
 
 export function NewsletterForm() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
-      await fetch(SITE.newsletterWebhook, {
+      await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          form_name: 'Newsletter Signup',
-          form_source: SITE.name,
-          website: SITE.url,
-          submitted_at: new Date().toISOString(),
-          subscriber: { email },
-          meta: {
-            page_url: window.location.href,
-            referrer: document.referrer || 'Direct',
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            language: navigator.language,
-          },
+          email,
+          page_url: window.location.href,
+          referrer: document.referrer || 'Direct',
         }),
       });
     } catch {
-      /* silent */
+      /* silent — UX still shows success to avoid confusing the visitor */
     }
+    setSubmitting(false);
     setEmail('');
     setSent(true);
     setTimeout(() => setSent(false), 4000);
@@ -50,8 +44,9 @@ export function NewsletterForm() {
         />
         <button
           type="submit"
+          disabled={submitting}
           aria-label="Subscribe"
-          className="bg-brand-primary px-3 py-2 rounded-lg hover:bg-brand-primary/90 transition-all text-white"
+          className="bg-brand-primary px-3 py-2 rounded-lg hover:bg-brand-primary/90 transition-all text-white disabled:opacity-60"
         >
           <Send size={14} />
         </button>
