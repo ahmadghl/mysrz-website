@@ -3,10 +3,11 @@ import Link from 'next/link';
 import {
   ArrowRight, ChevronDown, ChevronRight, Clock, Eye,
   MapPin, BookOpen, Users, Star, Phone,
+  type LucideIcon,
 } from 'lucide-react';
 import { getAllPosts } from '@/lib/posts';
 import { PostCard } from '@/components/PostCard';
-import { SITE } from '@/lib/utils';
+import { getSiteSettings } from '@/lib/site-settings';
 
 export const revalidate = 60;
 
@@ -38,19 +39,26 @@ async function getPreviewDestinations(): Promise<Destination[]> {
   }
 }
 
+const STAT_ICONS: Record<string, LucideIcon> = {
+  MapPin, BookOpen, Users, Star,
+};
+
 export default async function HomePage() {
-  const posts = await getAllPosts();
+  const [posts, previewDestinations, settings] = await Promise.all([
+    getAllPosts(),
+    getPreviewDestinations(),
+    getSiteSettings(),
+  ]);
   const heroPost = posts[2] ?? posts[0];
   const sidePosts = posts.slice(0, 2);
   const gridPosts = posts.slice(3, 6);
-  const previewDestinations = await getPreviewDestinations();
 
   return (
     <>
       <section className="relative h-[92vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://picsum.photos/seed/pakistan-mountains-hero/1920/1080"
+            src={settings.hero_image_url}
             alt="Pakistan mountains"
             fill
             priority
@@ -63,24 +71,26 @@ export default async function HomePage() {
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-px bg-brand-accent" />
-              <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-semibold">Explore Pakistan</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-semibold">
+                {settings.hero_kicker}
+              </span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-[1.05]">
-              Discover the<br />
-              <span className="text-brand-accent">Soul of</span><br />
-              Pakistan
+              {settings.hero_title_line_1}<br />
+              <span className="text-brand-accent">{settings.hero_title_line_2}</span><br />
+              {settings.hero_title_line_3}
             </h1>
             <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-lg">
-              From the Karakoram peaks to ancient Mughal cities - your complete guide to Pakistan&apos;s most extraordinary destinations, food, and culture.
+              {settings.hero_subtitle}
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/destinations"
+              <Link href={settings.hero_cta_primary_href}
                 className="bg-brand-primary text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-brand-primary/90 transition-all shadow-lg">
-                Explore Destinations
+                {settings.hero_cta_primary_text}
               </Link>
-              <Link href="/blog"
+              <Link href={settings.hero_cta_secondary_href}
                 className="border border-white/30 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-all">
-                Read the Blog
+                {settings.hero_cta_secondary_text}
               </Link>
             </div>
           </div>
@@ -92,18 +102,16 @@ export default async function HomePage() {
 
       <section className="bg-brand-primary text-white py-10">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            { value: '50+', label: 'Destinations Covered', icon: MapPin },
-            { value: '100+', label: 'Travel Guides', icon: BookOpen },
-            { value: '10K+', label: 'Monthly Readers', icon: Users },
-            { value: '5★', label: 'Reader Rating', icon: Star },
-          ].map(({ value, label, icon: Icon }) => (
-            <div key={label} className="text-center">
-              <Icon size={20} className="mx-auto mb-2 text-brand-accent/80" />
-              <div className="text-3xl font-bold">{value}</div>
-              <div className="text-xs uppercase tracking-wider text-brand-accent/60 mt-1">{label}</div>
-            </div>
-          ))}
+          {settings.homepage_stats.map(({ value, label, icon }) => {
+            const Icon = (icon && STAT_ICONS[icon]) || MapPin;
+            return (
+              <div key={label} className="text-center">
+                <Icon size={20} className="mx-auto mb-2 text-brand-accent/80" />
+                <div className="text-3xl font-bold">{value}</div>
+                <div className="text-xs uppercase tracking-wider text-brand-accent/60 mt-1">{label}</div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -232,15 +240,15 @@ export default async function HomePage() {
               className="bg-brand-accent text-brand-primary px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all">
               Contact Us
             </Link>
-            <a href={SITE.phoneLink}
+            <a href={settings.phone_link}
               className="border border-stone-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all flex items-center gap-2">
-              <Phone size={16} /> {SITE.phoneDisplay}
+              <Phone size={16} /> {settings.phone_display}
             </a>
           </div>
         </div>
       </section>
 
-      <a href={SITE.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp"
+      <a href={settings.whatsapp_url} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp"
         className="fixed bottom-6 right-6 z-40 bg-green-600 text-white p-3.5 rounded-full shadow-xl hover:bg-green-700 transition-all hover:scale-110">
         <ChevronRight size={20} className="rotate-90 hidden" />
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { Tracker } from '@/components/Tracker';
-import { SITE } from '@/lib/utils';
+import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
 const inter = Inter({
@@ -19,77 +19,59 @@ const playfair = Playfair_Display({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE.url),
-  title: {
-    default: `${SITE.name} - Explore Pakistan's Hidden Gems`,
-    template: `%s | ${SITE.name}`,
-  },
-  description: SITE.description,
-  applicationName: SITE.name,
-  authors: [{ name: SITE.founder }],
-  generator: 'Next.js',
-  keywords: [
-    'Pakistan travel',
-    'Pakistan tourism',
-    'Hunza Valley',
-    'K2 trek',
-    'Lahore',
-    'Karachi food',
-    'Skardu',
-    'Fairy Meadows',
-    'Nanga Parbat',
-    'Gilgit-Baltistan',
-    'Pakistan travel guide',
-    'mySRZ',
-    'Ahmad Fraz',
-  ],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const titleDefault = `${settings.site_name} - Explore Pakistan's Hidden Gems`;
+  const ogImage = settings.default_og_image_url || '/og-image.jpg';
+  return {
+    metadataBase: new URL(settings.site_url || 'https://www.mysrztourism.com'),
+    title: {
+      default: titleDefault,
+      template: `%s | ${settings.site_name}`,
+    },
+    description: settings.site_description,
+    applicationName: settings.site_name,
+    authors: [{ name: settings.founder_name }],
+    generator: 'Next.js',
+    keywords: settings.seo_keywords.length > 0 ? settings.seo_keywords : undefined,
+    robots: {
       index: true,
       follow: true,
-      'max-snippet': -1,
-      'max-image-preview': 'large',
-      'max-video-preview': -1,
-    },
-  },
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_PK',
-    siteName: SITE.name,
-    url: SITE.url,
-    title: `${SITE.name} - Explore Pakistan's Hidden Gems`,
-    description: SITE.description,
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: SITE.name,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+        'max-video-preview': -1,
       },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@mySRZ',
-    title: `${SITE.name} - Explore Pakistan's Hidden Gems`,
-    description: SITE.description,
-    images: ['/og-image.jpg'],
-  },
-  icons: {
-    icon: '/favicon.svg',
-    apple: '/apple-touch-icon.png',
-  },
-  other: {
-    'geo.region': 'PK',
-    'geo.placename': 'Pakistan',
-  },
-};
+    },
+    alternates: { canonical: '/' },
+    openGraph: {
+      type: 'website',
+      locale: 'en_PK',
+      siteName: settings.site_name,
+      url: settings.site_url,
+      title: titleDefault,
+      description: settings.site_description,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: settings.site_name }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@mySRZ',
+      title: titleDefault,
+      description: settings.site_description,
+      images: [ogImage],
+    },
+    icons: {
+      icon: '/favicon.svg',
+      apple: '/apple-touch-icon.png',
+    },
+    other: {
+      'geo.region': 'PK',
+      'geo.placename': 'Pakistan',
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: '#1a1a1a',
@@ -97,59 +79,61 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const orgJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: SITE.name,
-  url: SITE.url,
-  logo: `${SITE.url}/logo.png`,
-  description: SITE.description,
-  foundingDate: '2021',
-  founder: {
-    '@type': 'Person',
-    name: SITE.founder,
-    email: SITE.email,
-    telephone: SITE.phone,
-  },
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: SITE.phone,
-    contactType: 'customer support',
-    availableLanguage: ['English', 'Urdu'],
-    areaServed: 'PK',
-  },
-  sameAs: [SITE.social.instagram, SITE.social.twitter, SITE.social.facebook],
-};
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSiteSettings();
 
-const travelAgencyJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'TravelAgency',
-  name: SITE.name,
-  url: SITE.url,
-  telephone: SITE.phone,
-  email: SITE.email,
-  address: { '@type': 'PostalAddress', addressCountry: 'PK' },
-  areaServed: { '@type': 'Country', name: 'Pakistan' },
-  priceRange: '$$',
-  openingHours: 'Mo-Su 09:00-21:00',
-};
-
-const websiteJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: SITE.name,
-  url: SITE.url,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${SITE.url}/blog?q={search_term_string}`,
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: settings.site_name,
+    url: settings.site_url,
+    logo: `${settings.site_url}/logo.png`,
+    description: settings.site_description,
+    foundingDate: '2021',
+    founder: {
+      '@type': 'Person',
+      name: settings.founder_name,
+      email: settings.email,
+      telephone: settings.phone,
     },
-    'query-input': 'required name=search_term_string',
-  },
-};
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: settings.phone,
+      contactType: 'customer support',
+      availableLanguage: ['English', 'Urdu'],
+      areaServed: 'PK',
+    },
+    sameAs: [settings.instagram_url, settings.twitter_url, settings.facebook_url].filter(Boolean),
+  };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const travelAgencyJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TravelAgency',
+    name: settings.site_name,
+    url: settings.site_url,
+    telephone: settings.phone,
+    email: settings.email,
+    address: { '@type': 'PostalAddress', addressCountry: 'PK' },
+    areaServed: { '@type': 'Country', name: 'Pakistan' },
+    priceRange: '$$',
+    openingHours: 'Mo-Su 09:00-21:00',
+  };
+
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: settings.site_name,
+    url: settings.site_url,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${settings.site_url}/blog?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>

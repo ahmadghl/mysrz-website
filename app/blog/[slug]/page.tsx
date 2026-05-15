@@ -10,6 +10,7 @@ import {
 import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
 import { SITE } from '@/lib/utils';
+import { resolveImageUrl } from '@/lib/image-utils';
 
 export const revalidate = 60;
 

@@ -34,14 +34,17 @@ export async function POST(req: Request) {
     console.error('[api/revalidate] body parse failed', err);
   }
 
-  // Always revalidate both tags
+  // Always revalidate all dynamic content tags
   revalidateTag('posts');
   revalidateTag('destinations');
+  revalidateTag('site_settings');
 
   // Revalidate common paths
   revalidatePath('/');
   revalidatePath('/blog');
   revalidatePath('/destinations');
+  revalidatePath('/about');
+  revalidatePath('/contact');
   revalidatePath('/sitemap.xml');
 
   // Revalidate specific path if provided
@@ -51,7 +54,7 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     revalidated: {
-      tags: ['posts', 'destinations'],
+      tags: ['posts', 'destinations', 'site_settings'],
       path,
       slug: slug ?? null,
       at: new Date().toISOString()

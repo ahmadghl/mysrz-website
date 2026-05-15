@@ -2,13 +2,7 @@ import Link from 'next/link';
 import { Instagram, Twitter, Facebook, Phone, Mail, MapPin } from 'lucide-react';
 import { SiteLogo } from './SiteLogo';
 import { NewsletterForm } from './NewsletterForm';
-import { SITE } from '@/lib/utils';
-
-const SOCIALS = [
-  { Icon: Instagram, href: SITE.social.instagram, name: 'Instagram' },
-  { Icon: Twitter, href: SITE.social.twitter, name: 'Twitter' },
-  { Icon: Facebook, href: SITE.social.facebook, name: 'Facebook' },
-];
+import { getSiteSettings } from '@/lib/site-settings';
 
 const QUICK_LINKS = [
   { label: 'Home', href: '/' },
@@ -18,7 +12,20 @@ const QUICK_LINKS = [
   { label: 'Contact', href: '/contact' },
 ];
 
-export function Footer() {
+export async function Footer() {
+  const settings = await getSiteSettings();
+
+  const socials = [
+    { Icon: Instagram, href: settings.instagram_url, name: 'Instagram' },
+    { Icon: Twitter,   href: settings.twitter_url,   name: 'Twitter' },
+    { Icon: Facebook,  href: settings.facebook_url,  name: 'Facebook' },
+  ].filter((s) => Boolean(s.href));
+
+  const year = new Date().getFullYear();
+  const copyrightText = settings.footer_show_year
+    ? `© ${year} ${settings.footer_copyright_holder}. All rights reserved.`
+    : `© ${settings.footer_copyright_holder}. All rights reserved.`;
+
   return (
     <footer className="text-white pt-16 pb-0" style={{ background: '#111' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,10 +41,10 @@ export function Footer() {
               </div>
             </div>
             <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
-              Your ultimate guide to exploring Pakistan&apos;s breathtaking landscapes, rich culture, and incredible cuisine. Discover hidden gems from Karakoram to the Arabian Sea.
+              {settings.footer_tagline}
             </p>
             <div className="flex gap-3">
-              {SOCIALS.map(({ Icon, href, name }) => (
+              {socials.map(({ Icon, href, name }) => (
                 <a
                   key={name}
                   href={href}
@@ -74,19 +81,19 @@ export function Footer() {
             <ul className="space-y-3 text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
               <li className="flex items-center gap-2">
                 <Phone size={14} className="text-brand-accent flex-shrink-0" />
-                <a href={SITE.phoneLink} className="hover:text-brand-accent transition-colors" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                  {SITE.phoneDisplay}
+                <a href={settings.phone_link} className="hover:text-brand-accent transition-colors" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                  {settings.phone_display}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={14} className="text-brand-accent flex-shrink-0" />
-                <a href={`mailto:${SITE.email}`} className="hover:text-brand-accent transition-colors break-all">
-                  {SITE.email}
+                <a href={`mailto:${settings.email}`} className="hover:text-brand-accent transition-colors break-all">
+                  {settings.email}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin size={14} className="text-brand-accent flex-shrink-0 mt-0.5" />
-                <span>Pakistan</span>
+                <span>{settings.address_label}</span>
               </li>
             </ul>
             <div className="mt-6">
@@ -99,7 +106,7 @@ export function Footer() {
           style={{ background: '#d4af37', margin: '0 -2rem', padding: '10px 2rem' }}
           className="flex flex-col md:flex-row justify-between items-center gap-3 text-xs"
         >
-          <span style={{ color: '#1a1a1a', fontWeight: 700 }}>© 2026 mySRZ. All rights reserved.</span>
+          <span style={{ color: '#1a1a1a', fontWeight: 700 }}>{copyrightText}</span>
           <div className="flex gap-6" style={{ color: '#1a1a1a' }}>
             <Link href="/about" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/about" className="hover:text-white transition-colors">Terms of Use</Link>
