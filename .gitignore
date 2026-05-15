@@ -19,6 +19,15 @@ frontend/dist/
 frontend/.next/
 *.local
 
+# ── Next.js ──────────────────────────────────────
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# ── Vercel ───────────────────────────────────────
+.vercel
+
 # ── Environment ──────────────────────────────────
 .env
 .env.local
@@ -47,6 +56,18 @@ Thumbs.db
 # ── Redis / DB snapshots ─────────────────────────
 *.rdb
 backups/
+
+# ── Stray scratch files at repo root ─────────────
+# Put images in /public/, not in the repo root.
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.gif
+/*.zip
+/*.tar
+/*.tar.gz
+/*.bak
 
 # ── Celery ───────────────────────────────────────
 celerybeat-schedule
