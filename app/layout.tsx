@@ -79,10 +79,11 @@ export async function generateMetadata(): Promise<Metadata> {
       description: settings.site_description,
       images: [ogImage],
     },
-    icons: {
-      icon: '/favicon.svg',
-      apple: '/apple-touch-icon.png',
-    },
+    // Favicon + Apple touch icon are provided via the Next.js file
+    // convention (app/icon.svg + app/apple-icon.svg). No explicit
+    // `icons` block needed — the prior values pointed at files that
+    // didn't exist in /public, producing 404s and the generic browser
+    // globe in the tab.
     other: {
       'geo.region': 'PK',
       'geo.placename': 'Pakistan',
