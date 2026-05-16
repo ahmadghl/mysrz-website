@@ -38,7 +38,7 @@ export async function Footer() {
                 alt="mySRZ Travel & Tourism"
                 width={186}
                 height={50}
-                className="h-11 w-auto"
+                className="h-14 w-auto"
               />
             </div>
             <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>

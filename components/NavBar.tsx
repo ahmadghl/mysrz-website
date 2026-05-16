@@ -25,7 +25,7 @@ export function NavBar() {
     <>
       <nav className="sticky top-0 z-50 bg-brand-paper/90 backdrop-blur-md border-b border-black/5 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-18 py-3">
+          <div className="flex justify-between items-center h-20 py-3.5">
             <Link href="/" className="flex items-center" onClick={() => setOpen(false)} aria-label="mySRZ Travel & Tourism — home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -33,7 +33,7 @@ export function NavBar() {
                 alt="mySRZ Travel & Tourism"
                 width={186}
                 height={50}
-                className="h-10 sm:h-11 w-auto"
+                className="h-12 sm:h-14 w-auto"
               />
             </Link>
 
@@ -72,7 +72,7 @@ export function NavBar() {
       </nav>
 
       {open && (
-        <div className="md:hidden fixed top-[61px] left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
+        <div className="md:hidden fixed top-20 left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={href}
