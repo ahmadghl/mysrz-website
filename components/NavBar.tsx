@@ -4,8 +4,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { SiteLogo } from './SiteLogo';
 import { cn } from '@/lib/utils';
+
+// Brand-lockup font stacks. Outfit + IBM Plex Mono are loaded via
+// next/font in app/layout.tsx, exposed as CSS variables. The literal
+// family names + Söhne stay in the stack as belt-and-braces so a
+// future static-only render still picks up the right family.
+const wordFont = {
+  fontFamily: 'var(--font-outfit), "Outfit", "Söhne", system-ui, sans-serif',
+};
+const monoFont = {
+  fontFamily: 'var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace',
+};
 
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
@@ -26,14 +36,50 @@ export function NavBar() {
     <>
       <nav className="sticky top-0 z-50 bg-brand-paper/90 backdrop-blur-md border-b border-black/5 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-18 py-3">
-            <Link href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-              <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-md">
-                <SiteLogo />
-              </div>
-              <div className="flex flex-col leading-none text-left">
-                <span style={{ fontFamily: 'Georgia,serif', fontSize: '20px', fontWeight: 700, color: '#d4af37', letterSpacing: '-0.01em' }}>mySRZ</span>
-                <span className="text-[9px] uppercase tracking-[0.25em] text-brand-primary/40 font-medium">Travel & Tourism</span>
+          <div className="flex justify-between items-center h-20 py-3">
+            <Link
+              href="/"
+              className="flex items-center gap-3 sm:gap-4"
+              onClick={() => setOpen(false)}
+              aria-label="mySRZ Travel & Tourism — home"
+            >
+              {/* Saffron mountain mark (public/mysrz-mark.svg) — same
+                  asset as the admin sidebar + the brand kit. The
+                  wordmark + tagline alongside reproduce the full
+                  lockup in HTML, so the text stays crisp at every
+                  zoom level. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/mysrz-mark.svg"
+                alt=""
+                width={66}
+                height={44}
+                className="h-10 sm:h-12 w-auto"
+              />
+              <div className="flex flex-col leading-none">
+                <span
+                  className="text-brand-primary"
+                  style={{
+                    ...wordFont,
+                    fontSize: 'clamp(1.6rem, 4.5vw, 2rem)',
+                    fontWeight: 600,
+                    letterSpacing: '-0.03em',
+                  }}
+                >
+                  mySRZ
+                </span>
+                <span
+                  className="mt-1 text-brand-accent"
+                  style={{
+                    ...monoFont,
+                    fontSize: 'clamp(0.55rem, 1.3vw, 0.7rem)',
+                    fontWeight: 500,
+                    letterSpacing: '0.28em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Travel · Tourism · PK
+                </span>
               </div>
             </Link>
 
@@ -72,7 +118,7 @@ export function NavBar() {
       </nav>
 
       {open && (
-        <div className="md:hidden fixed top-[61px] left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
+        <div className="md:hidden fixed top-20 left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={href}
