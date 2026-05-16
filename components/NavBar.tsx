@@ -25,16 +25,41 @@ export function NavBar() {
     <>
       <nav className="sticky top-0 z-50 bg-brand-paper/90 backdrop-blur-md border-b border-black/5 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20 py-3.5">
-            <Link href="/" className="flex items-center" onClick={() => setOpen(false)} aria-label="mySRZ Travel & Tourism — home">
+          <div className="flex justify-between items-center h-18 py-3">
+            <Link
+              href="/"
+              className="flex items-center gap-3"
+              onClick={() => setOpen(false)}
+              aria-label="mySRZ Travel & Tourism — home"
+            >
+              {/* Saffron mountain mark (public/mysrz-mark.svg) — same
+                  asset as the admin sidebar. Decorative; the
+                  accessible name lives on the <Link> above. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/mysrz-lockup.svg"
-                alt="mySRZ Travel & Tourism"
-                width={186}
-                height={50}
-                className="h-12 sm:h-14 w-auto"
+                src="/mysrz-mark.svg"
+                alt=""
+                width={60}
+                height={40}
+                className="h-9 sm:h-10 w-auto"
               />
+              <div className="flex flex-col leading-none">
+                <span
+                  style={{
+                    fontFamily: 'Outfit, system-ui, sans-serif',
+                    color: 'var(--brand-primary, #1a1a1a)',
+                    fontSize: '1.4rem',
+                    fontWeight: 600,
+                    letterSpacing: '-0.02em',
+                  }}
+                  className="text-brand-primary"
+                >
+                  mySRZ
+                </span>
+                <span className="mt-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-accent">
+                  Travel · Tourism
+                </span>
+              </div>
             </Link>
 
             <div className="hidden md:flex items-center gap-1">
@@ -72,7 +97,7 @@ export function NavBar() {
       </nav>
 
       {open && (
-        <div className="md:hidden fixed top-20 left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
+        <div className="md:hidden fixed top-18 left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={href}

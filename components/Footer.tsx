@@ -30,16 +30,34 @@ export async function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-2">
-            <div className="mb-5">
-              {/* Dark variant of the same lockup — saffron mark, light wordmark for the footer's near-black background. */}
+            <div className="flex items-center gap-3 mb-5">
+              {/* Same mark as the NavBar (public/mysrz-mark.svg). The
+                  mark's stroke is saffron so it reads against the
+                  dark footer without needing a second SVG variant. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/mysrz-lockup-dark.svg"
-                alt="mySRZ Travel & Tourism"
-                width={186}
-                height={50}
-                className="h-14 w-auto"
+                src="/mysrz-mark.svg"
+                alt=""
+                width={60}
+                height={40}
+                className="h-10 w-auto"
               />
+              <div className="flex flex-col leading-none">
+                <span
+                  style={{
+                    fontFamily: 'Outfit, system-ui, sans-serif',
+                    color: '#fbf9f5',
+                    fontSize: '1.4rem',
+                    fontWeight: 600,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  mySRZ
+                </span>
+                <span className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-accent">
+                  Travel · Tourism
+                </span>
+              </div>
             </div>
             <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
               {settings.footer_tagline}
