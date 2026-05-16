@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Instagram, Twitter, Facebook, Phone, Mail, MapPin } from 'lucide-react';
-import { SiteLogo } from './SiteLogo';
 import { NewsletterForm } from './NewsletterForm';
 import { getSiteSettings } from '@/lib/site-settings';
 
@@ -31,14 +30,16 @@ export async function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center">
-                <SiteLogo />
-              </div>
-              <div>
-                <div className="text-xl font-bold text-brand-accent">mySRZ</div>
-                <div className="text-[9px] uppercase tracking-widest text-white/50">Travel & Tourism</div>
-              </div>
+            <div className="mb-5">
+              {/* Dark variant of the same lockup — saffron mark, light wordmark for the footer's near-black background. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/mysrz-lockup-dark.svg"
+                alt="mySRZ Travel & Tourism"
+                width={186}
+                height={50}
+                className="h-11 w-auto"
+              />
             </div>
             <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
               {settings.footer_tagline}

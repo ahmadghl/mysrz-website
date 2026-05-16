@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { SiteLogo } from './SiteLogo';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
@@ -27,14 +26,15 @@ export function NavBar() {
       <nav className="sticky top-0 z-50 bg-brand-paper/90 backdrop-blur-md border-b border-black/5 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-18 py-3">
-            <Link href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-              <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-md">
-                <SiteLogo />
-              </div>
-              <div className="flex flex-col leading-none text-left">
-                <span style={{ fontFamily: 'Georgia,serif', fontSize: '20px', fontWeight: 700, color: '#d4af37', letterSpacing: '-0.01em' }}>mySRZ</span>
-                <span className="text-[9px] uppercase tracking-[0.25em] text-brand-primary/40 font-medium">Travel & Tourism</span>
-              </div>
+            <Link href="/" className="flex items-center" onClick={() => setOpen(false)} aria-label="mySRZ Travel & Tourism — home">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/mysrz-lockup.svg"
+                alt="mySRZ Travel & Tourism"
+                width={186}
+                height={50}
+                className="h-10 sm:h-11 w-auto"
+              />
             </Link>
 
             <div className="hidden md:flex items-center gap-1">

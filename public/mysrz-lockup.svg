@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 140" fill="none">
+  <g transform="translate(20 30)" stroke="#d99a3a" stroke-width="8" stroke-linejoin="miter" stroke-linecap="square">
+    <path d="M4 70 L34 30 L52 50"/>
+    <path d="M40 70 L72 14 L92 42"/>
+    <path d="M78 70 L102 38 L116 56"/>
+    <line x1="0" y1="76" x2="120" y2="76"/>
+  </g>
+  <g fill="#1a1a1a" font-family="Outfit, system-ui, sans-serif">
+    <text x="170" y="72" font-size="56" font-weight="600" letter-spacing="-1.5">mySRZ</text>
+    <text x="170" y="106" font-size="14" font-weight="500" letter-spacing="3" fill="#d99a3a" font-family="IBM Plex Mono, monospace">TRAVEL  ·  TOURISM  ·  PK</text>
+  </g>
+</svg>
