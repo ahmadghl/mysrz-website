@@ -6,6 +6,17 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Brand-lockup font stacks. Outfit + IBM Plex Mono are loaded via
+// next/font in app/layout.tsx, exposed as CSS variables. The literal
+// family names + Söhne stay in the stack as belt-and-braces so a
+// future static-only render still picks up the right family.
+const wordFont = {
+  fontFamily: 'var(--font-outfit), "Outfit", "Söhne", system-ui, sans-serif',
+};
+const monoFont = {
+  fontFamily: 'var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace',
+};
+
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Destinations', href: '/destinations' },
@@ -49,7 +60,7 @@ export function NavBar() {
                 <span
                   className="text-brand-primary"
                   style={{
-                    fontFamily: 'Outfit, system-ui, sans-serif',
+                    ...wordFont,
                     fontSize: 'clamp(1.6rem, 4.5vw, 2rem)',
                     fontWeight: 600,
                     letterSpacing: '-0.03em',
@@ -60,7 +71,7 @@ export function NavBar() {
                 <span
                   className="mt-1 text-brand-accent"
                   style={{
-                    fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
+                    ...monoFont,
                     fontSize: 'clamp(0.55rem, 1.3vw, 0.7rem)',
                     fontWeight: 500,
                     letterSpacing: '0.28em',

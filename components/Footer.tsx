@@ -45,7 +45,8 @@ export async function Footer() {
               <div className="flex flex-col leading-none">
                 <span
                   style={{
-                    fontFamily: 'Outfit, system-ui, sans-serif',
+                    fontFamily:
+                      'var(--font-outfit), "Outfit", "Söhne", system-ui, sans-serif',
                     color: '#fbf9f5',
                     fontSize: '2rem',
                     fontWeight: 600,
@@ -57,7 +58,8 @@ export async function Footer() {
                 <span
                   className="mt-1 text-brand-accent"
                   style={{
-                    fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
+                    fontFamily:
+                      'var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace',
                     fontSize: '0.7rem',
                     fontWeight: 500,
                     letterSpacing: '0.28em',
