@@ -1,6 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" fill="none" stroke="#d99a3a" stroke-width="6" stroke-linejoin="miter" stroke-linecap="square">
-  <path d="M4 70 L34 30 L52 50"/>
-  <path d="M40 70 L72 14 L92 42"/>
-  <path d="M78 70 L102 38 L116 56"/>
-  <line x1="0" y1="76" x2="120" y2="76"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Solid brand-dark panel so the saffron mark reads at 16×16
+       favicon size. The original transparent stroke-only version
+       was nearly invisible in the Google SERP icon column. -->
+  <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
+  <g transform="translate(7 14)" stroke="#d99a3a" stroke-width="4" stroke-linejoin="miter" stroke-linecap="square" fill="none">
+    <path d="M2 32 L17 14 L26 24"/>
+    <path d="M20 32 L37 6 L46 20"/>
+    <path d="M40 32 L52 18 L58 26"/>
+    <line x1="0" y1="36" x2="60" y2="36"/>
+  </g>
 </svg>
