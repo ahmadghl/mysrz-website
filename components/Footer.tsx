@@ -30,7 +30,7 @@ export async function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center gap-4 mb-5">
               {/* Same mark as the NavBar (public/mysrz-mark.svg). The
                   mark's stroke is saffron so it reads against the
                   dark footer without needing a second SVG variant. */}
@@ -38,24 +38,33 @@ export async function Footer() {
               <img
                 src="/mysrz-mark.svg"
                 alt=""
-                width={60}
-                height={40}
-                className="h-10 w-auto"
+                width={66}
+                height={44}
+                className="h-12 w-auto"
               />
               <div className="flex flex-col leading-none">
                 <span
                   style={{
                     fontFamily: 'Outfit, system-ui, sans-serif',
                     color: '#fbf9f5',
-                    fontSize: '1.4rem',
+                    fontSize: '2rem',
                     fontWeight: 600,
-                    letterSpacing: '-0.02em',
+                    letterSpacing: '-0.03em',
                   }}
                 >
                   mySRZ
                 </span>
-                <span className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-accent">
-                  Travel · Tourism
+                <span
+                  className="mt-1 text-brand-accent"
+                  style={{
+                    fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
+                    fontSize: '0.7rem',
+                    fontWeight: 500,
+                    letterSpacing: '0.28em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Travel · Tourism · PK
                 </span>
               </div>
             </div>

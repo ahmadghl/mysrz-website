@@ -25,39 +25,49 @@ export function NavBar() {
     <>
       <nav className="sticky top-0 z-50 bg-brand-paper/90 backdrop-blur-md border-b border-black/5 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-18 py-3">
+          <div className="flex justify-between items-center h-20 py-3">
             <Link
               href="/"
-              className="flex items-center gap-3"
+              className="flex items-center gap-3 sm:gap-4"
               onClick={() => setOpen(false)}
               aria-label="mySRZ Travel & Tourism — home"
             >
               {/* Saffron mountain mark (public/mysrz-mark.svg) — same
-                  asset as the admin sidebar. Decorative; the
-                  accessible name lives on the <Link> above. */}
+                  asset as the admin sidebar + the brand kit. The
+                  wordmark + tagline alongside reproduce the full
+                  lockup in HTML, so the text stays crisp at every
+                  zoom level. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/mysrz-mark.svg"
                 alt=""
-                width={60}
-                height={40}
-                className="h-9 sm:h-10 w-auto"
+                width={66}
+                height={44}
+                className="h-10 sm:h-12 w-auto"
               />
               <div className="flex flex-col leading-none">
                 <span
+                  className="text-brand-primary"
                   style={{
                     fontFamily: 'Outfit, system-ui, sans-serif',
-                    color: 'var(--brand-primary, #1a1a1a)',
-                    fontSize: '1.4rem',
+                    fontSize: 'clamp(1.6rem, 4.5vw, 2rem)',
                     fontWeight: 600,
-                    letterSpacing: '-0.02em',
+                    letterSpacing: '-0.03em',
                   }}
-                  className="text-brand-primary"
                 >
                   mySRZ
                 </span>
-                <span className="mt-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-accent">
-                  Travel · Tourism
+                <span
+                  className="mt-1 text-brand-accent"
+                  style={{
+                    fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
+                    fontSize: 'clamp(0.55rem, 1.3vw, 0.7rem)',
+                    fontWeight: 500,
+                    letterSpacing: '0.28em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Travel · Tourism · PK
                 </span>
               </div>
             </Link>
@@ -97,7 +107,7 @@ export function NavBar() {
       </nav>
 
       {open && (
-        <div className="md:hidden fixed top-18 left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
+        <div className="md:hidden fixed top-20 left-0 right-0 z-40 bg-brand-paper border-b border-black/5 shadow-xl px-4 py-5 space-y-1">
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={href}
