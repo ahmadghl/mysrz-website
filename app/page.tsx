@@ -191,7 +191,7 @@ export default async function HomePage() {
                         className="absolute inset-0"
                         style={{
                           background:
-                            'radial-gradient(at 30% 20%, rgba(217,162,39,0.3), transparent 55%), #15301F',
+                            'radial-gradient(at 30% 20%, rgba(212,175,55,0.3), transparent 55%), #1a1a1a',
                         }}
                       />
                     )}

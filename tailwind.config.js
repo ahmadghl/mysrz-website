@@ -9,11 +9,9 @@ export default {
     extend: {
       colors: {
         brand: {
-          // Sourced from the lockup SVG so the whole site palette
-          // matches the logo art.
-          primary: '#15301F', // wordmark dark green (was #1a1a1a near-black)
-          accent: '#D9A227',  // logo saffron sun + separator line (was #d4af37)
-          paper: '#F1F6E6',   // logo snow-cap cream (was #faf9f6)
+          primary: '#1a1a1a',
+          accent: '#d4af37',
+          paper: '#faf9f6',
         },
       },
       fontFamily: {

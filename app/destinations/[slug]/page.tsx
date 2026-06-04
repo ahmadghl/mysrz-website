@@ -146,7 +146,7 @@ export default async function DestinationDetailPage({ params }: Props) {
               className="absolute inset-0"
               style={{
                 background:
-                  'radial-gradient(at 30% 20%, rgba(217,162,39,0.35), transparent 55%), radial-gradient(at 80% 100%, rgba(217,162,39,0.15), transparent 60%), #15301F',
+                  'radial-gradient(at 30% 20%, rgba(212,175,55,0.35), transparent 55%), radial-gradient(at 80% 100%, rgba(212,175,55,0.15), transparent 60%), #1a1a1a',
               }}
             />
           )}
