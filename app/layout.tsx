@@ -11,12 +11,21 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+  // Default `preload: true` is correct — Inter is the body font on
+  // every page, so we want the browser to fetch it eagerly.
 });
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
   display: 'swap',
+  // Only used in `.markdown-body h1/h2/h3` (blog post content). The
+  // Tailwind `font-serif` token has zero usages elsewhere. Preloading
+  // would burn ~48 KB of font bytes on every non-blog page where
+  // Playfair never paints. The browser fetches it lazily when the
+  // markdown-body selector first matches on /blog/[slug], and
+  // display:swap masks the brief FOUT during that one swap.
+  preload: false,
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -83,74 +92,82 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings();
 
-  const orgJsonLd = {
+  // Consolidated JSON-LD graph for the site itself. Three site-wide
+  // entities (Organization, TravelAgency, WebSite) share one
+  // <script> tag via @graph instead of emitting three separate
+  // blocks per page. Page-specific schema (BlogPosting, Person,
+  // TouristAttraction, etc.) is still emitted from individual route
+  // files so each surface ships only what it needs.
+  const siteGraphJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: settings.site_name,
-    url: settings.site_url,
-    logo: `${settings.site_url}/logo.png`,
-    description: settings.site_description,
-    foundingDate: '2021',
-    founder: {
-      '@type': 'Person',
-      name: settings.founder_name,
-      email: settings.email,
-      telephone: settings.phone,
-    },
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: settings.phone,
-      contactType: 'customer support',
-      availableLanguage: ['English', 'Urdu'],
-      areaServed: 'PK',
-    },
-    sameAs: [settings.instagram_url, settings.twitter_url, settings.facebook_url].filter(Boolean),
-  };
-
-  const travelAgencyJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'TravelAgency',
-    name: settings.site_name,
-    url: settings.site_url,
-    telephone: settings.phone,
-    email: settings.email,
-    address: { '@type': 'PostalAddress', addressCountry: 'PK' },
-    areaServed: { '@type': 'Country', name: 'Pakistan' },
-    priceRange: '$$',
-    openingHours: 'Mo-Su 09:00-21:00',
-  };
-
-  const websiteJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: settings.site_name,
-    url: settings.site_url,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${settings.site_url}/blog?q={search_term_string}`,
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': `${settings.site_url}#organization`,
+        name: settings.site_name,
+        url: settings.site_url,
+        logo: `${settings.site_url}/logo.png`,
+        description: settings.site_description,
+        foundingDate: '2021',
+        founder: {
+          '@type': 'Person',
+          name: settings.founder_name,
+          email: settings.email,
+          telephone: settings.phone,
+        },
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: settings.phone,
+          contactType: 'customer support',
+          availableLanguage: ['English', 'Urdu'],
+          areaServed: 'PK',
+        },
+        sameAs: [
+          settings.instagram_url,
+          settings.twitter_url,
+          settings.facebook_url,
+        ].filter(Boolean),
       },
-      'query-input': 'required name=search_term_string',
-    },
+      {
+        '@type': 'TravelAgency',
+        '@id': `${settings.site_url}#travel-agency`,
+        name: settings.site_name,
+        url: settings.site_url,
+        telephone: settings.phone,
+        email: settings.email,
+        address: { '@type': 'PostalAddress', addressCountry: 'PK' },
+        areaServed: { '@type': 'Country', name: 'Pakistan' },
+        priceRange: '$$',
+        openingHours: 'Mo-Su 09:00-21:00',
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${settings.site_url}#website`,
+        name: settings.site_name,
+        url: settings.site_url,
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${settings.site_url}/blog?q={search_term_string}`,
+          },
+          'query-input': 'required name=search_term_string',
+        },
+      },
+    ],
   };
 
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
-        <link rel="dns-prefetch" href="https://picsum.photos" />
-        <link rel="dns-prefetch" href="https://n8n.mysrztourism.com" />
+        {/* Dropped two dns-prefetch hints (picsum.photos +
+            n8n.mysrztourism.com). Neither was used by direct browser
+            requests — picsum is proxied through /_next/image
+            (same-origin), and the newsletter/contact forms POST to
+            /api/* route handlers which call n8n server-side. */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(travelAgencyJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraphJsonLd) }}
         />
       </head>
       <body className="font-sans min-h-screen flex flex-col bg-brand-paper">

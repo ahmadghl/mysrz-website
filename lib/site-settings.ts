@@ -7,6 +7,7 @@
  * POSTing /api/revalidate after every save.
  */
 
+import { cache } from 'react';
 import { SITE as FALLBACK_SITE } from '@/lib/utils';
 
 export interface StatItem {
@@ -170,7 +171,11 @@ function asArray<T>(raw: unknown, fallback: T[]): T[] {
   return Array.isArray(raw) ? (raw as T[]) : fallback;
 }
 
-export async function getSiteSettings(): Promise<SiteSettings> {
+// Wrapped with React.cache() so layout + generateMetadata + Footer +
+// page can all call this once per request and share the result. The
+// inner fetch() also uses the data cache (60min TTL, 'site_settings'
+// tag) for cross-request caching.
+export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_ANON_KEY;
   if (!url || !key) {
@@ -246,4 +251,4 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     console.error('[site-settings] fetch failed:', err);
     return FALLBACK;
   }
-}
+});

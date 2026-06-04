@@ -36,7 +36,12 @@ export function NavBar() {
                   mySRZ wordmark + TOURISM on the right. ViewBox
                   1220×360; dark-green ink (#15301F) reads on the cream
                   navbar bg. The icon sits on a transparent baseline
-                  (no dark ground rect) so it floats cleanly. */}
+                  (no dark ground rect) so it floats cleanly. Native
+                  <img> not next/image: SVGs should never be raster-
+                  pipelined. LCP hints: this is the topmost paint on
+                  every page so we promote it to high fetch priority,
+                  and decoding="async" lets the main thread keep
+                  going while the SVG paints. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/navbar-lockup.svg"
@@ -44,6 +49,8 @@ export function NavBar() {
                 width={1220}
                 height={360}
                 className="h-16 sm:h-20 w-auto"
+                fetchPriority="high"
+                decoding="async"
               />
             </Link>
 

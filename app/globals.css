@@ -49,7 +49,34 @@ body {
   border-radius: 0.25rem;
   font-size: 0.875rem;
 }
-.markdown-body img { width: 100%; border-radius: 1rem; margin: 1.5rem 0; }
+/* CLS guard for unsized images.
+ *
+ * Tiptap's <img> output from the admin doesn't carry width/height
+ * attributes, so before the image bytes arrive the browser reserves
+ * zero vertical space. When the image loads below the user's
+ * current scroll position the page reflows downward — that's a
+ * direct CLS hit on every blog post that embeds imagery.
+ *
+ * `aspect-ratio: 16 / 10` reserves a sensible landscape-photo
+ * placeholder up front. The image then settles into its real
+ * intrinsic ratio once loaded (modern browsers respect intrinsic
+ * dimensions over CSS aspect-ratio when the image fully resolves),
+ * so portrait/square images aren't permanently distorted — they
+ * just snap once at load time. After that one settle, there's no
+ * CLS contribution.
+ *
+ * Also covers Tailwind Typography `.prose img` which the blog post
+ * page applies via `prose prose-stone`. */
+.markdown-body img,
+.prose img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 1rem;
+  margin: 1.5rem 0;
+  background: rgba(0, 0, 0, 0.04);
+}
 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
