@@ -31,15 +31,16 @@ export async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-2">
             <div className="mb-5">
-              {/* Dark-bg variant of the lockup — wordmark + TOURISM ink
-                  is cream (#F1F6E6) so it reads on the near-black footer.
-                  Mountain + saffron sun colors unchanged. */}
+              {/* Dark-bg variant of the horizontal lockup — wordmark
+                  + TOURISM ink is cream (#F1F6E6) so it reads on the
+                  dark-green footer. Mountain + saffron sun colors
+                  unchanged. ViewBox 1220×360. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/navbar-lockup-dark.svg"
                 alt="mySRZ Tourism"
-                width={440}
-                height={164}
+                width={1220}
+                height={360}
                 className="h-20 w-auto"
               />
             </div>
