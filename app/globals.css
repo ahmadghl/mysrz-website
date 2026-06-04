@@ -2,53 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS variables — Aureate palette duplicated for code paths that
+ * read `var(--…)` directly instead of going through Tailwind. */
 :root {
-  --color-primary: #1a1a1a;
-  --color-accent: #d4af37;
-  --color-paper: #faf9f6;
+  --color-primary: #765a0a;
+  --color-accent: #c4a14e;
+  --color-paper: #fdf9e9;
+  --color-on-surface: #1d1c13;
+  --color-on-surface-variant: #4d4638;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background-color: var(--color-paper);
-  color: var(--color-primary);
+  color: var(--color-on-surface);
   -webkit-font-smoothing: antialiased;
 }
 
-.markdown-body { line-height: 1.85; font-size: 1.05rem; color: #1a1a1a; }
+/* Tiptap-authored blog post body styling.
+ *
+ * The .markdown-body and .prose selectors both apply here because
+ * /blog/[slug] wraps content in both. Headings use Playfair
+ * Display (--font-playfair), body Source Serif 4 (no explicit
+ * declaration — body class on <body> handles it). Quotes, code,
+ * links inherit the Aureate palette via aureate-* CSS variables. */
+.markdown-body {
+  line-height: 1.85;
+  font-size: 1.05rem;
+  color: var(--color-on-surface);
+}
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3 {
   font-family: var(--font-playfair), Georgia, serif;
   font-weight: 700;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   margin-bottom: 1rem;
   line-height: 1.3;
+  color: var(--color-on-surface);
 }
 .markdown-body h1 { font-size: 2.25rem; }
 .markdown-body h2 { font-size: 1.75rem; }
 .markdown-body h3 { font-size: 1.35rem; }
-.markdown-body p { margin-bottom: 1.25rem; color: rgba(26, 26, 26, 0.75); }
+.markdown-body p {
+  margin-bottom: 1.25rem;
+  color: var(--color-on-surface-variant);
+}
 .markdown-body ul,
-.markdown-body ol { margin: 1rem 0 1.25rem 1.5rem; color: rgba(26, 26, 26, 0.75); }
+.markdown-body ol {
+  margin: 1rem 0 1.25rem 1.5rem;
+  color: var(--color-on-surface-variant);
+}
 .markdown-body li { margin-bottom: 0.4rem; }
 .markdown-body blockquote {
-  border-left: 3px solid #d4af37;
+  border-left: 3px solid var(--color-accent);
   padding-left: 1.25rem;
   margin: 1.5rem 0;
   font-style: italic;
-  color: rgba(26, 26, 26, 0.6);
+  color: var(--color-on-surface-variant);
 }
-.markdown-body strong { font-weight: 700; color: #1a1a1a; }
-.markdown-body a { color: #d4af37; text-decoration: underline; }
+.markdown-body strong {
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+.markdown-body a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(118, 90, 10, 0.4);
+  transition: text-decoration-color 0.2s ease;
+}
+.markdown-body a:hover {
+  text-decoration-color: rgba(118, 90, 10, 1);
+}
 .markdown-body code {
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(118, 90, 10, 0.08);
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
   font-size: 0.875rem;
 }
+
 /* CLS guard for unsized images.
  *
  * Tiptap's <img> output from the admin doesn't carry width/height
@@ -59,11 +101,7 @@ body {
  *
  * `aspect-ratio: 16 / 10` reserves a sensible landscape-photo
  * placeholder up front. The image then settles into its real
- * intrinsic ratio once loaded (modern browsers respect intrinsic
- * dimensions over CSS aspect-ratio when the image fully resolves),
- * so portrait/square images aren't permanently distorted — they
- * just snap once at load time. After that one settle, there's no
- * CLS contribution.
+ * intrinsic ratio once loaded.
  *
  * Also covers Tailwind Typography `.prose img` which the blog post
  * page applies via `prose prose-stone`. */
@@ -73,11 +111,14 @@ body {
   height: auto;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  border-radius: 1rem;
   margin: 1.5rem 0;
   background: rgba(0, 0, 0, 0.04);
 }
 
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 3px;
+  opacity: 0.4;
+}

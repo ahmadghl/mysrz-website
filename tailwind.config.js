@@ -8,21 +8,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Legacy tokens — kept during the Aureate redesign transition.
-        // Pages not yet rebuilt still reference brand.primary / accent /
-        // paper. These get removed in Phase 5 of the redesign once
-        // every page is on aureate-* tokens.
-        brand: {
-          primary: '#1a1a1a',
-          accent: '#d4af37',
-          paper: '#faf9f6',
-        },
         // Aureate palette — Material 3 expressive-style token set
-        // sourced from the Stitch design. Cream + antique gold + deep
-        // green. Aligns with the brand lockup (green mountains +
-        // saffron sun) which the previous black/cream palette fought
-        // with. Use Tailwind utilities like `bg-aureate-surface`,
-        // `text-aureate-on-surface`, `border-aureate-outline-variant`.
+        // sourced from the Stitch design. Cream + antique gold +
+        // deep green. Aligns with the brand lockup (green mountains +
+        // saffron sun). Use Tailwind utilities like
+        // `bg-aureate-surface`, `text-aureate-on-surface`,
+        // `border-aureate-outline-variant`.
         aureate: {
           'primary': '#765a0a',
           'primary-container': '#c4a14e',
@@ -74,19 +65,14 @@ export default {
         },
       },
       fontFamily: {
-        // Legacy mappings — kept for pages still using `font-serif` /
-        // `font-sans` Tailwind utilities during redesign transition.
-        serif: ['var(--font-playfair)', 'Georgia', 'serif'],
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        // Aureate typography stack. Phase 2 wires up the actual
-        // `--font-source-serif-4` and `--font-montserrat` CSS variables
-        // via next/font in app/layout.tsx. Until then these gracefully
-        // fall back to the system serif / sans (which already look
-        // reasonable for the design).
+        // Aureate typography stack — Source Serif 4 for body,
+        // Playfair Display for headlines, Montserrat for labels.
+        // All wired in app/layout.tsx via next/font/google with
+        // restricted weights.
         'aureate-display': ['var(--font-playfair)', 'Georgia', 'serif'],
         'aureate-headline': ['var(--font-playfair)', 'Georgia', 'serif'],
         'aureate-body': ['var(--font-source-serif-4)', 'Georgia', 'serif'],
-        'aureate-label': ['var(--font-montserrat)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        'aureate-label': ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // Aureate type scale lifted from the Stitch tokens. Use as

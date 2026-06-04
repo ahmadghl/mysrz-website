@@ -1,23 +1,27 @@
 export default function DestinationsLoading() {
   return (
     <>
-      <div className="bg-brand-primary text-white py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="h-4 w-32 bg-white/10 rounded animate-pulse mb-4" />
-          <div className="h-12 w-72 bg-white/10 rounded animate-pulse mb-4" />
-          <div className="h-5 w-full max-w-2xl bg-white/10 rounded animate-pulse" />
+      {/* Hero skeleton — mirrors the cinematic-image hero block. */}
+      <div className="relative h-[70vh] animate-pulse bg-aureate-surface-container-high" />
+      <div className="mx-auto max-w-aureate-container px-aureate-mobile py-16 md:px-aureate-desktop md:py-24">
+        {/* Featured large card skeleton */}
+        <div className="mb-20 grid grid-cols-1 gap-aureate-gutter md:grid-cols-12">
+          <div className="aspect-[7/6] animate-pulse bg-aureate-surface-container-high md:col-span-7" />
+          <div className="space-y-4 md:col-span-5 md:pl-12">
+            <div className="h-4 w-32 animate-pulse bg-aureate-surface-container-high" />
+            <div className="h-12 w-2/3 animate-pulse bg-aureate-surface-container-high" />
+            <div className="h-4 w-full animate-pulse bg-aureate-surface-container-high" />
+            <div className="h-4 w-5/6 animate-pulse bg-aureate-surface-container-high" />
+          </div>
         </div>
-      </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-brand-paper rounded-2xl overflow-hidden shadow-sm">
-              <div className="h-52 bg-brand-primary/10 animate-pulse" />
-              <div className="p-5 space-y-3">
-                <div className="h-5 w-2/3 bg-brand-primary/10 rounded animate-pulse" />
-                <div className="h-4 w-full bg-brand-primary/10 rounded animate-pulse" />
-                <div className="h-4 w-1/2 bg-brand-primary/10 rounded animate-pulse" />
-              </div>
+        {/* Secondary cards skeleton */}
+        <div className="grid grid-cols-1 gap-20 md:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="space-y-6">
+              <div className="aspect-[4/5] animate-pulse bg-aureate-surface-container-high" />
+              <div className="h-4 w-24 animate-pulse bg-aureate-surface-container-high" />
+              <div className="h-7 w-2/3 animate-pulse bg-aureate-surface-container-high" />
+              <div className="h-4 w-full animate-pulse bg-aureate-surface-container-high" />
             </div>
           ))}
         </div>

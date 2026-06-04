@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import Link from 'next/link';
-import { AlertTriangle, Home, ArrowRight } from 'lucide-react';
+import { AlertTriangle, Home } from 'lucide-react';
+import { AureateButton } from '@/components/aureate/AureateButton';
 
 export default function GlobalError({
   error,
@@ -16,36 +16,30 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <main className="min-h-[60vh] flex items-center justify-center px-4 py-20">
+    <main className="flex min-h-[60vh] items-center justify-center px-aureate-mobile py-24 md:px-aureate-desktop">
       <div className="max-w-md text-center">
         <AlertTriangle
           size={40}
-          className="mx-auto mb-4 text-brand-accent"
+          className="mx-auto mb-6 text-aureate-primary"
           aria-hidden="true"
         />
-        <h1 className="text-2xl font-bold text-brand-primary mb-2">
+        <h1 className="mb-4 font-aureate-headline text-aureate-headline-md text-aureate-on-surface">
           Something went wrong
         </h1>
-        <p className="text-brand-primary/60 mb-6">
-          We hit an unexpected error rendering this page. Please try again,
-          or head back home.
+        <p className="mb-10 font-aureate-body text-aureate-body-md text-aureate-on-surface-variant">
+          We hit an unexpected error rendering this page. Please try again, or
+          head back home.
         </p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <button
-            onClick={() => reset()}
-            className="bg-brand-primary text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-brand-primary/90 transition-all"
-          >
-            Try again
-          </button>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 bg-brand-accent text-brand-primary px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-brand-accent/90 transition-all"
-          >
-            <Home size={14} /> Home <ArrowRight size={14} />
-          </Link>
+        <div className="flex flex-wrap justify-center gap-4">
+          <AureateButton onClick={() => reset()} variant="primary">
+            Try Again
+          </AureateButton>
+          <AureateButton href="/" variant="outline-on-light">
+            <Home size={14} className="mr-2" aria-hidden="true" /> Home
+          </AureateButton>
         </div>
         {error.digest && (
-          <p className="mt-6 text-xs text-brand-primary/40">
+          <p className="mt-8 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant/70">
             Error ref: {error.digest}
           </p>
         )}

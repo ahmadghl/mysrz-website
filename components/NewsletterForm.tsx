@@ -1,8 +1,17 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Send } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
+/**
+ * Aureate-restyled footer newsletter form. Renders against the
+ * deep-green footer, so the input is a transparent underline
+ * field with cream copy and an antique-gold submit chevron.
+ *
+ * Submit logic + POST payload to /api/newsletter unchanged.
+ * Soft-fail UX preserved (always shows success to avoid
+ * confusing the visitor if the upstream webhook is down).
+ */
 export function NewsletterForm() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
@@ -31,27 +40,29 @@ export function NewsletterForm() {
   };
 
   return (
-    <div>
-      <h4 className="font-bold text-sm uppercase tracking-widest mb-3 text-white/70">Newsletter</h4>
-      <form onSubmit={submit} className="flex gap-2">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Your email"
-          required
-          className="bg-brand-primary/80 border border-white/10 rounded-lg px-3 py-2 text-sm flex-grow focus:outline-none focus:border-brand-accent placeholder:text-brand-primary/70 text-white"
-        />
-        <button
-          type="submit"
-          disabled={submitting}
-          aria-label="Subscribe"
-          className="bg-brand-primary px-3 py-2 rounded-lg hover:bg-brand-primary/90 transition-all text-white disabled:opacity-60"
-        >
-          <Send size={14} />
-        </button>
-      </form>
-      {sent && <p className="text-brand-accent text-xs mt-2">✓ Subscribed! Thank you.</p>}
-    </div>
+    <form onSubmit={submit} className="flex items-center gap-3 border-b border-white/30 pb-2">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email address"
+        required
+        aria-label="Email address"
+        className="flex-grow bg-transparent py-2 font-aureate-body text-aureate-body-md text-white placeholder:text-white/50 focus:outline-none focus:ring-0"
+      />
+      <button
+        type="submit"
+        disabled={submitting}
+        aria-label="Subscribe to the newsletter"
+        className="p-2 text-aureate-primary-fixed-dim transition-transform hover:translate-x-1 disabled:opacity-50"
+      >
+        <ArrowRight size={18} />
+      </button>
+      {sent && (
+        <span className="sr-only" role="status">
+          Subscribed
+        </span>
+      )}
+    </form>
   );
 }

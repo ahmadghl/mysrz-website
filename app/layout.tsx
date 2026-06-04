@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Montserrat, Playfair_Display, Source_Serif_4 } from 'next/font/google';
+import { Montserrat, Playfair_Display, Source_Serif_4 } from 'next/font/google';
 import { Suspense } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
@@ -7,14 +7,10 @@ import { Tracker } from '@/components/Tracker';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-  // Inter is still used by old (pre-Aureate-redesign) pages during
-  // the transition. Gets demoted to preload:false in Phase 5 when
-  // every page is on the Aureate typography stack.
-});
+// Inter was dropped in Phase 5 — every page is now on the Aureate
+// typography stack (Playfair / Source Serif 4 / Montserrat). The
+// fallback chain for Montserrat steps straight to system-ui which is
+// fine for the brief FOUT window before the variable font arrives.
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -107,7 +103,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a1a',
+  // Cream — matches Aureate `background` token. Affects mobile
+  // browser chrome (Safari address bar, PWA splash, etc.).
+  themeColor: '#fdf9e9',
   width: 'device-width',
   initialScale: 1,
 };
@@ -183,7 +181,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} ${sourceSerif.variable} ${montserrat.variable}`}
+      className={`${playfair.variable} ${sourceSerif.variable} ${montserrat.variable}`}
     >
       <head>
         {/* Dropped two dns-prefetch hints (picsum.photos +
@@ -196,7 +194,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraphJsonLd) }}
         />
       </head>
-      <body className="font-sans min-h-screen flex flex-col bg-brand-paper">
+      <body className="flex min-h-screen flex-col bg-aureate-background font-aureate-body text-aureate-on-surface">
         <NavBar />
         <main className="flex-grow">{children}</main>
         <Footer />
