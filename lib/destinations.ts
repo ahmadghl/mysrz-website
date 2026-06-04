@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Destination, FaqItem } from './types';
 import { resolveImageUrl } from './image-utils';
 
@@ -113,16 +114,20 @@ async function fetchFromSupabase(slug?: string): Promise<Destination[] | null> {
   }
 }
 
-export async function getAllDestinations(): Promise<Destination[]> {
+// Wrapped with React.cache() so the layout + page + sitemap share a
+// single fetch per request. The inner fetch() still uses the data
+// cache (60s TTL, 'destinations' tag) for cross-request caching
+// invalidated by /api/revalidate.
+export const getAllDestinations = cache(async (): Promise<Destination[]> => {
   return (await fetchFromSupabase()) ?? [];
-}
+});
 
-export async function getDestinationBySlug(
-  slug: string,
-): Promise<Destination | null> {
-  const rows = await fetchFromSupabase(slug);
-  return rows?.[0] ?? null;
-}
+export const getDestinationBySlug = cache(
+  async (slug: string): Promise<Destination | null> => {
+    const rows = await fetchFromSupabase(slug);
+    return rows?.[0] ?? null;
+  },
+);
 
 export async function getDestinationSlugs(): Promise<string[]> {
   const all = await getAllDestinations();

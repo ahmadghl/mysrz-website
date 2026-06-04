@@ -34,7 +34,11 @@ export async function Footer() {
               {/* Dark-bg variant of the horizontal lockup — wordmark
                   + TOURISM ink is cream (#F1F6E6) so it reads on the
                   dark-green footer. Mountain + saffron sun colors
-                  unchanged. ViewBox 1220×360. */}
+                  unchanged. ViewBox 1220×360. Below the fold on every
+                  page — loading="lazy" defers the request until the
+                  user scrolls so it doesn't compete with hero imagery
+                  on first paint. decoding="async" stays off the main
+                  thread. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/navbar-lockup-dark.svg"
@@ -42,6 +46,8 @@ export async function Footer() {
                 width={1220}
                 height={360}
                 className="h-20 w-auto"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
