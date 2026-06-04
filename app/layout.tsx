@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Playfair_Display, Outfit, IBM_Plex_Mono } from 'next/font/google';
+import { Inter, Playfair_Display } from 'next/font/google';
 import { Suspense } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
@@ -16,23 +16,6 @@ const inter = Inter({
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
-  display: 'swap',
-});
-
-// Brand-lockup typefaces. Outfit drives the "mySRZ" wordmark; IBM
-// Plex Mono drives the saffron tagline. Loaded as CSS variables so
-// NavBar / Footer can apply the user's canonical font stack.
-const outfit = Outfit({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-outfit',
-  display: 'swap',
-});
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-plex-mono',
   display: 'swap',
 });
 
@@ -153,7 +136,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} ${outfit.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
         <link rel="dns-prefetch" href="https://picsum.photos" />
         <link rel="dns-prefetch" href="https://n8n.mysrztourism.com" />
