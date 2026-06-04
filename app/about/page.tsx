@@ -2,13 +2,25 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  Heart, Award, Users, Phone, Mail,
-  Globe, Star, MapPin, BookOpen, Camera, Compass,
+  Award,
+  BookOpen,
+  Camera,
+  Compass,
+  Globe,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Star,
+  Users,
   type LucideIcon,
 } from 'lucide-react';
 import { getSiteSettings } from '@/lib/site-settings';
 import { SITE } from '@/lib/utils';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
+import { PaperStack } from '@/components/aureate/PaperStack';
+import { AureateButton } from '@/components/aureate/AureateButton';
 
 export const metadata: Metadata = {
   title: 'About mySRZ — Pakistan Travel Experts',
@@ -34,6 +46,9 @@ export default async function AboutPage() {
     settings.facebook_url || SITE.social.facebook,
   ].filter(Boolean);
 
+  // Canonical Person JSON-LD referenced from every BlogPosting on
+  // /blog/[slug] via @id. Lets Google build a single connected
+  // author entity across the whole site.
   const personJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -71,112 +86,227 @@ export default async function AboutPage() {
         ]}
         hideVisual
       />
-      <div className="bg-brand-primary text-white py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">{settings.about_kicker}</span>
-          <h1 className="text-5xl font-bold mt-3 mb-4">{settings.about_title}</h1>
-          <p className="text-white/60 max-w-2xl text-lg">
-            {settings.about_intro_subtitle}
-          </p>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
-          <div>
-            <div
-              className="prose prose-stone max-w-none text-brand-primary/70 leading-relaxed prose-p:my-3 prose-h2:text-3xl prose-h2:font-bold prose-h2:text-brand-primary prose-h2:mb-6 prose-h2:mt-0 prose-strong:text-brand-primary"
-              dangerouslySetInnerHTML={{ __html: settings.about_intro_html }}
-            />
-            <div className="mt-8 flex gap-4">
-              <Link href="/contact" className="bg-brand-accent text-brand-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-brand-accent/90 transition-all">
-                Get in Touch
-              </Link>
-              <Link href="/blog" className="border border-stone-300 text-brand-primary/80 px-6 py-3 rounded-xl font-bold text-sm hover:border-brand-accent transition-all">
-                Read Our Blog
-              </Link>
+      {/* ───── HERO ───── */}
+      <section className="relative flex h-[70vh] items-center overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src={settings.about_image_url}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            aria-hidden="true"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-aureate-background/20 to-aureate-background" />
+        </div>
+        <RevealOnScroll className="relative z-10 mx-auto w-full max-w-aureate-container px-aureate-mobile md:px-aureate-desktop">
+          <div className="max-w-2xl">
+            <span className="mb-4 block font-aureate-label text-aureate-label-md uppercase tracking-[0.3em] text-aureate-primary">
+              {settings.about_kicker}
+            </span>
+            <h1 className="mb-8 font-aureate-display text-aureate-display-lg-mobile italic leading-tight text-aureate-on-surface md:text-aureate-display-lg">
+              {settings.about_title}
+            </h1>
+            <div className="mb-8 h-px w-24 bg-aureate-primary-container" />
+            <p className="font-aureate-body text-aureate-body-lg text-aureate-on-surface-variant">
+              {settings.about_intro_subtitle}
+            </p>
+          </div>
+        </RevealOnScroll>
+      </section>
+
+      {/* ───── MISSION / PHILOSOPHY ───── */}
+      <section className="mx-auto max-w-aureate-container px-aureate-mobile py-24 md:px-aureate-desktop">
+        <RevealOnScroll>
+          <div className="grid grid-cols-1 items-center gap-aureate-gutter md:grid-cols-12">
+            <div className="mb-12 md:col-span-5 md:mb-0">
+              <PaperStack className="group overflow-hidden">
+                <Image
+                  src={settings.about_image_url}
+                  alt={`${siteName} — about`}
+                  width={600}
+                  height={750}
+                  sizes="(max-width: 768px) 100vw, 42vw"
+                  className="aspect-[4/5] w-full border border-aureate-outline-variant object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </PaperStack>
+            </div>
+            <div className="md:col-span-6 md:col-start-7">
+              <h2 className="mb-6 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                Our Mission
+              </h2>
+              <div
+                className="prose prose-stone max-w-none prose-headings:font-aureate-headline prose-headings:text-aureate-on-surface prose-h2:text-aureate-headline-md prose-p:font-aureate-body prose-p:text-aureate-body-lg prose-p:leading-relaxed prose-p:text-aureate-on-surface-variant prose-a:text-aureate-primary prose-strong:text-aureate-on-surface"
+                dangerouslySetInnerHTML={{ __html: settings.about_intro_html }}
+              />
+              <div className="mt-8 flex flex-wrap gap-4">
+                <AureateButton href="/contact" variant="primary">
+                  Get in Touch
+                </AureateButton>
+                <AureateButton href="/blog" variant="outline-on-light">
+                  Read the Journal
+                </AureateButton>
+              </div>
             </div>
           </div>
-          <div className="relative">
-            <Image
-              src={settings.about_image_url}
-              alt="Pakistan travel"
-              width={600}
-              height={500}
-              className="w-full rounded-2xl shadow-xl object-cover"
-            />
-            <div className="absolute -bottom-6 -left-6 bg-brand-accent text-brand-primary p-5 rounded-2xl shadow-lg">
-              <div className="text-3xl font-bold">{settings.about_years_badge_value}</div>
-              <div className="text-xs uppercase tracking-wider text-brand-primary/70">{settings.about_years_badge_label}</div>
-            </div>
-          </div>
-        </div>
+        </RevealOnScroll>
+      </section>
 
-        {settings.about_values.length > 0 && (
-          <div className="bg-brand-paper rounded-3xl p-10 mb-16">
-            <h2 className="text-3xl font-bold text-brand-primary mb-10 text-center">What We Stand For</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {settings.about_values.map(({ icon, title, desc }) => {
+      {/* ───── PILLARS / VALUES ───── */}
+      {settings.about_values.length > 0 && (
+        <section className="overflow-hidden bg-aureate-surface-container-low py-24 md:py-32">
+          <div className="mx-auto max-w-aureate-container px-aureate-mobile md:px-aureate-desktop">
+            <RevealOnScroll className="mb-16 text-center">
+              <h2 className="mb-4 font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+                What we stand for
+              </h2>
+              <p className="mx-auto max-w-xl font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                Principles that shape every guide we write
+              </p>
+            </RevealOnScroll>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {settings.about_values.map(({ icon, title, desc }, i) => {
                 const Icon = (icon && VALUE_ICONS[icon]) || Heart;
                 return (
-                  <div key={title} className="text-center">
-                    <div className="w-14 h-14 bg-brand-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Icon size={24} className="text-brand-primary" />
+                  <RevealOnScroll key={title} delay={i * 100}>
+                    <div
+                      className={`group flex h-full flex-col justify-between border border-aureate-outline-variant bg-aureate-surface p-10 transition-all duration-500 hover:-translate-y-1 hover:border-aureate-primary hover:shadow-xl md:p-12 ${
+                        i === 1 ? 'md:translate-y-12' : ''
+                      }`}
+                    >
+                      <div>
+                        <span className="mb-6 block font-aureate-display text-5xl text-aureate-primary-container/30 transition-colors duration-300 group-hover:text-aureate-primary-container/60">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <Icon
+                          size={32}
+                          className="mb-6 text-aureate-primary"
+                          aria-hidden="true"
+                        />
+                        <h3 className="mb-4 font-aureate-headline text-aureate-headline-md text-aureate-on-surface">
+                          {title}
+                        </h3>
+                        <p className="font-aureate-body text-aureate-body-md leading-relaxed text-aureate-on-surface-variant">
+                          {desc}
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="font-bold text-brand-primary text-lg mb-2">{title}</h3>
-                    <p className="text-brand-primary/50 text-sm leading-relaxed">{desc}</p>
-                  </div>
+                  </RevealOnScroll>
                 );
               })}
             </div>
           </div>
-        )}
+        </section>
+      )}
 
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-brand-primary mb-10 text-center">The Team</h2>
-          <div className="flex justify-center">
-            <div className="text-center max-w-sm">
+      {/* ───── FOUNDER ───── */}
+      <section className="mx-auto max-w-aureate-container px-aureate-mobile py-24 md:px-aureate-desktop md:py-32">
+        <RevealOnScroll className="mb-12">
+          <div className="flex items-end justify-between">
+            <h2 className="font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+              The Team
+            </h2>
+            <div className="hidden h-px flex-grow bg-aureate-outline-variant md:ml-12 md:block" />
+          </div>
+        </RevealOnScroll>
+        <RevealOnScroll>
+          <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-12">
+            <div className="md:col-span-5">
               {settings.founder_image_url ? (
-                <Image
-                  src={settings.founder_image_url}
-                  alt={founderName}
-                  width={128}
-                  height={128}
-                  className="w-32 h-32 rounded-full object-cover mx-auto mb-5 shadow-lg"
-                />
+                <PaperStack className="group overflow-hidden">
+                  <Image
+                    src={settings.founder_image_url}
+                    alt={founderName}
+                    width={500}
+                    height={625}
+                    sizes="(max-width: 768px) 100vw, 42vw"
+                    className="aspect-[4/5] w-full border border-aureate-outline-variant object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </PaperStack>
               ) : (
-                <div className="w-32 h-32 bg-gradient-to-br from-brand-accent to-amber-600 rounded-full mx-auto mb-5 flex items-center justify-center text-brand-primary text-4xl font-bold shadow-lg">
+                <div className="flex aspect-[4/5] items-center justify-center border border-aureate-outline-variant bg-aureate-primary text-6xl font-bold text-aureate-on-primary">
                   {settings.founder_initials}
                 </div>
               )}
-              <h3 className="text-xl font-bold text-brand-primary">{founderName}</h3>
-              <p className="text-brand-primary font-semibold text-sm mb-3">{settings.founder_role}</p>
-              <p className="text-brand-primary/50 text-sm leading-relaxed mb-4">
+            </div>
+            <div className="space-y-6 md:col-span-7">
+              <span className="block font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                Founder &amp; Curator
+              </span>
+              <h3 className="font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+                {founderName}
+              </h3>
+              <p className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant">
+                {settings.founder_role}
+              </p>
+              <p className="font-aureate-body text-aureate-body-lg leading-relaxed text-aureate-on-surface-variant">
                 {settings.founder_bio}
               </p>
-              <div className="flex justify-center gap-3">
-                <a href={settings.phone_link} className="flex items-center gap-2 text-sm text-brand-primary/70 hover:text-brand-primary transition-colors">
-                  <Phone size={14} /> {settings.phone_display}
+              <div className="flex flex-wrap gap-6 pt-4">
+                <a
+                  href={settings.phone_link}
+                  className="inline-flex items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface underline decoration-aureate-outline-variant decoration-1 underline-offset-4 transition-all hover:decoration-aureate-primary"
+                >
+                  <Phone size={12} aria-hidden="true" /> {settings.phone_display}
                 </a>
-                <a href={`mailto:${settings.email}`} className="flex items-center gap-2 text-sm text-brand-primary/70 hover:text-brand-primary transition-colors">
-                  <Mail size={14} /> Email
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="inline-flex items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface underline decoration-aureate-outline-variant decoration-1 underline-offset-4 transition-all hover:decoration-aureate-primary"
+                >
+                  <Mail size={12} aria-hidden="true" /> Email
                 </a>
               </div>
             </div>
           </div>
-        </div>
+        </RevealOnScroll>
+      </section>
 
-        {settings.about_stats.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {settings.about_stats.map(({ value, label }) => (
-              <div key={label} className="text-center bg-brand-paper border border-black/5 rounded-2xl p-6 shadow-sm">
-                <div className="text-4xl font-bold text-brand-primary mb-1">{value}</div>
-                <div className="text-xs uppercase tracking-wider text-brand-primary/50 font-medium">{label}</div>
-              </div>
-            ))}
+      {/* ───── STATS ───── */}
+      {settings.about_stats.length > 0 && (
+        <section className="border-y border-aureate-outline-variant bg-aureate-surface">
+          <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile py-16 md:px-aureate-desktop md:py-20">
+            <div className="grid grid-cols-2 gap-aureate-gutter text-center md:grid-cols-4">
+              {settings.about_stats.map(({ value, label }, i) => {
+                const isLast = i === settings.about_stats.length - 1;
+                return (
+                  <div
+                    key={label}
+                    className={`p-6 transition-colors duration-500 hover:bg-aureate-surface-container-low md:border-r md:border-aureate-outline-variant ${
+                      isLast ? 'md:border-r-0' : ''
+                    }`}
+                  >
+                    <p className="mb-2 font-aureate-display text-aureate-headline-lg text-aureate-primary">
+                      {value}
+                    </p>
+                    <p className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant">
+                      {label}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </RevealOnScroll>
+        </section>
+      )}
+
+      {/* ───── BOTTOM CTA ───── */}
+      <section className="border-t border-aureate-outline-variant py-24">
+        <RevealOnScroll className="mx-auto max-w-2xl px-aureate-mobile text-center md:px-aureate-desktop">
+          <h2 className="mb-8 font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+            Begin your Pakistan story
+          </h2>
+          <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-6">
+            <AureateButton href="/destinations" variant="primary">
+              View Destinations
+            </AureateButton>
+            <AureateButton href="/blog" variant="outline-on-light">
+              The Journal
+            </AureateButton>
           </div>
-        )}
-      </div>
+        </RevealOnScroll>
+      </section>
     </>
   );
 }
