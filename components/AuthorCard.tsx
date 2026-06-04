@@ -29,7 +29,7 @@ export function AuthorCard({ name, bio }: Props = {}) {
       <div className="flex items-start gap-4 bg-brand-paper rounded-2xl p-6 border border-brand-accent/15">
         <div
           className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-brand-primary font-bold text-xl"
-          style={{ background: 'rgba(217,162,39,0.18)' }}
+          style={{ background: 'rgba(212,175,55,0.18)' }}
           aria-hidden="true"
         >
           {displayName
