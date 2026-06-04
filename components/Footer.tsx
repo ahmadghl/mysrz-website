@@ -63,7 +63,7 @@ export async function Footer() {
           </div>
 
           <div>
-            <h4 style={{ color: '#d4af37', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '20px' }}>
+            <h4 style={{ color: '#D9A227', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '20px' }}>
               Quick Links
             </h4>
             <ul className="space-y-3 text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
@@ -78,7 +78,7 @@ export async function Footer() {
           </div>
 
           <div>
-            <h4 style={{ color: '#d4af37', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '20px' }}>
+            <h4 style={{ color: '#D9A227', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '20px' }}>
               Contact Us
             </h4>
             <ul className="space-y-3 text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
@@ -106,11 +106,11 @@ export async function Footer() {
         </div>
 
         <div
-          style={{ background: '#d4af37', margin: '0 -2rem', padding: '10px 2rem' }}
+          style={{ background: '#D9A227', margin: '0 -2rem', padding: '10px 2rem' }}
           className="flex flex-col md:flex-row justify-between items-center gap-3 text-xs"
         >
-          <span style={{ color: '#1a1a1a', fontWeight: 700 }}>{copyrightText}</span>
-          <div className="flex gap-6" style={{ color: '#1a1a1a' }}>
+          <span style={{ color: '#15301F', fontWeight: 700 }}>{copyrightText}</span>
+          <div className="flex gap-6" style={{ color: '#15301F' }}>
             <Link href="/about" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/about" className="hover:text-white transition-colors">Terms of Use</Link>
             <a href="/sitemap.xml" className="hover:text-white transition-colors">Sitemap</a>
