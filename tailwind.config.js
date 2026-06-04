@@ -23,7 +23,11 @@ export default {
           'on-primary-container': '#4c3800',
           'on-primary-fixed': '#251a00',
           'on-primary-fixed-variant': '#5a4300',
-          'secondary': '#2b6954',
+          // Deepened from the M3 default #2b6954 to better match the
+          // brand-lockup mountain ink. Sits at roughly the same hue
+          // but ~30% darker — feels more like deep forest / juniper
+          // than the bright teal-green of the original token.
+          'secondary': '#1f4e3c',
           'secondary-container': '#adedd3',
           'secondary-fixed': '#b0f0d6',
           'secondary-fixed-dim': '#95d3ba',
