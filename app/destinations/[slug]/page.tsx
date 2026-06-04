@@ -3,16 +3,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Calendar, MapPin, Phone, Mail, Camera } from 'lucide-react';
-import { getAllDestinations, getDestinationBySlug } from '@/lib/destinations';
+import {
+  getAllDestinations,
+  getDestinationBySlug,
+  getDestinationSlugs,
+} from '@/lib/destinations';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { FaqSection } from '@/components/FaqSection';
 import { SITE } from '@/lib/utils';
 
-// Render dynamically so unknown slugs return a real 404 status code.
-// The underlying Supabase fetch is still cached via the `destinations`
-// tag (revalidated by /api/revalidate), so the DB is not hit on every
-// request — only the React render is per-request.
-export const dynamic = 'force-dynamic';
+// ISR: cache rendered HTML at the edge. Admin publishes call
+// /api/revalidate which fires revalidateTag('destinations') +
+// revalidatePath to purge instantly; the 60s window below is just a
+// safety net. Known slugs prerender at build via generateStaticParams;
+// unknown slugs render on demand and notFound() still emits a real 404.
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getDestinationSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -67,10 +77,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DestinationDetailPage({ params }: Props) {
   const { slug } = await params;
-  const dest = await getDestinationBySlug(slug);
+  // Parallelize the lookup + the all-destinations list (used to pick
+  // related). Both go through React.cache + the data cache, but
+  // Promise.all hides the round-trip on cold caches.
+  const [dest, all] = await Promise.all([
+    getDestinationBySlug(slug),
+    getAllDestinations(),
+  ]);
   if (!dest) notFound();
 
-  const all = await getAllDestinations();
   const related = all
     .filter((d) => d.slug !== dest.slug && d.region === dest.region)
     .slice(0, 3);

@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Post, FaqItem } from './types';
 import { slugify } from './utils';
 import { resolveImageUrl } from './image-utils';
@@ -104,17 +105,30 @@ async function fetchFromSupabase(slug?: string): Promise<Post[] | null> {
   }
 }
 
-export async function getAllPosts(): Promise<Post[]> {
+// Wrapped with React.cache() so multiple call-sites in a single
+// request (layout + page + sitemap + related lookup) share one fetch.
+// The inner fetch() still uses the data cache (60s TTL, 'posts' tag)
+// for cross-request caching invalidated by /api/revalidate.
+export const getAllPosts = cache(async (): Promise<Post[]> => {
   return (await fetchFromSupabase()) ?? [];
-}
+});
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
+export const getPostBySlug = cache(async (slug: string): Promise<Post | null> => {
   const rows = await fetchFromSupabase(slug);
   return rows?.[0] ?? null;
-}
+});
 
-export async function getRelatedPosts(slug: string, limit = 4): Promise<Post[]> {
-  const all = await getAllPosts();
+/**
+ * Pick related posts from a pre-fetched list. Pass the result of
+ * getAllPosts() (cheap because cached) — avoids a second round-trip on
+ * detail pages. Falls back to fetching itself if no list is provided.
+ */
+export async function getRelatedPosts(
+  slug: string,
+  limit = 4,
+  fromList?: Post[],
+): Promise<Post[]> {
+  const all = fromList ?? (await getAllPosts());
   return all.filter((p) => p.slug !== slug).slice(0, limit);
 }
 

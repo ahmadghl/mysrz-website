@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import {
   ArrowRight, User, Calendar, Clock, Eye, Phone, Mail,
 } from 'lucide-react';
-import { getPostBySlug, getRelatedPosts } from '@/lib/posts';
+import { getAllPosts, getPostBySlug, getPostSlugs, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { FaqSection } from '@/components/FaqSection';
@@ -18,10 +18,18 @@ import { SITE } from '@/lib/utils';
 // app/about/page.tsx).
 const AUTHOR_ID = `${SITE.url}/about#ahmad-fraz`;
 
-// Render dynamically so unknown slugs return a real 404 status code.
-// Supabase fetches are still cached via the `posts` tag and invalidated
-// by /api/revalidate when the admin publishes.
-export const dynamic = 'force-dynamic';
+// ISR: cache rendered HTML at the edge. Admin publishes call
+// /api/revalidate which fires revalidateTag('posts') + revalidatePath
+// to purge instantly; the 60s window below is just a safety net in
+// case the webhook ever fails. Known slugs are prerendered at build
+// time via generateStaticParams; unknown slugs render on demand and
+// notFound() still emits a real 404 status code under ISR.
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getPostSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 function truncateDescription(input: string, max: number) {
   if (input.length <= max) return input;
@@ -77,10 +85,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  // Parallelize the post lookup and the all-posts list (used for
+  // related). Both share the data cache underneath, but Promise.all
+  // hides the round-trip latency when caches are cold.
+  const [post, allPosts] = await Promise.all([
+    getPostBySlug(slug),
+    getAllPosts(),
+  ]);
   if (!post) notFound();
 
-  const related = await getRelatedPosts(post.slug, 4);
+  const related = await getRelatedPosts(post.slug, 4, allPosts);
   const contentIsHTML = isHTML(post.content);
   // image_url is already resolved through resolveImageUrl in lib/posts.ts
   const heroImage = post.image_url;

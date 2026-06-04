@@ -5,6 +5,12 @@ const nextConfig = {
   compress: true,
   images: {
     formats: ['image/avif', 'image/webp'],
+    // Cache optimized images for 1 day. Safe even if admin replaces an
+    // image at the same URL — Next/image keys on URL+query, so a new
+    // upload (different URL) or a busted `?v=` query gets a fresh
+    // optimized output immediately. Default is 60s which re-runs the
+    // optimizer on every CDN miss.
+    minimumCacheTTL: 86400,
     remotePatterns: [
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
