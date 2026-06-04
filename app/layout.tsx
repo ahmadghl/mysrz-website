@@ -11,12 +11,21 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+  // Default `preload: true` is correct — Inter is the body font on
+  // every page, so we want the browser to fetch it eagerly.
 });
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
   display: 'swap',
+  // Only used in `.markdown-body h1/h2/h3` (blog post content). The
+  // Tailwind `font-serif` token has zero usages elsewhere. Preloading
+  // would burn ~48 KB of font bytes on every non-blog page where
+  // Playfair never paints. The browser fetches it lazily when the
+  // markdown-body selector first matches on /blog/[slug], and
+  // display:swap masks the brief FOUT during that one swap.
+  preload: false,
 });
 
 export async function generateMetadata(): Promise<Metadata> {
