@@ -30,45 +30,18 @@ export async function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-4 mb-5">
-              {/* Same mark as the NavBar (public/mysrz-mark.svg). The
-                  mark's stroke is saffron so it reads against the
-                  dark footer without needing a second SVG variant. */}
+            <div className="mb-5">
+              {/* Dark-bg variant of the same lockup — wordmark + tagline
+                  ink swapped to cream (#fbf9f5) so they read on the
+                  near-black footer. Mountain + sun colors unchanged. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/mysrz-mark.svg"
-                alt=""
-                width={66}
-                height={44}
-                className="h-12 w-auto"
+                src="/navbar-lockup-dark.svg"
+                alt="mySRZ Travel & Tourism"
+                width={454}
+                height={128}
+                className="h-14 w-auto"
               />
-              <div className="flex flex-col leading-none">
-                <span
-                  style={{
-                    fontFamily:
-                      'var(--font-outfit), "Outfit", "Söhne", system-ui, sans-serif',
-                    color: '#fbf9f5',
-                    fontSize: '2rem',
-                    fontWeight: 600,
-                    letterSpacing: '-0.03em',
-                  }}
-                >
-                  mySRZ
-                </span>
-                <span
-                  className="mt-1 text-brand-accent"
-                  style={{
-                    fontFamily:
-                      'var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace',
-                    fontSize: '0.7rem',
-                    fontWeight: 500,
-                    letterSpacing: '0.28em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Travel · Tourism · PK
-                </span>
-              </div>
             </div>
             <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
               {settings.footer_tagline}
