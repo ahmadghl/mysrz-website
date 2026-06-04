@@ -32,15 +32,17 @@ export function NavBar() {
               onClick={() => setOpen(false)}
               aria-label="mySRZ Travel & Tourism — home"
             >
-              {/* Full brand lockup (mountain + mySRZ wordmark + TOURISM
-                  bar) from the design-system export. ViewBox 440×164;
-                  dark-green ink (#15301F) reads on cream navbar bg. */}
+              {/* Horizontal brand lockup — mountain icon on the left,
+                  mySRZ wordmark + TOURISM on the right. ViewBox
+                  1220×360; dark-green ink (#15301F) reads on the cream
+                  navbar bg. The icon sits on a transparent baseline
+                  (no dark ground rect) so it floats cleanly. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/navbar-lockup.svg"
                 alt="mySRZ Tourism"
-                width={440}
-                height={164}
+                width={1220}
+                height={360}
                 className="h-16 sm:h-20 w-auto"
               />
             </Link>
