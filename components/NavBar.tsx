@@ -32,15 +32,15 @@ export function NavBar() {
               onClick={() => setOpen(false)}
               aria-label="mySRZ Travel & Tourism — home"
             >
-              {/* Full brand lockup (mountain + wordmark + tagline) baked
-                  into the SVG itself. ViewBox 454×128. The wordmark uses
-                  dark-green ink which reads on the cream navbar bg. */}
+              {/* Full brand lockup (mountain + mySRZ wordmark + TOURISM
+                  bar) from the design-system export. ViewBox 440×164;
+                  dark-green ink (#15301F) reads on cream navbar bg. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/navbar-lockup.svg"
-                alt="mySRZ Travel & Tourism"
-                width={454}
-                height={128}
+                alt="mySRZ Tourism"
+                width={440}
+                height={164}
                 className="h-16 sm:h-20 w-auto"
               />
             </Link>
