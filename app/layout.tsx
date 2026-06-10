@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Montserrat, Playfair_Display, Source_Serif_4 } from 'next/font/google';
 import { Suspense } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
@@ -7,25 +7,44 @@ import { Tracker } from '@/components/Tracker';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-  // Default `preload: true` is correct — Inter is the body font on
-  // every page, so we want the browser to fetch it eagerly.
-});
+// Inter was dropped in Phase 5 — every page is now on the Aureate
+// typography stack (Playfair / Source Serif 4 / Montserrat). The
+// fallback chain for Montserrat steps straight to system-ui which is
+// fine for the brief FOUT window before the variable font arrives.
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
+  // Restrict to the weights actually used by the Aureate design:
+  // 600 (headlines) and 700 (display headlines + blog body h2/h3).
+  weight: ['600', '700'],
   variable: '--font-playfair',
   display: 'swap',
-  // Only used in `.markdown-body h1/h2/h3` (blog post content). The
-  // Tailwind `font-serif` token has zero usages elsewhere. Preloading
-  // would burn ~48 KB of font bytes on every non-blog page where
-  // Playfair never paints. The browser fetches it lazily when the
-  // markdown-body selector first matches on /blog/[slug], and
-  // display:swap masks the brief FOUT during that one swap.
-  preload: false,
+  // Aureate uses Playfair as the display + headline font on every
+  // rebuilt page (nav, hero, section titles), so preload is back on.
+  // The blog-body markdown headings also use it.
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin'],
+  // 400 = body copy; 400-italic = decorative quotes/taglines; 600 =
+  // emphasis. These cover every Source Serif 4 usage in the design.
+  weight: ['400', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-source-serif-4',
+  display: 'swap',
+  // Body font for the Aureate redesign — preload on every page so
+  // first paint doesn't FOUT into Georgia/system serif first.
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  // 500 (nav links, footer copy) + 600 (button labels, tracking
+  // labels). Two weights only; everything else in the design uses
+  // Playfair or Source Serif 4.
+  weight: ['500', '600'],
+  variable: '--font-montserrat',
+  display: 'swap',
+  // Above-the-fold (nav labels) — preload.
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -84,7 +103,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a1a',
+  // Cream — matches Aureate `background` token. Affects mobile
+  // browser chrome (Safari address bar, PWA splash, etc.).
+  themeColor: '#fdf9e9',
   width: 'device-width',
   initialScale: 1,
 };
@@ -158,7 +179,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${sourceSerif.variable} ${montserrat.variable}`}
+    >
       <head>
         {/* Dropped two dns-prefetch hints (picsum.photos +
             n8n.mysrztourism.com). Neither was used by direct browser
@@ -170,7 +194,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraphJsonLd) }}
         />
       </head>
-      <body className="font-sans min-h-screen flex flex-col bg-brand-paper">
+      <body className="flex min-h-screen flex-col bg-aureate-background font-aureate-body text-aureate-on-surface">
         <NavBar />
         <main className="flex-grow">{children}</main>
         <Footer />

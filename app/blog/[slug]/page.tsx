@@ -3,15 +3,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
-import {
-  ArrowRight, User, Calendar, Clock, Eye, Phone, Mail,
-} from 'lucide-react';
+import { ArrowRight, Calendar, Clock, Eye, User } from 'lucide-react';
 import { getAllPosts, getPostBySlug, getPostSlugs, getRelatedPosts } from '@/lib/posts';
 import { SharePost } from '@/components/SharePost';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { FaqSection } from '@/components/FaqSection';
 import { AuthorCard } from '@/components/AuthorCard';
 import { SITE } from '@/lib/utils';
+import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
 
 // Single canonical Person entity referenced from every BlogPosting's
 // `author`. The Person itself lives on /about (Person JSON-LD on
@@ -94,9 +93,8 @@ export default async function PostPage({ params }: Props) {
   ]);
   if (!post) notFound();
 
-  const related = await getRelatedPosts(post.slug, 4, allPosts);
+  const related = await getRelatedPosts(post.slug, 3, allPosts);
   const contentIsHTML = isHTML(post.content);
-  // image_url is already resolved through resolveImageUrl in lib/posts.ts
   const heroImage = post.image_url;
 
   const articleJsonLd = {
@@ -133,14 +131,15 @@ export default async function PostPage({ params }: Props) {
       <Breadcrumbs
         items={[
           { label: 'Home', href: '/' },
-          { label: 'Blog', href: '/blog' },
+          { label: 'Journal', href: '/blog' },
           { label: post.title },
         ]}
         hideVisual
       />
 
       <article>
-        <div className="relative h-[60vh] overflow-hidden">
+        {/* ───── HERO ───── */}
+        <header className="relative flex h-[70vh] items-center overflow-hidden">
           <Image
             src={heroImage}
             alt={post.title}
@@ -149,165 +148,196 @@ export default async function PostPage({ params }: Props) {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-          <div className="absolute inset-0 flex flex-col justify-end">
-            <div className="max-w-4xl mx-auto px-4 pb-12 w-full text-white">
+          <div className="absolute inset-0 bg-gradient-to-b from-aureate-on-surface/40 via-aureate-on-surface/20 to-aureate-on-surface/70" />
+          <div className="relative z-10 mx-auto w-full max-w-4xl px-aureate-mobile md:px-aureate-desktop">
+            <RevealOnScroll>
               <Link
                 href="/blog"
-                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest"
+                className="mb-6 inline-flex items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary-fixed-dim transition-all hover:text-white"
               >
-                <ArrowRight className="rotate-180" size={16} /> All Articles
+                <ArrowRight size={12} className="rotate-180" />
+                All Stories
               </Link>
-              <span className="bg-brand-primary/90 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block">
+              <span className="mb-4 inline-block bg-white/10 px-3 py-1 font-aureate-label text-aureate-label-md uppercase tracking-widest text-white backdrop-blur-sm">
                 {post.category}
               </span>
-              <h1 className="text-3xl md:text-5xl font-bold mb-5 leading-tight">{post.title}</h1>
-              <div className="flex flex-wrap items-center gap-5 text-sm text-white/70">
-                <span className="flex items-center gap-2"><User size={14} /> {post.author}</span>
+              <h1 className="mb-6 font-aureate-display text-aureate-headline-lg-mobile leading-tight text-white md:text-aureate-display-lg">
+                {post.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-6 font-aureate-label text-aureate-label-md uppercase tracking-widest text-white/80">
                 <span className="flex items-center gap-2">
-                  <Calendar size={14} />
-                  <time dateTime={post.created_at}>{format(new Date(post.created_at), 'MMMM d, yyyy')}</time>
+                  <User size={12} aria-hidden="true" /> {post.author}
                 </span>
-                <span className="flex items-center gap-2"><Clock size={14} /> {post.read_time} min read</span>
-                <span className="flex items-center gap-2"><Eye size={14} /> {post.views.toLocaleString()} views</span>
+                <span className="flex items-center gap-2">
+                  <Calendar size={12} aria-hidden="true" />
+                  <time dateTime={post.created_at}>
+                    {format(new Date(post.created_at), 'MMM d, yyyy')}
+                  </time>
+                </span>
+                <span className="flex items-center gap-2">
+                  <Clock size={12} aria-hidden="true" /> {post.read_time} min
+                </span>
+                <span className="flex items-center gap-2">
+                  <Eye size={12} aria-hidden="true" />
+                  {post.views.toLocaleString()}
+                </span>
               </div>
-            </div>
+            </RevealOnScroll>
           </div>
+        </header>
+
+        {/* ───── BODY ───── */}
+        <div className="mx-auto max-w-3xl px-aureate-mobile py-16 md:px-aureate-desktop md:py-24">
+          {/* Image credit */}
+          {post.image_credit_name && (
+            <p className="mb-10 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant">
+              Photo by{' '}
+              <span className="text-aureate-on-surface">
+                {post.image_credit_name}
+              </span>
+              {(post.image_credit_instagram ||
+                post.image_credit_twitter ||
+                post.image_credit_website) && <>{' · '}</>}
+              {post.image_credit_instagram && (
+                <a
+                  href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-aureate-primary"
+                >
+                  Instagram
+                </a>
+              )}
+              {post.image_credit_twitter && (
+                <>
+                  {post.image_credit_instagram && ' · '}
+                  <a
+                    href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-aureate-primary"
+                  >
+                    Twitter / X
+                  </a>
+                </>
+              )}
+              {post.image_credit_website && (
+                <>
+                  {(post.image_credit_instagram || post.image_credit_twitter) && ' · '}
+                  <a
+                    href={
+                      post.image_credit_website.startsWith('http')
+                        ? post.image_credit_website
+                        : `https://${post.image_credit_website}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-aureate-primary"
+                  >
+                    Website
+                  </a>
+                </>
+              )}
+            </p>
+          )}
+
+          {/*
+            post.content is Tiptap-authored HTML from the admin panel.
+            Tailwind Typography `prose` styles it. Sanitization is not
+            applied because only authenticated admins can write to
+            blog_posts; revisit if any untrusted source is ever added.
+            If content is not HTML (plain text fallback), wrap in <p>.
+
+            We layer the prose plugin's defaults with explicit aureate
+            overrides so headings use Playfair + the right tone, and
+            body copy stays in Source Serif 4.
+          */}
+          {contentIsHTML ? (
+            <div
+              className="prose prose-stone max-w-none prose-headings:font-aureate-headline prose-headings:text-aureate-on-surface prose-h2:text-aureate-headline-md prose-p:font-aureate-body prose-p:text-aureate-body-md prose-p:text-aureate-on-surface-variant prose-a:text-aureate-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-aureate-on-surface"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          ) : (
+            <div className="prose prose-stone max-w-none">
+              <p className="font-aureate-body text-aureate-body-md text-aureate-on-surface-variant">
+                {post.content}
+              </p>
+            </div>
+          )}
+
+          {post.updated_at &&
+            post.updated_at !== post.created_at &&
+            new Date(post.updated_at).getTime() -
+              new Date(post.created_at).getTime() >
+              86_400_000 && (
+              <p className="mt-8 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant/70">
+                Last updated{' '}
+                <time dateTime={post.updated_at}>
+                  {format(new Date(post.updated_at), 'MMM d, yyyy')}
+                </time>
+              </p>
+            )}
+
+          <SharePost title={post.title} slug={post.slug} />
+          <FaqSection faqs={post.faqs ?? []} />
+          <AuthorCard name={post.author} />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 py-16">
-          <div className="flex flex-col lg:flex-row gap-12">
-            <div className="flex-grow min-w-0">
-              {/* Image credit */}
-              {post.image_credit_name && (
-                <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-brand-primary/40">
-                  <span>Photo by</span>
-                  <span className="font-semibold text-brand-primary/60">{post.image_credit_name}</span>
-                  {post.image_credit_instagram && (
-                    <a
-                      href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold hover:underline"
-                      style={{ color: '#e1306c' }}
-                    >
-                      Instagram
-                    </a>
-                  )}
-                  {post.image_credit_twitter && (
-                    <a
-                      href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold hover:underline"
-                      style={{ color: '#1da1f2' }}
-                    >
-                      Twitter/X
-                    </a>
-                  )}
-                  {post.image_credit_website && (
-                    <a
-                      href={post.image_credit_website.startsWith('http') ? post.image_credit_website : `https://${post.image_credit_website}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-brand-primary/50 hover:underline"
-                    >
-                      Website
-                    </a>
-                  )}
+        {/* ───── RELATED ───── */}
+        {related.length > 0 && (
+          <section className="bg-aureate-surface-container-low py-20">
+            <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile md:px-aureate-desktop">
+              <div className="mb-10 flex items-end justify-between">
+                <div>
+                  <span className="mb-2 block font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                    Continue Reading
+                  </span>
+                  <h2 className="font-aureate-headline text-aureate-headline-md text-aureate-on-surface">
+                    More from the Journal
+                  </h2>
                 </div>
-              )}
-
-              {/* post.content is Tiptap-authored HTML from the admin panel.
-                  Tailwind Typography `prose` styles it. Sanitization is not
-                  applied because only authenticated admins can write to
-                  blog_posts; revisit if any untrusted source is ever added.
-                  If content is not HTML (plain text fallback), wrap in <p>. */}
-              {contentIsHTML ? (
-                <div
-                  className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
-                />
-              ) : (
-                <div className="prose prose-stone max-w-none prose-headings:text-brand-primary prose-a:text-brand-primary prose-strong:text-brand-primary">
-                  <p>{post.content}</p>
-                </div>
-              )}
-
-              {post.updated_at &&
-                post.updated_at !== post.created_at &&
-                new Date(post.updated_at).getTime() - new Date(post.created_at).getTime() > 86_400_000 && (
-                  <p className="mt-6 text-xs text-brand-primary/40">
-                    Last updated{' '}
-                    <time dateTime={post.updated_at}>
-                      {format(new Date(post.updated_at), 'MMMM d, yyyy')}
-                    </time>
-                    .
-                  </p>
-                )}
-
-              <SharePost title={post.title} slug={post.slug} />
-
-              <FaqSection faqs={post.faqs ?? []} />
-
-              <AuthorCard name={post.author} />
-
-              {related.length > 0 && (
-                <div className="mt-12">
-                  <h3 className="font-bold text-brand-primary text-xl mb-6">More Articles</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {related.map((r) => (
-                      <Link href={`/blog/${r.slug}`} key={r.id} className="flex gap-3 group">
-                        <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                          <Image
-                            src={r.image_url}
-                            alt={r.title}
-                            fill
-                            sizes="80px"
-                            className="object-cover"
-                          />
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{r.category}</span>
-                          <h4 className="text-sm font-semibold text-stone-800 group-hover:text-brand-primary transition-colors line-clamp-2 mt-0.5">{r.title}</h4>
-                          <span className="text-xs text-brand-primary/40">{r.read_time} min read</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <aside className="lg:w-72 flex-shrink-0">
-              <div className="sticky top-24 space-y-6">
-                <div className="bg-brand-primary text-white p-5 rounded-2xl">
-                  <h4 className="font-bold text-lg mb-2">Plan This Trip</h4>
-                  <p className="text-white/60 text-sm mb-4">Need help planning your visit? Contact us for personalized advice.</p>
-                  <a
-                    href={SITE.phoneLink}
-                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center"
-                  >
-                    <Phone size={14} /> Call Us Now
-                  </a>
-                  <a
-                    href={`mailto:${SITE.email}`}
-                    className="flex items-center gap-2 border border-white/10 text-white/70 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-brand-accent transition-all w-full justify-center"
-                  >
-                    <Mail size={14} /> Email Us
-                  </a>
-                </div>
-                <div className="bg-brand-paper p-5 rounded-2xl border border-brand-accent/20">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">Quick Contact</h4>
-                  <div className="space-y-2 text-sm text-brand-primary/70">
-                    <div className="flex items-center gap-2"><Phone size={13} className="text-brand-accent" /> {SITE.phoneDisplay}</div>
-                    <div className="flex items-center gap-2"><Mail size={13} className="text-brand-accent" /> {SITE.email}</div>
-                  </div>
-                </div>
+                <Link
+                  href="/blog"
+                  className="group hidden items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary md:inline-flex"
+                >
+                  All Stories
+                  <ArrowRight
+                    size={12}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
+                </Link>
               </div>
-            </aside>
-          </div>
-        </div>
+              <div className="grid grid-cols-1 gap-aureate-gutter md:grid-cols-3">
+                {related.map((r, i) => (
+                  <RevealOnScroll key={r.id} delay={i * 100}>
+                    <Link
+                      href={`/blog/${r.slug}`}
+                      className="group block border border-aureate-outline-variant bg-aureate-surface transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
+                    >
+                      <div className="relative aspect-[4/5] overflow-hidden">
+                        <Image
+                          src={r.image_url}
+                          alt={r.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <span className="mb-2 block font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                          {r.category}
+                        </span>
+                        <h3 className="font-aureate-headline text-xl text-aureate-on-surface transition-colors duration-300 group-hover:text-aureate-primary">
+                          {r.title}
+                        </h3>
+                      </div>
+                    </Link>
+                  </RevealOnScroll>
+                ))}
+              </div>
+            </RevealOnScroll>
+          </section>
+        )}
       </article>
     </>
   );

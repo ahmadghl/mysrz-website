@@ -18,8 +18,15 @@ interface Props {
  * Google's FAQPage rich-result snippet displays best with 3–5 Q&A,
  * each answer kept under ~60 words. The admin editor surfaces a
  * word counter; this component does not re-validate.
+ *
+ * Aureate-restyled: cream-paper card aesthetic, Playfair headings,
+ * Source Serif 4 answers. JSON-LD payload unchanged.
  */
-export function FaqSection({ faqs, heading = 'Frequently asked questions', as = 'h2' }: Props) {
+export function FaqSection({
+  faqs,
+  heading = 'Frequently asked questions',
+  as = 'h2',
+}: Props) {
   if (!faqs || faqs.length === 0) return null;
 
   const jsonLd = {
@@ -38,19 +45,32 @@ export function FaqSection({ faqs, heading = 'Frequently asked questions', as = 
   const HeadingTag = as;
 
   return (
-    <section className="mt-16 pt-10 border-t border-brand-primary/10" aria-labelledby="faq-heading">
+    <section
+      className="mt-16 border-t border-aureate-outline-variant pt-12"
+      aria-labelledby="faq-heading"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HeadingTag id="faq-heading" className="text-2xl font-bold text-brand-primary mb-6">
+      <HeadingTag
+        id="faq-heading"
+        className="mb-8 font-aureate-headline text-aureate-headline-md text-aureate-on-surface"
+      >
         {heading}
       </HeadingTag>
-      <dl className="space-y-5">
+      <dl className="space-y-8">
         {faqs.map((f, i) => (
-          <div key={i}>
-            <dt className="text-base font-semibold text-brand-primary">{f.q}</dt>
-            <dd className="mt-1.5 text-sm leading-relaxed text-brand-primary/70">{f.a}</dd>
+          <div
+            key={i}
+            className="border-l-2 border-aureate-primary-container/40 pl-6"
+          >
+            <dt className="font-aureate-headline text-lg font-semibold text-aureate-on-surface">
+              {f.q}
+            </dt>
+            <dd className="mt-3 font-aureate-body text-aureate-body-md leading-relaxed text-aureate-on-surface-variant">
+              {f.a}
+            </dd>
           </div>
         ))}
       </dl>
