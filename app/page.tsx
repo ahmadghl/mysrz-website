@@ -1,37 +1,57 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  ArrowRight, ChevronDown, ChevronRight, Clock, Eye,
-  MapPin, BookOpen, Users, Star, Phone,
+  ArrowRight,
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  MapPin,
+  Phone,
+  Star,
+  Users,
   type LucideIcon,
 } from 'lucide-react';
 import { getAllPosts } from '@/lib/posts';
 import { getAllDestinations } from '@/lib/destinations';
-import { PostCard } from '@/components/PostCard';
 import { getSiteSettings } from '@/lib/site-settings';
+import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
+import { PaperStack } from '@/components/aureate/PaperStack';
+import { AureateButton } from '@/components/aureate/AureateButton';
 
 export const revalidate = 60;
 
+// Map admin-supplied icon strings to Lucide components for the
+// stats row. Unknown values fall back to MapPin so a malformed
+// admin entry can't crash the page.
 const STAT_ICONS: Record<string, LucideIcon> = {
-  MapPin, BookOpen, Users, Star,
+  MapPin,
+  BookOpen,
+  Users,
+  Star,
 };
 
 export default async function HomePage() {
+  // Parallel fetch — same React.cache()-deduped accessors as before.
+  // No data shape changed; only the presentation layer is new.
   const [posts, allDestinations, settings] = await Promise.all([
     getAllPosts(),
     getAllDestinations(),
     getSiteSettings(),
   ]);
-  // Hero is the featured/first post; side and grid posts don't reuse it.
-  const heroPost = posts[0];
-  const sidePosts = posts.slice(1, 3);
-  const gridPosts = posts.slice(3, 6);
-  const previewDestinations = allDestinations.slice(0, 6);
+
+  const featuredDestinations = allDestinations.slice(0, 3);
+  const featuredPosts = posts.slice(0, 3);
+  // Editorial section uses the first blog post's hero as its
+  // imagery. Saves an extra Unsplash dependency and keeps the
+  // section content fresh as the admin publishes new posts.
+  const philosophyImage = featuredPosts[0]?.image_url ?? settings.hero_image_url;
 
   return (
     <>
-      <section className="relative h-[92vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
+      {/* ───── IMMERSIVE HERO ───── */}
+      <header className="relative flex h-[90vh] w-full items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <Image
             src={settings.hero_image_url}
             alt="Pakistan mountains"
@@ -40,217 +60,275 @@ export default async function HomePage() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-stone-900/85 via-stone-900/50 to-transparent" />
+          {/* Soft warm gradient so cream text reads against any
+              hero photo regardless of color temperature. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-aureate-on-surface/40 to-aureate-on-surface/10" />
         </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white w-full">
-          <div className="max-w-2xl">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-px bg-brand-accent" />
-              <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-semibold">
-                {settings.hero_kicker}
-              </span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-[1.05]">
-              {settings.hero_title_line_1}<br />
-              <span className="text-brand-accent">{settings.hero_title_line_2}</span><br />
-              {settings.hero_title_line_3}
-            </h1>
-            <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-lg">
-              {settings.hero_subtitle}
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href={settings.hero_cta_primary_href}
-                className="bg-brand-primary text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-brand-primary/90 transition-all shadow-lg"
-              >
-                {settings.hero_cta_primary_text}
-              </Link>
-              <Link
-                href={settings.hero_cta_secondary_href}
-                className="border border-white/30 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-all"
-              >
-                {settings.hero_cta_secondary_text}
-              </Link>
-            </div>
+
+        <RevealOnScroll className="relative z-10 max-w-4xl px-aureate-mobile text-center md:px-aureate-desktop">
+          <span className="mb-6 block font-aureate-label text-aureate-label-md uppercase tracking-[0.3em] text-aureate-primary-fixed-dim">
+            {settings.hero_kicker}
+          </span>
+          <h1 className="mb-10 font-aureate-display text-aureate-display-lg-mobile leading-tight text-white md:text-aureate-display-lg">
+            {settings.hero_title_line_1}{' '}
+            <span className="italic">{settings.hero_title_line_2}</span>{' '}
+            {settings.hero_title_line_3}
+          </h1>
+          <p className="mx-auto mb-10 max-w-xl font-aureate-body text-aureate-body-lg text-white/85">
+            {settings.hero_subtitle}
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:gap-6">
+            <AureateButton href={settings.hero_cta_primary_href} variant="primary">
+              {settings.hero_cta_primary_text}
+            </AureateButton>
+            <AureateButton
+              href={settings.hero_cta_secondary_href}
+              variant="outline-on-dark"
+            >
+              {settings.hero_cta_secondary_text}
+            </AureateButton>
           </div>
-        </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <ChevronDown size={28} className="text-white/40" />
-        </div>
-      </section>
+        </RevealOnScroll>
 
-      <section className="bg-brand-primary text-white py-10">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {settings.homepage_stats.map(({ value, label, icon }) => {
-            const Icon = (icon && STAT_ICONS[icon]) || MapPin;
-            return (
-              <div key={label} className="text-center">
-                <Icon size={20} className="mx-auto mb-2 text-brand-accent/80" />
-                <div className="text-3xl font-bold">{value}</div>
-                <div className="text-xs uppercase tracking-wider text-brand-accent/60 mt-1">{label}</div>
-              </div>
-            );
-          })}
+        {/* Scroll-indicator anchor pointing into the stats row.
+            Pure decoration — keyboard users get nothing extra here. */}
+        <div
+          aria-hidden="true"
+          className="absolute bottom-10 left-1/2 flex -translate-x-1/2 animate-bounce flex-col items-center gap-2 opacity-80"
+        >
+          <span className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-white/60">
+            Discover
+          </span>
+          <ChevronDown size={20} className="text-white/60" />
         </div>
-      </section>
+      </header>
 
-      <section className="py-20 bg-brand-paper">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-brand-primary">Latest Stories</span>
-              <h2 className="text-4xl font-bold text-brand-primary mt-2">Featured Articles</h2>
-            </div>
-            <Link href="/blog" className="mt-4 md:mt-0 flex items-center gap-2 text-sm font-semibold text-brand-primary hover:gap-4 transition-all">
-              View All Articles <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
-            {heroPost && (
-              <Link href={`/blog/${heroPost.slug}`} className="lg:col-span-3 group">
-                <article className="relative h-80 lg:h-96 rounded-2xl overflow-hidden">
-                  <Image
-                    src={heroPost.image_url}
-                    alt={heroPost.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+      {/* ───── STATS / IMPACT ROW ───── */}
+      <section className="border-b border-aureate-outline-variant bg-aureate-background">
+        <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile py-16 md:px-aureate-desktop md:py-24">
+          <div className="grid grid-cols-1 gap-aureate-gutter text-center md:grid-cols-2 lg:grid-cols-4">
+            {settings.homepage_stats.map(({ value, label, icon }, i) => {
+              const Icon = (icon && STAT_ICONS[icon]) || MapPin;
+              const isLast = i === settings.homepage_stats.length - 1;
+              return (
+                <div
+                  key={label}
+                  className={`p-8 transition-colors duration-500 hover:bg-aureate-surface-container-low lg:border-r lg:border-aureate-outline-variant ${
+                    isLast ? 'lg:border-r-0' : ''
+                  }`}
+                >
+                  <Icon
+                    size={24}
+                    className="mx-auto mb-3 text-aureate-primary"
+                    aria-hidden="true"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                    <span className="bg-brand-primary/90 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3 inline-block">
-                      {heroPost.category}
-                    </span>
-                    <h3 className="text-2xl font-bold leading-tight mb-2">{heroPost.title}</h3>
-                    <div className="flex items-center gap-4 text-xs text-white/60">
-                      <span className="flex items-center gap-1"><Clock size={10} /> {heroPost.read_time} min read</span>
-                      <span className="flex items-center gap-1"><Eye size={10} /> {heroPost.views.toLocaleString()} views</span>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            )}
-
-            <div className="lg:col-span-2 flex flex-col gap-6">
-              {sidePosts.map((post) => (
-                <Link href={`/blog/${post.slug}`} key={post.id} className="group flex gap-4 bg-brand-paper rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
-                  <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
-                    <Image
-                      src={post.image_url}
-                      alt={post.title}
-                      fill
-                      sizes="96px"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="flex-grow min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">{post.category}</span>
-                    <h3 className="text-sm font-bold text-brand-primary leading-tight mt-1 line-clamp-2 group-hover:text-brand-primary transition-colors">{post.title}</h3>
-                    <div className="flex items-center gap-3 text-xs text-brand-primary/40 mt-2">
-                      <span className="flex items-center gap-1"><Clock size={10} /> {post.read_time} min</span>
-                      <span className="flex items-center gap-1"><Eye size={10} /> {post.views.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  <h3 className="mb-2 font-aureate-display text-aureate-headline-lg text-aureate-primary">
+                    {value}
+                  </h3>
+                  <p className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant">
+                    {label}
+                  </p>
+                </div>
+              );
+            })}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {gridPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        </div>
+        </RevealOnScroll>
       </section>
 
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-brand-primary">Where to Go</span>
-            <h2 className="text-4xl font-bold text-brand-primary mt-2">Top Destinations</h2>
-            <p className="text-brand-primary/50 mt-3 max-w-xl mx-auto">From northern peaks to ancient cities, Pakistan has something extraordinary for every kind of traveler.</p>
-          </div>
-          {previewDestinations.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {previewDestinations.map((dest) => (
-                <Link key={dest.slug} href={`/destinations/${dest.slug}`} className="group relative rounded-2xl overflow-hidden shadow-sm">
-                  <div className="relative h-44 md:h-56">
-                    {dest.image_url ? (
-                      <Image
-                        src={dest.image_url}
-                        alt={dest.name}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div
-                        aria-hidden="true"
-                        className="absolute inset-0"
-                        style={{
-                          background:
-                            'radial-gradient(at 30% 20%, rgba(212,175,55,0.3), transparent 55%), #1a1a1a',
-                        }}
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    {dest.tags[0] && (
-                      <div className="absolute top-3 left-3">
-                        <span className="bg-brand-accent text-brand-primary text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{dest.tags[0]}</span>
-                      </div>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                      <div className="font-bold text-lg leading-tight">{dest.name}</div>
+      {/* ───── CURATED ODYSSEYS (FEATURED DESTINATIONS) ───── */}
+      <section className="bg-aureate-background">
+        <div className="mx-auto max-w-aureate-container px-aureate-mobile py-24 md:px-aureate-desktop md:py-32">
+          <RevealOnScroll className="mb-16 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+            <div className="max-w-2xl">
+              <span className="mb-3 block font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                Where to Go
+              </span>
+              <h2 className="mb-4 font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+                Curated Odysseys
+              </h2>
+              <p className="font-aureate-body text-aureate-body-lg text-aureate-on-surface-variant">
+                Journey across landscapes that have shaped centuries of stories
+                — from the Karakoram peaks to the Indus heartlands.
+              </p>
+            </div>
+            <Link
+              href="/destinations"
+              className="group flex items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary transition-colors hover:text-aureate-on-secondary-container"
+            >
+              All Destinations
+              <ChevronRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </Link>
+          </RevealOnScroll>
+
+          {featuredDestinations.length > 0 ? (
+            <div className="grid grid-cols-1 gap-aureate-gutter md:grid-cols-3 md:gap-12">
+              {featuredDestinations.map((dest, i) => (
+                <RevealOnScroll
+                  as="article"
+                  key={dest.slug}
+                  delay={i * 100}
+                  // Staggered translate-y on the middle card makes
+                  // the trio feel editorial instead of a flat grid.
+                  className={i === 1 ? 'md:translate-y-12' : ''}
+                >
+                  <Link href={`/destinations/${dest.slug}`} className="group block">
+                    <div className="relative mb-6 h-[400px] overflow-hidden md:h-[500px]">
+                      {dest.image_url ? (
+                        <Image
+                          src={dest.image_url}
+                          alt={dest.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                        />
+                      ) : (
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 bg-aureate-surface-container-high"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-aureate-on-surface/20 transition-colors duration-700 group-hover:bg-aureate-on-surface/5" />
+                    </div>
+                    <div className="space-y-3">
                       {dest.region && (
-                        <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5"><MapPin size={10} />{dest.region}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="h-px w-8 bg-aureate-primary transition-all duration-500 group-hover:w-12" />
+                          <span className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                            {dest.region}
+                          </span>
+                        </div>
+                      )}
+                      <h3 className="font-aureate-headline text-aureate-headline-md text-aureate-on-surface transition-colors duration-300 group-hover:text-aureate-primary">
+                        {dest.name}
+                      </h3>
+                      {dest.description && (
+                        <p className="line-clamp-2 font-aureate-body text-aureate-body-md text-aureate-on-surface-variant">
+                          {dest.description}
+                        </p>
                       )}
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </RevealOnScroll>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-brand-primary/30">
+            <div className="py-16 text-center text-aureate-on-surface-variant/50">
               <MapPin size={36} className="mx-auto mb-3 opacity-30" />
-              <p>Destinations coming soon.</p>
+              <p className="font-aureate-body">Destinations coming soon.</p>
             </div>
           )}
-          <div className="text-center mt-10">
-            <Link href="/destinations" className="inline-block bg-brand-primary text-white px-8 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-primary/90 transition-all">
-              See All Destinations
-            </Link>
-          </div>
         </div>
       </section>
 
-      <section className="py-20 bg-brand-primary text-white text-center px-4">
-        <div className="max-w-2xl mx-auto">
-          <span className="text-xs uppercase tracking-[0.3em] text-brand-accent font-bold">Get in Touch</span>
-          <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-4">Plan Your Pakistan Journey</h2>
-          <p className="text-white/60 max-w-xl mx-auto mb-8">Have questions about traveling in Pakistan? We&apos;re here to help you plan an unforgettable trip.</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/contact" className="bg-brand-accent text-brand-primary px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-brand-accent/90 transition-all">
-              Contact Us
-            </Link>
-            <a href={settings.phone_link} className="border border-stone-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:border-brand-accent transition-all flex items-center gap-2">
-              <Phone size={16} /> {settings.phone_display}
+      {/* ───── EDITORIAL / JOURNAL TEASER ───── */}
+      {featuredPosts.length > 0 && (
+        <section className="mt-20 bg-aureate-surface-container-low py-24 md:py-32">
+          <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile md:px-aureate-desktop">
+            <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
+              <div className="relative">
+                <div
+                  aria-hidden="true"
+                  className="absolute -left-6 -top-6 h-32 w-32 border-l border-t border-aureate-primary/30 md:h-40 md:w-40"
+                />
+                <Image
+                  src={philosophyImage}
+                  alt="Stories from Pakistan"
+                  width={900}
+                  height={1100}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="relative z-10 h-auto w-full object-cover"
+                />
+              </div>
+              <div className="space-y-6 md:space-y-8">
+                <span className="block font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                  The Journal
+                </span>
+                <h2 className="font-aureate-headline text-aureate-headline-lg-mobile leading-tight text-aureate-on-surface md:text-aureate-headline-lg">
+                  Stories from across Pakistan
+                </h2>
+                <p className="font-aureate-body text-aureate-body-lg text-aureate-on-surface-variant">
+                  First-hand accounts from the valleys we cover — what to see,
+                  when to go, and the people whose lives unfold against these
+                  landscapes.
+                </p>
+                <div className="space-y-4 border-l border-aureate-outline-variant pl-6">
+                  {featuredPosts.slice(0, 3).map((post) => (
+                    <Link
+                      key={post.id}
+                      href={`/blog/${post.slug}`}
+                      className="group block"
+                    >
+                      <div className="flex items-baseline justify-between gap-4">
+                        <span className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant">
+                          {post.category}
+                        </span>
+                        <span className="flex items-center gap-2 font-aureate-label text-aureate-label-md text-aureate-on-surface-variant/60">
+                          <Eye size={12} aria-hidden="true" />
+                          {post.views.toLocaleString()}
+                        </span>
+                      </div>
+                      <h3 className="mt-1 font-aureate-headline text-aureate-headline-md text-aureate-on-surface transition-colors duration-300 group-hover:text-aureate-primary">
+                        {post.title}
+                      </h3>
+                    </Link>
+                  ))}
+                </div>
+                <div className="pt-2">
+                  <AureateButton href="/blog" variant="secondary">
+                    Read the Journal
+                  </AureateButton>
+                </div>
+              </div>
+            </div>
+          </RevealOnScroll>
+        </section>
+      )}
+
+      {/* ───── PLAN-A-TRIP / CONTACT CTA ───── */}
+      <section className="relative overflow-hidden py-24 md:py-32">
+        <RevealOnScroll className="mx-auto max-w-2xl px-aureate-mobile text-center md:px-aureate-desktop">
+          <span className="mb-6 block font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+            Get in Touch
+          </span>
+          <h2 className="mb-6 font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+            Plan your Pakistan journey
+          </h2>
+          <p className="mb-12 font-aureate-body text-aureate-body-lg text-aureate-on-surface-variant">
+            Have a region in mind, or want help shaping an itinerary across
+            several? Send us the rough sketch and we&apos;ll come back with the
+            detail.
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:gap-6">
+            <AureateButton href="/contact" variant="primary">
+              Start Planning
+            </AureateButton>
+            <a
+              href={settings.phone_link}
+              className="inline-flex items-center gap-2 border border-aureate-outline px-10 py-4 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-aureate-primary hover:shadow-md"
+            >
+              <Phone size={14} aria-hidden="true" />
+              {settings.phone_display}
             </a>
           </div>
-        </div>
+        </RevealOnScroll>
       </section>
 
+      {/* ───── FLOATING WHATSAPP CTA ───── */}
       <a
         href={settings.whatsapp_url}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
-        className="fixed bottom-6 right-6 z-40 bg-green-600 text-white p-3.5 rounded-full shadow-xl hover:bg-green-700 transition-all hover:scale-110"
+        // rounded-full is a deliberate exception to the square-cornered
+        // Aureate system — the circular FAB is the recognized WhatsApp
+        // convention. Colors are WhatsApp brand, not palette tokens.
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl transition-all hover:scale-110 hover:bg-[#128C7E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aureate-primary"
       >
-        <ChevronRight size={20} className="rotate-90 hidden" />
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
         </svg>
       </a>
     </>

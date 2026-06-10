@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowRight, Calendar, MapPin, Phone, Mail, Camera } from 'lucide-react';
+import { ArrowRight, Calendar, Camera, MapPin } from 'lucide-react';
 import {
   getAllDestinations,
   getDestinationBySlug,
@@ -11,6 +11,9 @@ import {
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { FaqSection } from '@/components/FaqSection';
 import { SITE } from '@/lib/utils';
+import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
+import { PaperStack } from '@/components/aureate/PaperStack';
+import { AureateButton } from '@/components/aureate/AureateButton';
 
 // ISR: cache rendered HTML at the edge. Admin publishes call
 // /api/revalidate which fires revalidateTag('destinations') +
@@ -33,8 +36,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const dest = await getDestinationBySlug(slug);
   if (!dest) return { title: 'Destination not found' };
 
-  // Prefer the admin-supplied SEO copy; fall back to the destination's
-  // own description, truncated at a word boundary.
   const rawDescription = dest.meta_description?.trim() || dest.description;
   const description =
     rawDescription.length > 160
@@ -138,10 +139,12 @@ export default async function DestinationDetailPage({ params }: Props) {
           { label: 'Destinations', href: '/destinations' },
           { label: dest.name },
         ]}
+        hideVisual
       />
 
-      <article>
-        <div className="relative h-[55vh] overflow-hidden mt-4 bg-brand-primary">
+      {/* ───── CINEMATIC HERO ───── */}
+      <header className="relative flex h-[90vh] items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
           {dest.image_url ? (
             <Image
               src={dest.image_url}
@@ -152,82 +155,105 @@ export default async function DestinationDetailPage({ params }: Props) {
               className="object-cover"
             />
           ) : (
-            // Fallback when no hero image is set in the admin. Uses brand
-            // colors plus a soft radial highlight so the hero doesn't look
-            // empty. The admin should still require an image on publish —
-            // tracking that as a Phase 3 finding.
             <div
               aria-hidden="true"
               className="absolute inset-0"
               style={{
                 background:
-                  'radial-gradient(at 30% 20%, rgba(212,175,55,0.35), transparent 55%), radial-gradient(at 80% 100%, rgba(212,175,55,0.15), transparent 60%), #1a1a1a',
+                  'radial-gradient(at 30% 20%, rgba(118,90,10,0.35), transparent 55%), radial-gradient(at 80% 100%, rgba(118,90,10,0.15), transparent 60%), #1d1c13',
               }}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-          <div className="absolute inset-0 flex flex-col justify-end">
-            <div className="max-w-5xl mx-auto px-4 pb-12 w-full text-white">
-              <Link
-                href="/destinations"
-                className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-accent hover:gap-4 transition-all uppercase tracking-widest"
-              >
-                <ArrowRight className="rotate-180" size={16} /> All Destinations
-              </Link>
-              <div className="flex items-center gap-2 text-sm text-white/70 mb-3">
-                <MapPin size={14} className="text-brand-accent" />
-                {dest.region}
-              </div>
-              <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
-                {dest.name}
-              </h1>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-white/70">
-                {dest.best_time && (
-                  <span className="flex items-center gap-2">
-                    <Calendar size={14} className="text-brand-accent" /> Best:{' '}
-                    {dest.best_time}
-                  </span>
-                )}
-                {dest.tags.slice(0, 4).map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-white/10 px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-widest"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-aureate-on-surface/40 to-aureate-on-surface/10" />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 py-16">
-          <div className="flex flex-col lg:flex-row gap-12">
-            <div className="flex-grow min-w-0">
-              <p className="text-lg leading-relaxed text-brand-primary/80">
+        <RevealOnScroll className="relative z-10 px-aureate-mobile text-center text-white md:px-aureate-desktop">
+          {dest.region && (
+            <span className="mb-6 block font-aureate-label text-aureate-label-md uppercase tracking-[0.3em] text-aureate-primary-fixed-dim">
+              {dest.region}
+            </span>
+          )}
+          <h1 className="mb-8 font-aureate-display text-aureate-display-lg-mobile leading-none text-white md:text-aureate-display-lg">
+            {dest.name}
+          </h1>
+          <div className="mx-auto h-px w-16 bg-aureate-primary-fixed-dim" />
+        </RevealOnScroll>
+      </header>
+
+      {/* ───── QUICK STATS ───── */}
+      <section className="border-b border-aureate-outline-variant bg-aureate-surface">
+        <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile py-12 md:px-aureate-desktop">
+          <div className="grid grid-cols-2 gap-aureate-gutter text-center md:grid-cols-4">
+            {dest.region && <Stat label="Region" value={dest.region} />}
+            {dest.best_time && <Stat label="Best Visit" value={dest.best_time} />}
+            {dest.tags[0] && <Stat label="Highlight" value={dest.tags[0]} />}
+            <Stat
+              label="Access"
+              value="Open to All"
+            />
+          </div>
+        </RevealOnScroll>
+      </section>
+
+      {/* ───── STORYTELLING ───── */}
+      <section className="mx-auto max-w-aureate-container overflow-hidden px-aureate-mobile py-24 md:px-aureate-desktop">
+        <RevealOnScroll>
+          <div className="grid grid-cols-1 items-center gap-16 md:grid-cols-12">
+            <div className="space-y-8 md:col-span-5">
+              <div className="h-1 w-12 bg-aureate-primary" />
+              <h2 className="font-aureate-headline text-aureate-headline-lg-mobile leading-tight text-aureate-on-surface md:text-aureate-headline-lg">
+                {dest.name}
+                <br />
+                <span className="italic text-aureate-on-surface-variant">
+                  &mdash; at a glance
+                </span>
+              </h2>
+              <p className="font-aureate-body text-aureate-body-lg leading-relaxed text-aureate-on-surface-variant">
                 {dest.description}
               </p>
 
               {dest.tags.length > 0 && (
-                <section className="mt-10">
-                  <h2 className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">
+                <div className="space-y-3">
+                  <span className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
                     What to expect
-                  </h2>
+                  </span>
                   <div className="flex flex-wrap gap-2">
                     {dest.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="bg-brand-paper border border-brand-accent/30 text-brand-primary text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full"
+                        className="border border-aureate-outline-variant bg-aureate-surface px-4 py-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
-                </section>
+                </div>
               )}
 
+              <div className="pt-4">
+                <AureateButton href="/contact" variant="outline-on-light">
+                  Plan This Trip
+                </AureateButton>
+              </div>
+            </div>
+
+            <div className="md:col-span-7">
+              <PaperStack className="group cursor-default overflow-hidden">
+                {dest.image_url ? (
+                  <Image
+                    src={dest.image_url}
+                    alt={dest.name}
+                    width={1200}
+                    height={1500}
+                    sizes="(max-width: 768px) 100vw, 58vw"
+                    className="aspect-[4/5] w-full object-cover grayscale-[15%] shadow-sm transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0 group-hover:shadow-xl"
+                  />
+                ) : (
+                  <div className="aspect-[4/5] w-full bg-aureate-surface-container-high" />
+                )}
+              </PaperStack>
               {dest.image_credit?.name && (
-                <p className="mt-10 text-xs text-brand-primary/50 flex items-center gap-1.5">
+                <p className="mt-4 flex items-center gap-1.5 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant/70">
                   <Camera size={11} aria-hidden="true" />
                   Photo by{' '}
                   {dest.image_credit.instagram ||
@@ -241,7 +267,7 @@ export default async function DestinationDetailPage({ params }: Props) {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-brand-primary underline-offset-2 hover:underline"
+                      className="underline-offset-2 hover:text-aureate-primary hover:underline"
                     >
                       {dest.image_credit.name}
                     </a>
@@ -250,92 +276,111 @@ export default async function DestinationDetailPage({ params }: Props) {
                   )}
                 </p>
               )}
+            </div>
+          </div>
+        </RevealOnScroll>
+      </section>
 
-              <FaqSection faqs={dest.faqs ?? []} />
+      {/* ───── FAQ ───── */}
+      <section className="mx-auto max-w-3xl px-aureate-mobile pb-16 md:px-aureate-desktop">
+        <FaqSection faqs={dest.faqs ?? []} />
+      </section>
 
-              {related.length > 0 && (
-                <section className="mt-16 pt-10 border-t border-brand-primary/10">
-                  <h2 className="font-bold text-brand-primary text-xl mb-6">
-                    Other destinations in {dest.region}
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    {related.map((r) => (
-                      <Link
-                        key={r.slug}
-                        href={`/destinations/${r.slug}`}
-                        className="group relative rounded-2xl overflow-hidden shadow-sm"
-                      >
-                        <div className="relative h-44">
-                          {r.image_url && (
-                            <Image
-                              src={r.image_url}
-                              alt={r.name}
-                              fill
-                              sizes="(max-width: 768px) 100vw, 33vw"
-                              className="object-cover group-hover:scale-110 transition-transform duration-700"
-                            />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                            <div className="font-bold leading-tight">{r.name}</div>
-                            {r.region && (
-                              <div className="text-xs text-white/70 flex items-center gap-1 mt-0.5">
-                                <MapPin size={10} />
-                                {r.region}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
-              )}
+      {/* ───── RELATED ───── */}
+      {related.length > 0 && (
+        <section className="bg-aureate-surface-container-low py-24">
+          <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile md:px-aureate-desktop">
+            <div className="mb-12 flex items-end justify-between">
+              <div>
+                <span className="mb-2 block font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                  Continue Exploring
+                </span>
+                <h2 className="font-aureate-headline text-aureate-headline-md text-aureate-on-surface md:text-aureate-headline-lg">
+                  Other destinations in {dest.region}
+                </h2>
+              </div>
+              <Link
+                href="/destinations"
+                className="group hidden items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary md:inline-flex"
+              >
+                All Regions
+                <ArrowRight
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </Link>
             </div>
 
-            <aside className="lg:w-72 flex-shrink-0">
-              <div className="sticky top-24 space-y-6">
-                <div className="bg-brand-primary text-white p-5 rounded-2xl">
-                  <h2 className="font-bold text-lg mb-2">Plan This Trip</h2>
-                  <p className="text-white/60 text-sm mb-4">
-                    Want a tailored itinerary for {dest.name}? Get in touch — we
-                    plan trips across Pakistan.
-                  </p>
-                  <a
-                    href={SITE.phoneLink}
-                    className="flex items-center gap-2 bg-brand-accent text-brand-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-accent/90 transition-all mb-2 w-full justify-center"
-                  >
-                    <Phone size={14} /> Call Us Now
-                  </a>
-                  <a
-                    href={`mailto:${SITE.email}`}
-                    className="flex items-center gap-2 border border-white/10 text-white/70 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-brand-accent transition-all w-full justify-center"
-                  >
-                    <Mail size={14} /> Email Us
-                  </a>
-                </div>
-                <div className="bg-brand-paper p-5 rounded-2xl border border-brand-accent/20">
-                  <h2 className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">
-                    Quick Facts
-                  </h2>
-                  <dl className="space-y-2 text-sm text-brand-primary/70">
-                    <div className="flex justify-between gap-3">
-                      <dt className="font-medium">Region</dt>
-                      <dd className="text-right">{dest.region}</dd>
+            <div className="grid grid-cols-1 gap-aureate-gutter md:grid-cols-3">
+              {related.map((r, i) => (
+                <RevealOnScroll key={r.slug} delay={i * 100}>
+                  <Link href={`/destinations/${r.slug}`} className="group block">
+                    <div className="relative mb-5 aspect-[4/5] overflow-hidden shadow-sm transition-shadow duration-500 group-hover:shadow-xl">
+                      {r.image_url ? (
+                        <Image
+                          src={r.image_url}
+                          alt={r.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-aureate-surface-container-high" />
+                      )}
                     </div>
-                    {dest.best_time && (
-                      <div className="flex justify-between gap-3">
-                        <dt className="font-medium">Best time</dt>
-                        <dd className="text-right">{dest.best_time}</dd>
+                    {r.region && (
+                      <div className="mb-2 flex items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+                        <MapPin size={12} aria-hidden="true" /> {r.region}
                       </div>
                     )}
-                  </dl>
-                </div>
-              </div>
-            </aside>
+                    <h3 className="font-aureate-headline text-xl text-aureate-on-surface transition-colors duration-300 group-hover:text-aureate-primary">
+                      {r.name}
+                    </h3>
+                  </Link>
+                </RevealOnScroll>
+              ))}
+            </div>
+          </RevealOnScroll>
+        </section>
+      )}
+
+      {/* ───── BOTTOM CTA ───── */}
+      <section className="py-24 md:py-32">
+        <RevealOnScroll className="mx-auto max-w-2xl px-aureate-mobile text-center md:px-aureate-desktop">
+          <Calendar
+            size={36}
+            className="mx-auto mb-6 text-aureate-primary"
+            aria-hidden="true"
+          />
+          <h2 className="mb-6 font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+            Want a tailored itinerary for {dest.name}?
+          </h2>
+          <p className="mb-10 font-aureate-body text-aureate-body-lg text-aureate-on-surface-variant">
+            We&apos;ll handle the logistics. You focus on the journey.
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:gap-6">
+            <AureateButton href="/contact" variant="primary">
+              Start a Trip
+            </AureateButton>
+            <AureateButton href="/destinations" variant="outline-on-light">
+              Browse All Regions
+            </AureateButton>
           </div>
-        </div>
-      </article>
+        </RevealOnScroll>
+      </section>
     </>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="space-y-2">
+      <p className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+        {label}
+      </p>
+      <p className="font-aureate-headline text-xl text-aureate-on-surface md:text-aureate-headline-md">
+        {value}
+      </p>
+    </div>
   );
 }

@@ -1,8 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Calendar, Clock, Eye, ChevronRight, User, Mountain, Camera, Utensils, Leaf } from 'lucide-react';
-import { format } from 'date-fns';
-import type { Post, Category } from '@/lib/types';
+import { ArrowRight, Camera, Leaf, Mountain, Utensils } from 'lucide-react';
+import type { Category, Post } from '@/lib/types';
 
 const CATEGORY_ICONS: Record<Exclude<Category, 'All'>, typeof Mountain> = {
   Adventure: Mountain,
@@ -17,51 +16,54 @@ interface Props {
   priority?: boolean;
 }
 
+/**
+ * Aureate-restyled journal card. 4:5 image plate, category eyebrow
+ * with icon, Playfair headline, excerpt, view-narrative link.
+ *
+ * Preserves the existing `priority` prop so the first card in a
+ * grid can hint LCP via next/image's fetchpriority=high. Sizes
+ * unchanged.
+ */
 export function PostCard({ post, showMeta = true, priority = false }: Props) {
   const Icon = CATEGORY_ICONS[post.category];
 
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group bg-brand-paper rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
+      className="group flex h-full flex-col border border-aureate-outline-variant bg-aureate-surface transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
     >
-      <div className="relative h-52 overflow-hidden">
+      <div className="relative aspect-[4/5] overflow-hidden">
         <Image
           src={post.image_url}
           alt={post.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority={priority}
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <span className="absolute top-3 left-3 bg-brand-paper/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest text-brand-primary/80 px-2 py-1 rounded-full flex items-center gap-1">
-          <Icon size={12} /> {post.category}
-        </span>
       </div>
-      <div className="p-5 flex flex-col flex-grow">
-        {showMeta && (
-          <div className="flex items-center gap-3 text-xs text-brand-primary/40 mb-3 flex-wrap">
-            <span className="flex items-center gap-1">
-              <Calendar size={10} /> {format(new Date(post.created_at), 'MMM d, yyyy')}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock size={10} /> {post.read_time} min read
-            </span>
-            <span className="flex items-center gap-1">
-              <Eye size={10} /> {post.views.toLocaleString()}
-            </span>
-          </div>
-        )}
-        <h3 className="font-bold text-brand-primary leading-tight mb-2 text-lg group-hover:text-brand-primary transition-colors">
+      <div className="flex flex-grow flex-col p-8">
+        <span className="mb-3 flex items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
+          <Icon size={12} aria-hidden="true" /> {post.category}
+        </span>
+        <h3 className="mb-4 font-aureate-headline text-aureate-headline-md text-aureate-on-surface transition-colors duration-300 group-hover:text-aureate-primary">
           {post.title}
         </h3>
-        <p className="text-brand-primary/50 text-sm line-clamp-2 leading-relaxed mb-4">{post.excerpt}</p>
-        <div className="flex items-center justify-between mt-auto">
-          <span className="text-xs text-brand-primary/40 flex items-center gap-1">
-            <User size={10} /> {post.author}
-          </span>
-          <span className="text-xs font-bold text-brand-primary flex items-center gap-1 group-hover:gap-2 transition-all">
-            Read <ChevronRight size={12} />
+        <p className="mb-6 line-clamp-3 font-aureate-body text-aureate-body-md leading-relaxed text-aureate-on-surface-variant">
+          {post.excerpt}
+        </p>
+        <div className="mt-auto flex items-center justify-between border-t border-aureate-outline-variant pt-5">
+          {showMeta && (
+            <span className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant">
+              {post.read_time} min read
+            </span>
+          )}
+          <span className="inline-flex items-center gap-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary transition-colors group-hover:text-aureate-on-secondary-container">
+            Read
+            <ArrowRight
+              size={12}
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            />
           </span>
         </div>
       </div>

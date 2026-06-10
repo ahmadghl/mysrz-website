@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
-import { Search, X, Mountain, Camera, Utensils, Leaf } from 'lucide-react';
+import { Camera, Leaf, Mountain, Search, Utensils, X } from 'lucide-react';
 import type { Category } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +20,11 @@ interface Props {
   initialQuery: string;
 }
 
+/**
+ * Aureate-restyled blog filters. Border-on-surface category pills
+ * with underline-on-active, search input as a bordered underline
+ * field. URL-building logic unchanged.
+ */
 export function BlogFilters({ activeCategory, initialQuery }: Props) {
   const router = useRouter();
   const params = useSearchParams();
@@ -51,26 +56,8 @@ export function BlogFilters({ activeCategory, initialQuery }: Props) {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-10">
-      <form
-        onSubmit={submit}
-        className="flex items-center gap-2 border border-black/10 rounded-xl px-4 py-2 flex-grow max-w-sm bg-white"
-      >
-        <Search size={16} className="text-brand-primary/40" />
-        <input
-          type="text"
-          placeholder="Search articles..."
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          className="bg-transparent text-sm outline-none flex-grow placeholder:text-brand-primary/40"
-        />
-        {q && (
-          <button type="button" onClick={clear} aria-label="Clear search">
-            <X size={14} className="text-brand-primary/40" />
-          </button>
-        )}
-      </form>
-      <div className="flex flex-wrap gap-2">
+    <div className="mb-12 flex flex-col gap-6 border-y border-aureate-outline-variant py-6 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-wrap gap-3">
         {CATEGORIES.map((cat) => {
           const Icon = cat === 'All' ? null : ICONS[cat];
           const active = activeCategory === cat;
@@ -79,17 +66,41 @@ export function BlogFilters({ activeCategory, initialQuery }: Props) {
               key={cat}
               href={buildHref(cat)}
               className={cn(
-                'flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all',
+                'inline-flex items-center gap-2 border px-5 py-2 font-aureate-label text-aureate-label-md uppercase tracking-widest transition-all duration-300',
                 active
-                  ? 'bg-brand-primary text-white'
-                  : 'bg-brand-paper border border-black/10 text-brand-primary/70 hover:border-brand-accent'
+                  ? 'border-aureate-primary bg-aureate-primary text-aureate-on-primary'
+                  : 'border-aureate-outline-variant text-aureate-on-surface-variant hover:border-aureate-primary hover:bg-aureate-surface-container hover:text-aureate-primary',
               )}
             >
-              {Icon && <Icon size={14} />} {cat}
+              {Icon && <Icon size={12} aria-hidden="true" />} {cat}
             </Link>
           );
         })}
       </div>
+      <form
+        onSubmit={submit}
+        className="flex items-center gap-3 border-b border-aureate-outline-variant pb-2 md:max-w-xs"
+      >
+        <Search size={16} className="text-aureate-on-surface-variant" aria-hidden="true" />
+        <input
+          type="text"
+          placeholder="Search the Journal…"
+          aria-label="Search articles"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          className="flex-grow bg-transparent py-1 font-aureate-body text-aureate-body-md text-aureate-on-surface placeholder:text-aureate-on-surface-variant/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-aureate-primary"
+        />
+        {q && (
+          <button
+            type="button"
+            onClick={clear}
+            aria-label="Clear search"
+            className="text-aureate-on-surface-variant transition-colors hover:text-aureate-primary"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </form>
     </div>
   );
 }

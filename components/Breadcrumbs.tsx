@@ -27,6 +27,10 @@ interface BreadcrumbsProps {
  *     { label: 'Destinations', href: '/destinations' },
  *     { label: 'Hunza Valley' },
  *   ]} />
+ *
+ * Aureate-restyled: aureate tokens, tracked-uppercase Montserrat
+ * labels. JSON-LD payload unchanged so existing rich-result
+ * eligibility carries over.
  */
 export function Breadcrumbs({ items, hideVisual, className }: BreadcrumbsProps) {
   if (items.length === 0) return null;
@@ -53,24 +57,24 @@ export function Breadcrumbs({ items, hideVisual, className }: BreadcrumbsProps) 
           aria-label="Breadcrumb"
           className={
             className ??
-            'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 text-sm text-brand-primary/60'
+            'mx-auto max-w-aureate-container px-aureate-mobile pt-6 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant md:px-aureate-desktop'
           }
         >
-          <ol className="flex flex-wrap items-center gap-1">
+          <ol className="flex flex-wrap items-center gap-2">
             {items.map((crumb, i) => {
               const isLast = i === items.length - 1;
               return (
-                <li key={`${crumb.label}-${i}`} className="flex items-center gap-1">
+                <li key={`${crumb.label}-${i}`} className="flex items-center gap-2">
                   {crumb.href && !isLast ? (
                     <Link
                       href={crumb.href}
-                      className="hover:text-brand-primary underline-offset-2 hover:underline"
+                      className="transition-colors hover:text-aureate-primary"
                     >
                       {crumb.label}
                     </Link>
                   ) : (
                     <span
-                      className={isLast ? 'text-brand-primary font-medium' : ''}
+                      className={isLast ? 'text-aureate-primary' : ''}
                       aria-current={isLast ? 'page' : undefined}
                     >
                       {crumb.label}
@@ -78,8 +82,8 @@ export function Breadcrumbs({ items, hideVisual, className }: BreadcrumbsProps) 
                   )}
                   {!isLast && (
                     <ChevronRight
-                      size={13}
-                      className="opacity-50"
+                      size={12}
+                      className="opacity-60"
                       aria-hidden="true"
                     />
                   )}
