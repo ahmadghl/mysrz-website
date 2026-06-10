@@ -85,9 +85,10 @@ export function BlogFilters({ activeCategory, initialQuery }: Props) {
         <input
           type="text"
           placeholder="Search the Journal…"
+          aria-label="Search articles"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="flex-grow bg-transparent py-1 font-aureate-body text-aureate-body-md text-aureate-on-surface outline-none placeholder:text-aureate-on-surface-variant/60"
+          className="flex-grow bg-transparent py-1 font-aureate-body text-aureate-body-md text-aureate-on-surface placeholder:text-aureate-on-surface-variant/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-aureate-primary"
         />
         {q && (
           <button

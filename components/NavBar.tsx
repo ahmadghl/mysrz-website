@@ -41,6 +41,17 @@ export function NavBar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Escape closes the mobile menu — keyboard users shouldn't have
+  // to tab to the toggle button to dismiss it.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
@@ -126,13 +137,17 @@ export function NavBar() {
             </button>
           </div>
         </nav>
-      </header>
 
-      {open && (
-        <div
-          id="mobile-nav"
-          className="fixed inset-x-0 top-[80px] z-40 border-b border-aureate-outline-variant bg-aureate-surface px-aureate-mobile py-6 shadow-xl md:hidden"
-        >
+        {/* Mobile menu lives INSIDE the sticky header and anchors with
+            top-full, so it always sits flush below the nav regardless
+            of the compact-on-scroll height change (py-6 ↔ py-4). A
+            fixed top-[Npx] here would overlap or gap as the nav
+            resizes. */}
+        {open && (
+          <div
+            id="mobile-nav"
+            className="absolute inset-x-0 top-full border-b border-aureate-outline-variant bg-aureate-surface px-aureate-mobile py-6 shadow-xl md:hidden"
+          >
           <ul className="space-y-1">
             {NAV_LINKS.map(({ label, href }) => (
               <li key={href}>
@@ -150,18 +165,19 @@ export function NavBar() {
                 </Link>
               </li>
             ))}
-            <li className="pt-3">
-              <Link
-                href="/contact"
-                onClick={() => setOpen(false)}
-                className="block w-full bg-aureate-primary px-4 py-3 text-center font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-primary"
-              >
-                Plan a Trip
-              </Link>
-            </li>
-          </ul>
-        </div>
-      )}
+              <li className="pt-3">
+                <Link
+                  href="/contact"
+                  onClick={() => setOpen(false)}
+                  className="block w-full bg-aureate-primary px-4 py-3 text-center font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-primary"
+                >
+                  Plan a Trip
+                </Link>
+              </li>
+            </ul>
+          </div>
+        )}
+      </header>
     </>
   );
 }

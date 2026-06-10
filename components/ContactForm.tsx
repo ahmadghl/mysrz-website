@@ -166,7 +166,7 @@ export function ContactForm({ subjects }: { subjects?: SubjectOption[] }) {
               required
               value={form.subject}
               onChange={(e) => set('subject', e.target.value)}
-              className="appearance-none border-x-0 border-b border-t-0 border-aureate-outline-variant bg-transparent py-3 font-aureate-body text-aureate-body-md text-aureate-on-surface transition-all duration-300 focus:border-aureate-primary focus:outline-none focus:ring-0"
+              className="appearance-none border-x-0 border-b border-t-0 border-aureate-outline-variant bg-transparent py-3 font-aureate-body text-aureate-body-md text-aureate-on-surface transition-colors duration-300 focus:border-aureate-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-aureate-primary"
             >
               <option value="">Select a subject</option>
               {subjectOptions.map((s) => (
@@ -253,7 +253,7 @@ function FieldUnderline({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="border-x-0 border-b border-t-0 border-aureate-outline-variant bg-transparent py-3 font-aureate-body text-aureate-body-md text-aureate-on-surface transition-all duration-300 placeholder:text-aureate-on-surface-variant/40 focus:border-aureate-primary focus:outline-none focus:ring-0"
+        className="border-x-0 border-b border-t-0 border-aureate-outline-variant bg-transparent py-3 font-aureate-body text-aureate-body-md text-aureate-on-surface transition-colors duration-300 placeholder:text-aureate-on-surface-variant/60 focus:border-aureate-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-aureate-primary"
       />
     </div>
   );

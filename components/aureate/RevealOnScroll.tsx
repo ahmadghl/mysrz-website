@@ -29,18 +29,30 @@ interface Props {
   className?: string;
 }
 
+type RevealState =
+  /** Server render + pre-hydration: fully visible, no transition. */
+  | 'ssr'
+  /** Below the fold after hydration: hidden, waiting for the observer. */
+  | 'hidden'
+  /** Revealed (or never needed hiding): visible, with transition. */
+  | 'visible';
+
 /**
  * IntersectionObserver-based reveal wrapper for the Aureate redesign.
- * Replaces the Stitch mockup's manual querySelectorAll('.reveal')
- * pattern with a React-idiomatic component.
  *
- * - Respects `prefers-reduced-motion: reduce` (renders visible
- *   immediately, skips the transition).
- * - Disconnects the observer after first reveal by default so we
- *   don't keep watching elements that have already animated.
- * - Renders a fallback-visible state when JS is disabled (the
- *   inline style sets opacity:1 if React never hydrates), so users
- *   without JS still see the content.
+ * Server HTML is rendered FULLY VISIBLE — no inline opacity:0. This
+ * matters for three audiences: search crawlers snapshotting the page,
+ * users with JS disabled, and users on slow connections who'd
+ * otherwise stare at blank sections until hydration.
+ *
+ * After hydration, only elements that sit BELOW the current viewport
+ * are switched to the hidden state (the user can't see them, so the
+ * switch causes no visible flash) and then revealed by the observer
+ * as they scroll in. Elements already on screen at hydration time
+ * stay visible and never animate.
+ *
+ * Respects `prefers-reduced-motion: reduce` (everything stays
+ * visible, no transitions).
  */
 export function RevealOnScroll({
   children,
@@ -51,29 +63,36 @@ export function RevealOnScroll({
   className,
 }: Props) {
   const ref = useRef<HTMLElement | null>(null);
-  const [visible, setVisible] = useState(false);
+  const [state, setState] = useState<RevealState>('ssr');
 
   useEffect(() => {
-    // Respect users who've asked for less motion at the OS level.
-    const reduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      setVisible(true);
+    const el = ref.current;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!el || reduced) {
+      setState('visible');
       return;
     }
 
-    const el = ref.current;
-    if (!el) return;
+    // Already in (or above) the viewport at hydration time — leave it
+    // visible. Hiding it now would cause a visible flash.
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 50) {
+      setState('visible');
+      return;
+    }
+
+    // Below the fold: safe to hide (user can't see it), then reveal
+    // via the observer as it scrolls toward the viewport.
+    setState('hidden');
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisible(true);
+            setState('visible');
             if (once) observer.unobserve(entry.target);
           } else if (!once) {
-            setVisible(false);
+            setState('hidden');
           }
         });
       },
@@ -84,14 +103,16 @@ export function RevealOnScroll({
     return () => observer.disconnect();
   }, [once, threshold]);
 
-  const style: CSSProperties = {
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(20px)',
-    transition:
-      'opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
-    transitionDelay: visible && delay ? `${delay}ms` : '0ms',
-    willChange: visible ? 'auto' : 'opacity, transform',
-  };
+  const style: CSSProperties =
+    state === 'ssr'
+      ? {}
+      : {
+          opacity: state === 'visible' ? 1 : 0,
+          transform: state === 'visible' ? 'translateY(0)' : 'translateY(20px)',
+          transition:
+            'opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
+          transitionDelay: state === 'visible' && delay ? `${delay}ms` : '0ms',
+        };
 
   return (
     // @ts-expect-error — dynamic tag with strict ref typing is a known

@@ -115,6 +115,20 @@ body {
   background: rgba(0, 0, 0, 0.04);
 }
 
+/* Motion accessibility: Tailwind's animate-* utilities don't gate on
+ * the user's OS motion preference by themselves. One global rule
+ * covers every current and future use (hero scroll-hint bounce,
+ * loading-skeleton pulses) without editing each call site. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-bounce,
+  .animate-pulse {
+    animation: none;
+  }
+  .animate-pulse {
+    opacity: 0.6; /* skeletons stay readable as static placeholders */
+  }
+}
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {

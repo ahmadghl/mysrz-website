@@ -48,13 +48,13 @@ export function NewsletterForm() {
         placeholder="Email address"
         required
         aria-label="Email address"
-        className="flex-grow bg-transparent py-2 font-aureate-body text-aureate-body-md text-white placeholder:text-white/50 focus:outline-none focus:ring-0"
+        className="flex-grow bg-transparent py-2 font-aureate-body text-aureate-body-md text-white placeholder:text-white/75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aureate-primary-fixed-dim"
       />
       <button
         type="submit"
         disabled={submitting}
         aria-label="Subscribe to the newsletter"
-        className="p-2 text-aureate-primary-fixed-dim transition-transform hover:translate-x-1 disabled:opacity-50"
+        className="p-2 text-aureate-primary-fixed-dim transition-transform hover:translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aureate-primary-fixed-dim disabled:opacity-50"
       >
         <ArrowRight size={18} />
       </button>
