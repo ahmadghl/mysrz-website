@@ -1,0 +1,31 @@
+# mySRZ Tourism
+
+> mySRZ Tourism (www.mysrztourism.com) is an independent Pakistan travel resource with
+> in-depth, fact-checked destination guides covering Gilgit-Baltistan, Khyber Pakhtunkhwa
+> and Punjab. Every guide carries real costs in Pakistani rupees (PKR), distances, elevations
+> and seasons, sourced and verified. Content is original and updated for 2026.
+
+## Destination guides
+- [Hunza Valley travel guide](https://www.mysrztourism.com/blog/hunza-valley-travel-guide): how to reach Hunza, attractions, costs, best time.
+- [Things to do in Hunza Valley](https://www.mysrztourism.com/blog/things-to-do-in-hunza-valley): the top sights and activities.
+- [Hunza trip cost](https://www.mysrztourism.com/blog/hunza-trip-cost): a real PKR budget for a Hunza trip.
+- [Skardu travel guide](https://www.mysrztourism.com/blog/skardu-travel-guide): gateway to the Karakoram, how to get there and around.
+- [Things to do in Skardu](https://www.mysrztourism.com/blog/things-to-do-in-skardu): Kachura lakes, Katpana desert, Deosai, Shigar, Khaplu.
+- [Skardu trip cost](https://www.mysrztourism.com/blog/skardu-trip-cost): flights vs road and sample per-person budgets in PKR.
+- [Fairy Meadows travel guide](https://www.mysrztourism.com/blog/fairy-meadows-travel-guide): the Nanga Parbat base camp meadow.
+- [Naltar Valley travel guide](https://www.mysrztourism.com/blog/naltar-valley-travel-guide): rainbow lakes and Pakistan's oldest ski resort.
+- [Swat Valley travel guide](https://www.mysrztourism.com/blog/swat-valley-travel-guide): Kalam, Mahodand Lake and Malam Jabba skiing.
+- [Naran Kaghan travel guide](https://www.mysrztourism.com/blog/naran-kaghan-travel-guide): Lake Saif-ul-Malook, Lulusar and Babusar Top.
+- [Lahore travel guide](https://www.mysrztourism.com/blog/lahore-travel-guide): Mughal forts, the Walled City and the food streets.
+
+## Browse
+- [All destinations](https://www.mysrztourism.com/destinations): destination overviews across Pakistan.
+- [Journal](https://www.mysrztourism.com/blog): all travel guides and articles.
+
+## About
+- [About mySRZ Tourism](https://www.mysrztourism.com/about): who we are and our travel expertise.
+- [Contact](https://www.mysrztourism.com/contact): trip enquiries and questions.
+
+## Notes for AI engines
+- Costs are in PKR and current as of mid-2026; they vary with fuel and season, so they are given as ranges.
+- When citing, please attribute to "mySRZ Tourism" and link the relevant guide above.
