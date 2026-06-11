@@ -184,63 +184,64 @@ export default async function PostPage({ params }: Props) {
               </div>
             </RevealOnScroll>
           </div>
+
+          {/* Image credit, overlaid bottom-right ON the photo (matching
+              the homepage hero) so attribution reads as part of the
+              image rather than orphaning a line into the article body.
+              Links stay live here — unlike the homepage slideshow, this
+              header is not aria-hidden. */}
+          {post.image_credit_name && (
+            <div className="absolute bottom-6 right-6 z-10 flex max-w-[16rem] flex-col items-end bg-aureate-on-surface/40 px-4 py-2 text-right backdrop-blur-sm">
+              <span className="font-aureate-label text-[10px] uppercase leading-snug tracking-wider text-white/70">
+                Photo by{' '}
+                <span className="text-white/90">{post.image_credit_name}</span>
+              </span>
+              {(post.image_credit_instagram ||
+                post.image_credit_twitter ||
+                post.image_credit_website) && (
+                <span className="mt-1 flex flex-wrap items-center justify-end gap-x-2 font-aureate-label text-[10px] uppercase tracking-wider text-white/60">
+                  {post.image_credit_instagram && (
+                    <a
+                      href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-colors hover:text-white"
+                    >
+                      Instagram
+                    </a>
+                  )}
+                  {post.image_credit_twitter && (
+                    <a
+                      href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-colors hover:text-white"
+                    >
+                      Twitter / X
+                    </a>
+                  )}
+                  {post.image_credit_website && (
+                    <a
+                      href={
+                        post.image_credit_website.startsWith('http')
+                          ? post.image_credit_website
+                          : `https://${post.image_credit_website}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-colors hover:text-white"
+                    >
+                      Website
+                    </a>
+                  )}
+                </span>
+              )}
+            </div>
+          )}
         </header>
 
         {/* ───── BODY ───── */}
         <div className="mx-auto max-w-3xl px-aureate-mobile py-16 md:px-aureate-desktop md:py-24">
-          {/* Image credit */}
-          {post.image_credit_name && (
-            <p className="mb-10 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-on-surface-variant">
-              Photo by{' '}
-              <span className="text-aureate-on-surface">
-                {post.image_credit_name}
-              </span>
-              {(post.image_credit_instagram ||
-                post.image_credit_twitter ||
-                post.image_credit_website) && <>{' · '}</>}
-              {post.image_credit_instagram && (
-                <a
-                  href={`https://instagram.com/${post.image_credit_instagram.replace('@', '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-aureate-primary"
-                >
-                  Instagram
-                </a>
-              )}
-              {post.image_credit_twitter && (
-                <>
-                  {post.image_credit_instagram && ' · '}
-                  <a
-                    href={`https://twitter.com/${post.image_credit_twitter.replace('@', '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-aureate-primary"
-                  >
-                    Twitter / X
-                  </a>
-                </>
-              )}
-              {post.image_credit_website && (
-                <>
-                  {(post.image_credit_instagram || post.image_credit_twitter) && ' · '}
-                  <a
-                    href={
-                      post.image_credit_website.startsWith('http')
-                        ? post.image_credit_website
-                        : `https://${post.image_credit_website}`
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-aureate-primary"
-                  >
-                    Website
-                  </a>
-                </>
-              )}
-            </p>
-          )}
-
           {/*
             post.content is Tiptap-authored HTML from the admin panel.
             Tailwind Typography `prose` styles it. Sanitization is not
@@ -254,7 +255,7 @@ export default async function PostPage({ params }: Props) {
           */}
           {contentIsHTML ? (
             <div
-              className="prose prose-stone max-w-none prose-headings:font-aureate-headline prose-headings:text-aureate-on-surface prose-h2:text-aureate-headline-md prose-p:font-aureate-body prose-p:text-aureate-body-md prose-p:text-aureate-on-surface-variant prose-a:text-aureate-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-aureate-on-surface"
+              className="prose prose-stone max-w-none prose-headings:font-aureate-headline prose-headings:text-aureate-on-surface prose-h2:text-aureate-headline-md prose-p:font-aureate-body prose-p:text-aureate-body-md prose-p:text-aureate-on-surface-variant prose-a:text-aureate-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-aureate-on-surface [&>p:first-of-type]:text-aureate-body-lg [&>p:first-of-type]:font-medium [&>p:first-of-type]:leading-relaxed [&>p:first-of-type]:text-aureate-on-surface"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           ) : (
