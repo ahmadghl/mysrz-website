@@ -27,46 +27,44 @@ export interface HeroSlide {
   credit: string;
 }
 
-const WM = 'https://upload.wikimedia.org/wikipedia/commons/thumb';
-
 export const HERO_SLIDES: HeroSlide[] = [
   {
-    src: `${WM}/e/e0/Ali_Mujtaba_WLM2017_FAISAL_MOSQUE_019.jpg/1920px-Ali_Mujtaba_WLM2017_FAISAL_MOSQUE_019.jpg`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-islamabad-faisal-mosque.jpg',
     label: 'Faisal Mosque · Islamabad',
     credit: 'Ali Mujtaba, CC BY-SA 4.0',
   },
   {
-    src: `${WM}/4/47/PK_Karachi_asv2020-02_img52_Mazar-e-Quaid.jpg/1920px-PK_Karachi_asv2020-02_img52_Mazar-e-Quaid.jpg`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-karachi-mazar-e-quaid.jpg',
     label: 'Mazar-e-Quaid · Karachi',
     credit: 'A.Savin, FAL',
   },
   {
-    src: `${WM}/c/c8/Badshahi_Mosque_front_picture.jpg/1920px-Badshahi_Mosque_front_picture.jpg`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-lahore-badshahi-mosque.jpg',
     label: 'Badshahi Mosque · Lahore',
     credit: 'Romero Maia, CC BY-SA 4.0',
   },
   {
-    src: `${WM}/f/f2/Hanna_Lake_Quetta.jpg/1920px-Hanna_Lake_Quetta.jpg`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-quetta-hanna-lake.jpg',
     label: 'Hanna Lake · Quetta',
     credit: 'Aysafaran, CC BY-SA 4.0',
   },
   {
-    src: `${WM}/a/ab/Islamia_College_Peshawar_%28Public_Sector_University%29%2C_Khyber_Pakhtunkhwa%2C_Pakistan_cropped.jpg/1920px-Islamia_College_Peshawar_%28Public_Sector_University%29%2C_Khyber_Pakhtunkhwa%2C_Pakistan_cropped.jpg`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-peshawar-islamia-college.jpg',
     label: 'Islamia College · Peshawar',
     credit: 'Zafarmaini, CC BY-SA 4.0',
   },
   {
-    src: `${WM}/c/c2/Pakistan_is_full_of_breathtaking_views_-_Muzafarabad.JPG/1920px-Pakistan_is_full_of_breathtaking_views_-_Muzafarabad.JPG`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-muzaffarabad-neelum.jpg',
     label: 'Neelum Valley · Muzaffarabad',
     credit: 'Obaid747, CC BY-SA 3.0',
   },
   {
-    src: `${WM}/5/52/Attabad.jpg/1920px-Attabad.jpg`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-hunza-attabad-lake.jpg',
     label: 'Attabad Lake · Hunza',
     credit: 'Peracha1, CC BY-SA 4.0',
   },
   {
-    src: `${WM}/9/9f/Shangrila_resort_skardu.jpg/1920px-Shangrila_resort_skardu.jpg`,
+    src: 'https://sptdzsvuswdpykvgblfm.supabase.co/storage/v1/object/public/media/content/slide-skardu-shangrila.jpg',
     label: 'Shangrila Lake · Skardu',
     credit: 'S Sher Xaman, CC BY-SA 4.0',
   },
