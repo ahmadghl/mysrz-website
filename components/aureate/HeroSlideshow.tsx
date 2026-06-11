@@ -77,9 +77,18 @@ export function HeroSlideshow({ slides, intervalMs = 6000 }: Props) {
             sizes="100vw"
             className="object-cover"
           />
-          {/* City caption — bottom-right, fades with its slide. */}
-          <span className="absolute bottom-6 right-6 hidden bg-aureate-on-surface/40 px-4 py-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-white/90 backdrop-blur-sm md:block">
-            {slide.label}
+          {/* City caption + photographer attribution. The credit line
+              satisfies the CC BY-SA / FAL licenses of the Wikimedia
+              photos and fades with its slide. Text-only (no link)
+              because the slideshow container is aria-hidden and must
+              not contain focusable elements. */}
+          <span className="absolute bottom-6 right-6 hidden flex-col items-end bg-aureate-on-surface/40 px-4 py-2 backdrop-blur-sm md:flex">
+            <span className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-white/90">
+              {slide.label}
+            </span>
+            <span className="mt-0.5 font-aureate-label text-[10px] uppercase tracking-wider text-white/60">
+              Photo: {slide.credit}
+            </span>
           </span>
         </div>
       ))}
