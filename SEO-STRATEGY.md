@@ -78,7 +78,8 @@ Goal: capture planning + buying intent, where revenue and high-value traffic liv
 - [x] Northern Pakistan 10-day itinerary (2026-06-11)
 - [x] "Hunza vs Skardu" comparison (2026-06-11)
 - [ ] More itineraries: Skardu-focused, Swat/Kalam, Naran loop
-- [ ] More comparisons: "Naran vs Swat", "Fairy Meadows vs Deosai"
+- [x] "Naran vs Swat" comparison (2026-06-12)
+- [ ] More comparisons: "Fairy Meadows vs Deosai", "Kalam vs Naran"
 - [ ] "Pakistan tour packages / costs" overview tying to contact/enquiry
 - [ ] Seasonal pages ("Cherry blossom in Hunza", "Autumn in Hunza", "Skiing in Pakistan")
 - [ ] Strong contact/enquiry CTA woven into commercial posts
