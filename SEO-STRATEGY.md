@@ -81,13 +81,21 @@ Goal: capture planning + buying intent, where revenue and high-value traffic liv
 - [ ] Seasonal pages ("Cherry blossom in Hunza", "Autumn in Hunza", "Skiing in Pakistan")
 - [ ] Strong contact/enquiry CTA woven into commercial posts
 
-### Phase 3 — Measurement loop  ⬜ (mostly Ahmad's action; unblocks everything)
+### Phase 3 — Measurement loop  🟡 (scaffold shipped; needs Ahmad to connect)
 Goal: stop publishing blind. Iterate on real query data.
 
-- [ ] Connect **Google Search Console**, submit sitemap (Ahmad: verify property)
-- [ ] Add **GA4** (or Vercel Analytics) — scaffold reads env var, Ahmad provides ID
-- [ ] Add `google-site-verification` via env var
+- [x] `google-site-verification` via env var — `GSC_SITE_VERIFICATION` in metadata (inert until set)
+- [x] GA4 loader scaffold — `components/Analytics.tsx`, gated on `NEXT_PUBLIC_GA_ID` (inert until set)
+- [ ] **Ahmad:** set env vars in Vercel, then connect GSC + submit sitemap (see below)
 - [ ] Monthly review: prune/expand by impressions, CTR, position
+
+**Env vars to set in Vercel (Production) to switch measurement on:**
+- `GSC_SITE_VERIFICATION` — the content value from Google Search Console's HTML-tag method.
+- `NEXT_PUBLIC_GA_ID` — the GA4 measurement ID, e.g. `G-XXXXXXXXXX` (optional; the
+  first-party Tracker already covers basic behaviour).
+
+After setting `GSC_SITE_VERIFICATION` and redeploying, verify the property in GSC, then
+submit `https://www.mysrztourism.com/sitemap.xml`. The sitemap is already dynamic and complete.
 
 ### Phase 4 — Off-page, local & E-E-A-T  ⬜
 - [ ] Google Business Profile for mySRZ Tourism

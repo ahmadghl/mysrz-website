@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { Tracker } from '@/components/Tracker';
+import { Analytics } from '@/components/Analytics';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
@@ -74,6 +75,13 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     alternates: { canonical: '/' },
+    // Set GSC_SITE_VERIFICATION in Vercel to verify Google Search
+    // Console via the HTML-tag method. Emits nothing until set, so it
+    // is safe to ship inert. GSC is the source of the query/CTR data
+    // that drives the content roadmap in SEO-STRATEGY.md (Phase 3).
+    verification: {
+      google: process.env.GSC_SITE_VERIFICATION || undefined,
+    },
     openGraph: {
       type: 'website',
       locale: 'en_PK',
@@ -201,6 +209,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Suspense fallback={null}>
           <Tracker />
         </Suspense>
+        <Analytics />
       </body>
     </html>
   );
