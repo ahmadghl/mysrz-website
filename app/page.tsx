@@ -18,6 +18,8 @@ import { getSiteSettings } from '@/lib/site-settings';
 import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
 import { PaperStack } from '@/components/aureate/PaperStack';
 import { AureateButton } from '@/components/aureate/AureateButton';
+import { HeroSlideshow } from '@/components/aureate/HeroSlideshow';
+import { HERO_SLIDES } from '@/lib/hero-slides';
 
 export const revalidate = 60;
 
@@ -49,21 +51,14 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ───── IMMERSIVE HERO ───── */}
+      {/* ───── IMMERSIVE HERO ─────
+          Crossfading slideshow of the eight flagship cities (see
+          lib/hero-slides.ts). First slide is the LCP image with
+          priority — same cost as the old single-image hero. The
+          admin's hero_image_url setting is no longer used here;
+          swap slides by editing lib/hero-slides.ts. */}
       <header className="relative flex h-[90vh] w-full items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={settings.hero_image_url}
-            alt="Pakistan mountains"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          {/* Soft warm gradient so cream text reads against any
-              hero photo regardless of color temperature. */}
-          <div className="absolute inset-0 bg-gradient-to-b from-aureate-on-surface/40 to-aureate-on-surface/10" />
-        </div>
+        <HeroSlideshow slides={HERO_SLIDES} />
 
         <RevealOnScroll className="relative z-10 max-w-4xl px-aureate-mobile text-center md:px-aureate-desktop">
           <span className="mb-6 block font-aureate-label text-aureate-label-md uppercase tracking-[0.3em] text-aureate-primary-fixed-dim">

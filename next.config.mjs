@@ -12,6 +12,9 @@ const nextConfig = {
     // optimizer on every CDN miss.
     minimumCacheTTL: 86400,
     remotePatterns: [
+      // Wikimedia Commons CDN — homepage hero slideshow images
+      // (lib/hero-slides.ts). Freely licensed landmark photos.
+      { protocol: 'https', hostname: 'upload.wikimedia.org' },
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: '**.supabase.co' },
