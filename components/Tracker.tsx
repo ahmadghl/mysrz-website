@@ -3,7 +3,9 @@
 import { useEffect, useRef } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_TRACKER_WEBHOOK_URL;
+// First-party, same-origin ingestion endpoint (app/api/track). No external
+// webhook to break — events write straight into Supabase page_analytics.
+const TRACK_ENDPOINT = '/api/track';
 
 function getSessionId(): string {
   let id = sessionStorage.getItem('mysrz_sid');
@@ -49,7 +51,6 @@ function getDeviceInfo() {
 }
 
 function send(event: string, extra?: Record<string, unknown>) {
-  if (!WEBHOOK_URL) return;
   const params = new URLSearchParams(window.location.search);
   const payload = {
     event,
@@ -74,7 +75,7 @@ function send(event: string, extra?: Record<string, unknown>) {
     ...(extra ? { data: extra } : {}),
   };
   try {
-    fetch(WEBHOOK_URL, {
+    fetch(TRACK_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -100,7 +101,6 @@ export function Tracker() {
     window.addEventListener('scroll', onScroll, { passive: true });
 
     const onUnload = () => {
-      if (!WEBHOOK_URL) return;
       const data = JSON.stringify({
         event: 'page_exit',
         session_id: getSessionId(),
@@ -108,7 +108,7 @@ export function Tracker() {
         time_on_page_sec: Math.round((Date.now() - startTimeRef.current) / 1000),
         max_scroll_pct: maxScrollRef.current,
       });
-      navigator.sendBeacon(WEBHOOK_URL, new Blob([data], { type: 'application/json' }));
+      navigator.sendBeacon(TRACK_ENDPOINT, new Blob([data], { type: 'application/json' }));
     };
     window.addEventListener('beforeunload', onUnload);
 
