@@ -26,7 +26,7 @@ interface TrackPayload {
   data?: unknown;
 }
 
-const ALLOWED_EVENTS = new Set(['page_view', 'page_exit']);
+const ALLOWED_EVENTS = new Set(['page_view', 'page_exit', 'click', 'conversion']);
 
 // Always answer 204 so a failed insert never surfaces an error to the visitor
 // or the sendBeacon call. Tracking is best-effort and must never break a page.
@@ -47,9 +47,20 @@ export async function POST(req: Request) {
   const event = typeof b.event === 'string' ? b.event : '';
   if (!ALLOWED_EVENTS.has(event) || !b.session_id) return noContent();
 
+  // Geography from Vercel's edge geo headers (present in production on Vercel).
+  // City/region are URL-encoded; country is an ISO code. No IP is stored.
+  const h = req.headers;
+  const dec = (v: string | null) => {
+    if (!v) return null;
+    try { return decodeURIComponent(v); } catch { return v; }
+  };
+
   const row = {
     event,
     session_id: b.session_id,
+    country: h.get('x-vercel-ip-country') || null,
+    region: dec(h.get('x-vercel-ip-country-region')),
+    city: dec(h.get('x-vercel-ip-city')),
     returning_visitor: b.returning_visitor ?? null,
     page_url: b.page?.url ?? null,
     page_path: b.page?.path ?? b.path ?? null,
