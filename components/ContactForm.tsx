@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { ArrowRight } from 'lucide-react';
 import type { SubjectOption } from '@/lib/site-settings';
+import { trackEvent } from '@/lib/track';
 
 interface State {
   name: string;
@@ -76,6 +77,7 @@ export function ContactForm({ subjects }: { subjects?: SubjectOption[] }) {
     }
     setSubmitting(false);
     setSent(true);
+    trackEvent('conversion', { kind: 'contact', subject: form.subject || null });
     setForm(initial);
     setTimeout(() => setSent(false), 6000);
   };

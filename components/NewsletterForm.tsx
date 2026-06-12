@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { trackEvent } from '@/lib/track';
 
 /**
  * Aureate-restyled footer newsletter form. Renders against the
@@ -36,6 +37,7 @@ export function NewsletterForm() {
     setSubmitting(false);
     setEmail('');
     setSent(true);
+    trackEvent('conversion', { kind: 'newsletter' });
     setTimeout(() => setSent(false), 4000);
   };
 
