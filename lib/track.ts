@@ -6,6 +6,23 @@
 
 const TRACK_ENDPOINT = '/api/track';
 
+/**
+ * Self-exclusion. Visiting any page with `?notrack=1` sets a persistent opt-out
+ * on that device (use `?notrack=0` to turn tracking back on). This keeps the
+ * team's own browsing out of the first-party analytics, so the SEO / AEO / GEO
+ * numbers reflect real visitors only.
+ */
+function trackingDisabled(): boolean {
+  try {
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get('notrack') === '1') localStorage.setItem('mysrz_notrack', '1');
+    else if (sp.get('notrack') === '0') localStorage.removeItem('mysrz_notrack');
+    return localStorage.getItem('mysrz_notrack') === '1';
+  } catch {
+    return false;
+  }
+}
+
 export function getSessionId(): string {
   let id = sessionStorage.getItem('mysrz_sid');
   if (!id) {
@@ -52,6 +69,7 @@ function getDeviceInfo() {
 /** Fire an event with full page + device + utm context. Best-effort. */
 export function trackEvent(event: string, extra?: Record<string, unknown>) {
   if (typeof window === 'undefined') return;
+  if (trackingDisabled()) return;
   const params = new URLSearchParams(window.location.search);
   const payload = {
     event,
@@ -90,6 +108,7 @@ export function trackEvent(event: string, extra?: Record<string, unknown>) {
 /** Lightweight beacon for unload-time events (page_exit). */
 export function trackBeacon(event: string, extra: Record<string, unknown>) {
   if (typeof navigator === 'undefined' || !navigator.sendBeacon) return;
+  if (trackingDisabled()) return;
   const data = JSON.stringify({ event, session_id: getSessionId(), ...extra });
   navigator.sendBeacon(TRACK_ENDPOINT, new Blob([data], { type: 'application/json' }));
 }
