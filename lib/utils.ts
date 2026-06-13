@@ -23,9 +23,9 @@ export const SITE = {
   email: 'ahmadfraz009@gmail.com',
   founder: 'Ahmad Fraz',
   social: {
-    instagram: 'https://instagram.com/mysrz',
-    twitter: 'https://twitter.com/mysrz',
-    facebook: 'https://facebook.com/mysrz',
+    instagram: 'https://www.instagram.com/mysrzpakistan/',
+    twitter: 'https://x.com/mysrzpakistan',
+    facebook: 'https://www.facebook.com/profile.php?id=61570708703617',
   },
   contactWebhook: 'https://n8n.mysrztourism.com/webhook/contact_form',
   newsletterWebhook: 'https://n8n.mysrztourism.com/webhook/newsletter_form',
