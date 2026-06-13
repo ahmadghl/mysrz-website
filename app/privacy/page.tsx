@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SITE } from '@/lib/utils';
+import { getSiteSettings } from '@/lib/site-settings';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -12,7 +12,9 @@ export const metadata: Metadata = {
 const article =
   'prose prose-stone max-w-none prose-headings:font-aureate-headline prose-headings:text-aureate-on-surface prose-h2:text-aureate-headline-md prose-p:font-aureate-body prose-p:text-aureate-on-surface-variant prose-p:leading-relaxed prose-a:text-aureate-primary prose-li:text-aureate-on-surface-variant prose-li:font-aureate-body prose-strong:text-aureate-on-surface';
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const s = await getSiteSettings();
+  const SITE = { name: s.site_name, url: s.site_url, email: s.email, founder: s.founder_name };
   return (
     <main className="mx-auto max-w-3xl px-aureate-mobile py-16 md:px-aureate-desktop md:py-24">
       <p className="mb-4 font-aureate-label text-aureate-label-md uppercase tracking-[0.3em] text-aureate-primary">Legal</p>
