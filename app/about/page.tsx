@@ -294,9 +294,12 @@ export default async function AboutPage() {
       {/* ───── BOTTOM CTA ───── */}
       <section className="border-t border-aureate-outline-variant py-24">
         <RevealOnScroll className="mx-auto max-w-2xl px-aureate-mobile text-center md:px-aureate-desktop">
-          <h2 className="mb-8 font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
+          <h2 className="mb-4 font-aureate-headline text-aureate-headline-lg-mobile text-aureate-on-surface md:text-aureate-headline-lg">
             Begin your Pakistan story
           </h2>
+          <p className="mb-8 font-aureate-body text-aureate-body-lg italic leading-relaxed text-aureate-on-surface-variant">
+            Some places stay open long after the last visitor leaves. This one was built to wait, and it still is.
+          </p>
           <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-6">
             <AureateButton href="/destinations" variant="primary">
               View Destinations
