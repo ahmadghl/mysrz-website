@@ -1,22 +1,22 @@
-import Script from 'next/script';
-
 // Google AdSense account-level loader (site verification + Auto ads).
 //
-// The publisher ID is public — it appears in page source on every AdSense
-// site — so it defaults to our ID and can still be overridden with
-// NEXT_PUBLIC_ADSENSE_ID if ever needed. Renders nothing if explicitly
-// blanked. Mirrors the env pattern used by the GA4 Analytics loader.
+// Rendered directly inside the document <head> so the real <script> tag is
+// present in the server-side HTML. AdSense's ownership verifier and crawler
+// look for the script in <head>; next/script's afterInteractive strategy only
+// left a preload <link> there, which is why verification failed.
+//
+// The publisher ID is public (it appears in page source on every AdSense
+// site), so it defaults to our ID and stays overridable via
+// NEXT_PUBLIC_ADSENSE_ID. Returns null if explicitly blanked.
 const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID ?? 'ca-pub-6248382237982919';
 
 export function AdSense() {
   if (!ADSENSE_ID) return null;
   return (
-    <Script
-      id="adsbygoogle-init"
+    <script
       async
       src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
       crossOrigin="anonymous"
-      strategy="afterInteractive"
     />
   );
 }
