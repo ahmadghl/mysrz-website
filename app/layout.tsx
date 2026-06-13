@@ -5,6 +5,7 @@ import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { Tracker } from '@/components/Tracker';
 import { Analytics } from '@/components/Analytics';
+import { AdSense } from '@/components/AdSense';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
@@ -210,6 +211,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Tracker />
         </Suspense>
         <Analytics />
+        <AdSense />
       </body>
     </html>
   );
