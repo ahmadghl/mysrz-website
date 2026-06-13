@@ -139,16 +139,22 @@ export async function Footer() {
           </p>
           <div className="flex gap-8">
             <Link
-              href="/about"
+              href="/privacy"
               className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-white/60 transition-colors hover:text-aureate-primary-fixed-dim"
             >
               Privacy Policy
             </Link>
             <Link
-              href="/about"
+              href="/terms"
               className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-white/60 transition-colors hover:text-aureate-primary-fixed-dim"
             >
               Terms
+            </Link>
+            <Link
+              href="/cookies"
+              className="font-aureate-label text-aureate-label-md uppercase tracking-widest text-white/60 transition-colors hover:text-aureate-primary-fixed-dim"
+            >
+              Cookies
             </Link>
             <a
               href="/sitemap.xml"
