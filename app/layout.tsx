@@ -202,6 +202,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraphJsonLd) }}
         />
+        {/* AdSense account script — a real <script> in <head> for ownership
+            verification and ad serving. */}
+        <AdSense />
       </head>
       <body className="flex min-h-screen flex-col bg-aureate-background font-aureate-body text-aureate-on-surface">
         <NavBar />
@@ -211,7 +214,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Tracker />
         </Suspense>
         <Analytics />
-        <AdSense />
       </body>
     </html>
   );
