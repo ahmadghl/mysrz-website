@@ -63,11 +63,11 @@ These are non-negotiable and already proven. See linked memory pipelines.
 ### Phase 1 — Topical authority breadth  🟡 active
 Goal: a destination + pillar guide for every major Pakistan region, plus connective hubs.
 
-Done: Hunza (full cluster), Skardu (full cluster), Fairy Meadows, Naltar, Lahore, Swat, Naran Kaghan, Islamabad, Gilgit.
+Done: Hunza (full cluster), Skardu (full cluster), Fairy Meadows, Naltar, Lahore, Swat, Naran Kaghan, Islamabad, Gilgit, Chitral & Kalash.
 
 - [x] Islamabad / Rawalpindi destination + guide (gateway hub) (2026-06-13)
 - [x] Gilgit destination + guide (route hub for the north) (2026-06-13)
-- [ ] Chitral & Kalash Valleys destination + guide
+- [x] Chitral & Kalash Valleys destination + guide (2026-06-13)
 - [ ] Murree & Galiyat destination + guide (mass-market anchor)
 - [x] **Connective pillar:** "Best time to visit Pakistan" (links every destination) (2026-06-11)
 - [x] **Connective pillar:** "How to plan a Pakistan trip / itinerary" hub → Northern Pakistan itinerary (2026-06-11)
