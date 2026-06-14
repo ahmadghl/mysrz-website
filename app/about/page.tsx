@@ -25,7 +25,7 @@ import { AureateButton } from '@/components/aureate/AureateButton';
 export const metadata: Metadata = {
   title: 'About mySRZ — Pakistan Travel Experts',
   description:
-    "Learn about mySRZ Travel & Tourism — Pakistan's trusted travel guide founded by Ahmad Fraz. Our mission, team, and travel philosophy.",
+    "Learn about mySRZ Travel & Tourism — Pakistan's trusted travel guide founded by Ahmad Faraz. Our mission, team, and travel philosophy.",
   alternates: { canonical: '/about' },
 };
 

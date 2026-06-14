@@ -30,7 +30,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return {
     title: 'Pakistan Travel Journal — Tips, Guides & Stories',
     description:
-      'In-depth Pakistan travel guides, destination stories, food discoveries and adventure tips written by local expert Ahmad Fraz.',
+      'In-depth Pakistan travel guides, destination stories, food discoveries and adventure tips written by local expert Ahmad Faraz.',
     alternates: { canonical: '/blog' },
     keywords: [
       'Pakistan travel blog',
