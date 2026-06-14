@@ -1,7 +1,7 @@
 # mySRZ Tourism — Ranking Strategy (SEO / AEO / GEO)
 
 > Living plan for ranking **www.mysrztourism.com** as a Pakistan travel authority.
-> Owner: Ahmad. Maintained by Claude across sessions. Last reviewed: 2026-06-11.
+> Owner: Ahmad. Maintained by Claude across sessions. Last reviewed: 2026-06-14.
 >
 > **Rule: every content/SEO change must map to a pillar and a phase below.**
 > If a task does not fit the plan, it does not ship until the plan is updated.
@@ -84,21 +84,26 @@ Goal: capture planning + buying intent, where revenue and high-value traffic liv
 - [ ] Seasonal pages ("Cherry blossom in Hunza", "Autumn in Hunza", "Skiing in Pakistan")
 - [ ] Strong contact/enquiry CTA woven into commercial posts
 
-### Phase 3 — Measurement loop  🟡 (scaffold shipped; needs Ahmad to connect)
+### Phase 2.5 — Food vertical  🟡 new (2026-06-14)
+Goal: own Pakistani food search the way we own travel. High volume, evergreen, and it
+cross-links naturally into the destination guides. Same operating rules (Section 2) apply.
+
+- [ ] Pillar: "Pakistani food guide" (cuisine overview + must-try dishes)
+- [ ] Regional food guides tied to destinations (Lahore food street, Gilgit-Baltistan/Hunza, Peshawar/Chitral, Karachi)
+- [ ] Dish deep-dives (nihari, chapli kabab, biryani, Hunza apricot/walnut, etc.)
+- [ ] Cross-link food ↔ destination guides both ways
+
+### Phase 3 — Measurement loop  ✅ connected (2026-06-14)
 Goal: stop publishing blind. Iterate on real query data.
 
-- [x] `google-site-verification` via env var — `GSC_SITE_VERIFICATION` in metadata (inert until set)
-- [x] GA4 loader scaffold — `components/Analytics.tsx`, gated on `NEXT_PUBLIC_GA_ID` (inert until set)
-- [ ] **Ahmad:** set env vars in Vercel, then connect GSC + submit sitemap (see below)
-- [ ] Monthly review: prune/expand by impressions, CTR, position
+- [x] GA4 loader — `components/Analytics.tsx`, defaults to `G-89XDMKV9PQ` (overridable via `NEXT_PUBLIC_GA_ID`) (2026-06-14)
+- [x] GSC connected — `www` + `mysrztourism.com` Domain property verified, sitemap submitted, crawling (2026-06-14)
+- [x] GA4 live — tag confirmed firing in Realtime (first_visit / page_view / session_start) (2026-06-14)
+- [ ] Monthly review: prune/expand by impressions, CTR, position (begin ~end-June, once ~2 weeks of data lands)
 
-**Env vars to set in Vercel (Production) to switch measurement on:**
-- `GSC_SITE_VERIFICATION` — the content value from Google Search Console's HTML-tag method.
-- `NEXT_PUBLIC_GA_ID` — the GA4 measurement ID, e.g. `G-XXXXXXXXXX` (optional; the
-  first-party Tracker already covers basic behaviour).
-
-After setting `GSC_SITE_VERIFICATION` and redeploying, verify the property in GSC, then
-submit `https://www.mysrztourism.com/sitemap.xml`. The sitemap is already dynamic and complete.
+**Note (2026-06-14):** GSC verified via the `mysrztourism.com` Domain property (DNS), so
+`GSC_SITE_VERIFICATION` was not needed and stays unset. GA4 ships with its real (public) ID
+defaulted in code, so no env var is required either. Both are live with zero Vercel config.
 
 ### Phase 4 — Off-page, local & E-E-A-T  ⬜
 - [ ] Google Business Profile for mySRZ Tourism
@@ -125,6 +130,7 @@ submit `https://www.mysrztourism.com/sitemap.xml`. The sitemap is already dynami
 
 ## 5. Current focus
 
-**Active phase:** Phase 1 (breadth) → roll into Phase 2 (commercial) as the base completes.
-**Highest single-leverage gap:** Phase 3 measurement loop (needs Ahmad to connect GSC/GA4).
-**Live footprint:** 7 destinations, 11 posts, all images unique + self-hosted, 0 hotlinks.
+**Active phase:** Phase 1 nearly done (only Murree & Galiyat left) → roll into Phase 2 (commercial) + the new Phase 2.5 food vertical.
+**Measurement:** Phase 3 connected (GSC + GA4 live, 2026-06-14) — let ~2 weeks of data accumulate, then iterate on real queries.
+**Monetization:** Google AdSense submitted and in review (`ca-pub-6248382237982919`); loader + ads.txt live.
+**Live footprint:** 10 destinations, 18 posts, all images unique + self-hosted, 0 hotlinks.
