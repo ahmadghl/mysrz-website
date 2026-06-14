@@ -16,7 +16,8 @@ and tour enquiries. Founder/owner: Ahmad Faraz.
 - **Automation:** n8n at n8n.mysrztourism.com (social dispatch, forms)
 
 ## Stack
-- Next.js (16.x, App Router, Server Components/Actions, ISR) on **Vercel**.
+- Next.js App Router (Server Components/Actions, ISR) on **Vercel**. A build with breaking
+  changes vs stock Next.js — read `node_modules/next/dist/docs/` before writing code.
 - **Supabase** (Postgres + RLS, Storage `media` bucket, pg_cron + pg_net) — single project shared
   by both apps. Content lives in `blog_posts` + `destinations`; analytics in `page_analytics`;
   social queue in `social_forge_runs`; CMS copy in `site_settings`; media in `media_files`.
