@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     'contact mySRZ',
     'book Pakistan tour',
     'Pakistan tour inquiry',
-    'Ahmad Fraz contact',
+    'Ahmad Faraz contact',
   ],
 };
 

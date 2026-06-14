@@ -48,7 +48,7 @@ function normalize(row: SupabasePostRow): Post {
     content: row.content ?? '',
     image_url: resolveImageUrl(row.image_url ?? ''),
     category: (row.category as Post['category']) ?? 'Adventure',
-    author: row.author ?? 'Ahmad Fraz',
+    author: row.author ?? 'Ahmad Faraz',
     created_at: row.created_at ?? new Date().toISOString(),
     updated_at: row.updated_at ?? null,
     read_time: row.read_time ?? 5,

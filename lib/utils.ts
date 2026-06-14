@@ -15,13 +15,13 @@ export const SITE = {
   name: 'mySRZ Travel & Tourism',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.mysrztourism.com',
   description:
-    "Pakistan's trusted travel guide - expert articles, destination guides, and trip planning by Ahmad Fraz.",
+    "Pakistan's trusted travel guide - expert articles, destination guides, and trip planning by Ahmad Faraz.",
   phone: '+92-301-2432222',
   phoneDisplay: '+92 301 2432222',
   phoneLink: 'tel:+923012432222',
   whatsapp: 'https://wa.me/923012432222',
   email: 'ahmadfraz009@gmail.com',
-  founder: 'Ahmad Fraz',
+  founder: 'Ahmad Faraz',
   social: {
     instagram: 'https://www.instagram.com/mysrzpakistan/',
     twitter: 'https://x.com/mysrzpakistan',
