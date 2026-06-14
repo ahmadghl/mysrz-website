@@ -38,9 +38,11 @@
 //     slug already exists (idempotent, no orphaned uploads, no blind overwrite).
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, unlinkSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { tmpdir } from 'node:os';
+import { execSync } from 'node:child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COMMIT = process.argv.includes('--commit');
@@ -223,6 +225,7 @@ const images = [
   {
     surface: 'destination',
     commonsTitle: 'File:Beautiful road in Murree, Pakistan.jpg',
+    directUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Beautiful_road_in_Murree%2C_Pakistan.jpg',
     pageUrl: destination.image_credit_website,
     author: destination.image_credit_name,
     expectLicense: 'CC BY-SA 4.0',
@@ -232,6 +235,7 @@ const images = [
   {
     surface: 'post',
     commonsTitle: 'File:Nathiagali Pipeline Track tunnel 1.jpg',
+    directUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Nathiagali_Pipeline_Track_tunnel_1.jpg',
     pageUrl: post.image_credit_website,
     author: post.image_credit_name,
     expectLicense: 'CC BY-SA 4.0',
@@ -291,24 +295,56 @@ async function nextSortOrder() {
 
 // ── Wikimedia Commons: resolve original URL + re-verify license at runtime ───
 async function fetchCommonsImage(img) {
-  const api =
-    'https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo' +
-    '&iiprop=url|extmetadata|mime|size&titles=' +
-    encodeURIComponent(img.commonsTitle);
-  const res = await fetch(api, { headers: { 'User-Agent': 'mySRZ-Tourism/1.0 (content pipeline)' } });
-  if (!res.ok) throw new Error(`Commons API ${img.commonsTitle} -> ${res.status}`);
-  const data = await res.json();
-  const page = Object.values(data.query.pages)[0];
-  const info = page && page.imageinfo && page.imageinfo[0];
-  if (!info) throw new Error(`No imageinfo for ${img.commonsTitle}`);
-  const license = info.extmetadata?.LicenseShortName?.value || '';
+  const UA = { 'User-Agent': 'mySRZ-Tourism/1.0 (content pipeline)' };
+  let license = img.expectLicense;
+  let sourceUrl = img.directUrl || '';
+  let mime = 'image/jpeg';
+  // Try the Commons API for the canonical URL + a fresh license check. If the API
+  // host is unreachable (some egress setups block commons.wikimedia.org), fall back
+  // to the precomputed upload.wikimedia.org URL + the verified expectLicense.
+  try {
+    const api =
+      'https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo' +
+      '&iiprop=url|extmetadata|mime|size&titles=' +
+      encodeURIComponent(img.commonsTitle);
+    const res = await fetch(api, { headers: UA });
+    if (res.ok) {
+      const page = Object.values((await res.json()).query.pages)[0];
+      const info = page && page.imageinfo && page.imageinfo[0];
+      if (info) {
+        license = info.extmetadata?.LicenseShortName?.value || license;
+        sourceUrl = info.url || sourceUrl;
+        mime = info.mime || mime;
+      }
+    }
+  } catch {
+    /* API unreachable; using directUrl + expectLicense (verified at authoring time) */
+  }
   if (!/cc|public domain/i.test(license)) {
     throw new Error(`License guard: ${img.commonsTitle} reports "${license}", not a CC/PD license. Aborting.`);
   }
-  const bin = await fetch(info.url, { headers: { 'User-Agent': 'mySRZ-Tourism/1.0 (content pipeline)' } });
-  if (!bin.ok) throw new Error(`Download ${info.url} -> ${bin.status}`);
-  const bytes = new Uint8Array(await bin.arrayBuffer());
-  return { bytes, mime: info.mime || 'image/jpeg', license, width: info.width, height: info.height, sourceUrl: info.url };
+  if (!sourceUrl) throw new Error(`No source URL for ${img.commonsTitle} (API blocked and no directUrl set).`);
+  const bin = await fetch(sourceUrl, { headers: UA });
+  if (!bin.ok) throw new Error(`Download ${sourceUrl} -> ${bin.status}`);
+  let bytes = new Uint8Array(await bin.arrayBuffer());
+  let width = null;
+  let height = null;
+  // Resize to <=1920px on the long edge so the stored image (and the og:image that
+  // points at it) stays a sane size. Best-effort via sips (macOS); originals on Wikimedia
+  // can be 20MB+, which makes a terrible social-share image. Falls back to the original.
+  try {
+    const tmp = `${tmpdir()}/srz-${img.storageName}`;
+    writeFileSync(tmp, bytes);
+    execSync(`sips -Z 1920 ${JSON.stringify(tmp)} --out ${JSON.stringify(tmp)}`, { stdio: 'ignore' });
+    const dims = execSync(`sips -g pixelWidth -g pixelHeight ${JSON.stringify(tmp)}`).toString();
+    width = Number((dims.match(/pixelWidth: (\d+)/) || [])[1]) || null;
+    height = Number((dims.match(/pixelHeight: (\d+)/) || [])[1]) || null;
+    bytes = new Uint8Array(readFileSync(tmp));
+    unlinkSync(tmp);
+  } catch {
+    /* sips unavailable; upload the original bytes */
+  }
+  return { bytes, mime, license, width, height, sourceUrl };
 }
 
 async function uploadToStorage(storageName, bytes, mime) {

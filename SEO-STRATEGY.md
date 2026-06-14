@@ -63,12 +63,12 @@ These are non-negotiable and already proven. See linked memory pipelines.
 ### Phase 1 — Topical authority breadth  🟡 active
 Goal: a destination + pillar guide for every major Pakistan region, plus connective hubs.
 
-Done: Hunza (full cluster), Skardu (full cluster), Fairy Meadows, Naltar, Lahore, Swat, Naran Kaghan, Islamabad, Gilgit, Chitral & Kalash, Murree & Galiyat (authored, publish pending).
+Done: Hunza (full cluster), Skardu (full cluster), Fairy Meadows, Naltar, Lahore, Swat, Naran Kaghan, Islamabad, Gilgit, Chitral & Kalash, Murree & Galiyat. **Phase 1 breadth complete.**
 
 - [x] Islamabad / Rawalpindi destination + guide (gateway hub) (2026-06-13)
 - [x] Gilgit destination + guide (route hub for the north) (2026-06-13)
 - [x] Chitral & Kalash Valleys destination + guide (2026-06-13)
-- [x] Murree & Galiyat destination + guide (mass-market anchor) (authored 2026-06-14; publish via `scripts/publish-murree-galiyat.mjs` once Supabase is reachable)
+- [x] Murree & Galiyat destination + guide (mass-market anchor) (published 2026-06-14, via `scripts/publish-murree-galiyat.mjs`)
 - [x] **Connective pillar:** "Best time to visit Pakistan" (links every destination) (2026-06-11)
 - [x] **Connective pillar:** "How to plan a Pakistan trip / itinerary" hub → Northern Pakistan itinerary (2026-06-11)
 
@@ -130,7 +130,7 @@ defaulted in code, so no env var is required either. Both are live with zero Ver
 
 ## 5. Current focus
 
-**Active phase:** Phase 1 breadth authored-complete (Murree & Galiyat staged for publish via `scripts/publish-murree-galiyat.mjs`); rolling into Phase 2 (commercial) and the new Phase 2.5 food vertical.
+**Active phase:** Phase 1 breadth complete (Murree & Galiyat published 2026-06-14); rolling into Phase 2 (commercial) and the new Phase 2.5 food vertical.
 **Measurement:** Phase 3 connected (GSC + GA4 live, 2026-06-14) — let ~2 weeks of data accumulate, then iterate on real queries.
 **Monetization:** Google AdSense submitted and in review (`ca-pub-6248382237982919`); loader + ads.txt live.
-**Live footprint:** 10 destinations, 18 posts, all images unique + self-hosted, 0 hotlinks.
+**Live footprint:** 11 destinations, 19 posts, all images unique + self-hosted, 0 hotlinks.
