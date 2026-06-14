@@ -10,7 +10,9 @@ import Script from 'next/script';
 // n8n webhook. GA4 adds Google-ecosystem funnels, audiences and the
 // link to Google Ads / Search Console once connected. See Phase 3 of
 // SEO-STRATEGY.md.
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+// The GA4 Measurement ID is public (it appears in page source), so it
+// defaults to our property and stays overridable via NEXT_PUBLIC_GA_ID.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? 'G-89XDMKV9PQ';
 
 export function Analytics() {
   if (!GA_ID) return null;
