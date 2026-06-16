@@ -62,6 +62,7 @@ export async function POST(req: Request) {
     if (path === '/') {
       revalidateTag('posts');
       revalidateTag('destinations');
+      revalidateTag('live_stats');
     }
     return NextResponse.json({
       ok: true,
@@ -90,6 +91,9 @@ export async function POST(req: Request) {
   // Default: invalidate the broad indexes
   revalidatePath('/');
   revalidatePath('/sitemap.xml');
+  // Live stats are derived from destinations + posts counts, so bust them
+  // whenever any content table changes.
+  revalidateTag('live_stats');
 
   if (!table || table === 'blog_posts') {
     revalidateTag('posts');

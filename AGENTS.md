@@ -39,6 +39,9 @@ existing typographic styles rather than inventing new ones.
 ## Engineering rules
 - `tsc --noEmit` + `npm run build` must be green before any PR.
 - **Never push to `main`** — always branch → PR.
+- Log meaningful project activity in `ACTIVITY-LOG.md`: context reads, schema or live-data
+  assumptions, code/content changes, verification commands, browser checks, deployment notes,
+  and any blocker or declined approval.
 - Live-DB ops: inspect with a query before and after; never bulk-delete blind.
 - Secrets live in `.env.local` / Vercel env (`SUPABASE_SERVICE_ROLE_KEY`,
   `NEXT_PUBLIC_SUPABASE_*`, `REVALIDATE_SECRET`, etc.). Never print or commit secret values.

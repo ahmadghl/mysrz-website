@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { getSiteSettings } from '@/lib/site-settings';
+import { getLiveStats } from '@/lib/live-stats';
 import { SITE } from '@/lib/utils';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
@@ -34,7 +35,13 @@ const VALUE_ICONS: Record<string, LucideIcon> = {
 };
 
 export default async function AboutPage() {
-  const settings = await getSiteSettings();
+  const [settings, liveStats] = await Promise.all([
+    getSiteSettings(),
+    getLiveStats(),
+  ]);
+
+  // Use real DB-backed stats — liveStats.about has 4 items all from live data.
+  const aboutStats = liveStats.about;
 
   const founderName = settings.founder_name || SITE.founder;
   const siteUrl = settings.site_url || SITE.url;
@@ -264,12 +271,12 @@ export default async function AboutPage() {
       </section>
 
       {/* ───── STATS ───── */}
-      {settings.about_stats.length > 0 && (
+      {aboutStats.length > 0 && (
         <section className="border-y border-aureate-outline-variant bg-aureate-surface">
           <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile py-16 md:px-aureate-desktop md:py-20">
             <div className="grid grid-cols-2 gap-aureate-gutter text-center md:grid-cols-4">
-              {settings.about_stats.map(({ value, label }, i) => {
-                const isLast = i === settings.about_stats.length - 1;
+              {aboutStats.map(({ value, label }, i) => {
+                const isLast = i === aboutStats.length - 1;
                 return (
                   <div
                     key={label}

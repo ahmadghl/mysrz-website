@@ -8,13 +8,13 @@ import {
   Eye,
   MapPin,
   Phone,
-  Star,
   Users,
   type LucideIcon,
 } from 'lucide-react';
 import { getAllPosts } from '@/lib/posts';
 import { getAllDestinations } from '@/lib/destinations';
 import { getSiteSettings } from '@/lib/site-settings';
+import { getLiveStats } from '@/lib/live-stats';
 import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
 import { PaperStack } from '@/components/aureate/PaperStack';
 import { AureateButton } from '@/components/aureate/AureateButton';
@@ -30,24 +30,26 @@ const STAT_ICONS: Record<string, LucideIcon> = {
   MapPin,
   BookOpen,
   Users,
-  Star,
 };
 
 export default async function HomePage() {
   // Parallel fetch — same React.cache()-deduped accessors as before.
-  // No data shape changed; only the presentation layer is new.
-  const [posts, allDestinations, settings] = await Promise.all([
+  // getLiveStats() reuses getAllPosts/getAllDestinations internally so
+  // there is no double-fetch.
+  const [posts, allDestinations, settings, liveStats] = await Promise.all([
     getAllPosts(),
     getAllDestinations(),
     getSiteSettings(),
+    getLiveStats(),
   ]);
 
   const featuredDestinations = allDestinations.slice(0, 3);
   const featuredPosts = posts.slice(0, 3);
-  // Editorial section uses the first blog post's hero as its
-  // imagery. Saves an extra Unsplash dependency and keeps the
-  // section content fresh as the admin publishes new posts.
   const philosophyImage = featuredPosts[0]?.image_url ?? settings.hero_image_url;
+
+  // Use real DB-backed stats. liveStats.homepage already has rating removed
+  // and all values computed from live data (see lib/live-stats.ts).
+  const heroStats = liveStats.homepage;
 
   return (
     <>
@@ -101,15 +103,15 @@ export default async function HomePage() {
       {/* ───── STATS / IMPACT ROW ───── */}
       <section className="border-b border-aureate-outline-variant bg-aureate-background">
         <RevealOnScroll className="mx-auto max-w-aureate-container px-aureate-mobile py-16 md:px-aureate-desktop md:py-24">
-          <div className="grid grid-cols-1 gap-aureate-gutter text-center md:grid-cols-2 lg:grid-cols-4">
-            {settings.homepage_stats.map(({ value, label, icon }, i) => {
+          <div className="grid grid-cols-1 gap-aureate-gutter text-center md:grid-cols-3">
+            {heroStats.map(({ value, label, icon }, i) => {
               const Icon = (icon && STAT_ICONS[icon]) || MapPin;
-              const isLast = i === settings.homepage_stats.length - 1;
+              const isLast = i === heroStats.length - 1;
               return (
                 <div
                   key={label}
-                  className={`p-8 transition-colors duration-500 hover:bg-aureate-surface-container-low lg:border-r lg:border-aureate-outline-variant ${
-                    isLast ? 'lg:border-r-0' : ''
+                  className={`p-8 transition-colors duration-500 hover:bg-aureate-surface-container-low md:border-r md:border-aureate-outline-variant ${
+                    isLast ? 'md:border-r-0' : ''
                   }`}
                 >
                   <Icon

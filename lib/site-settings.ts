@@ -127,7 +127,6 @@ const FALLBACK: SiteSettings = {
     { value: '50+', label: 'Destinations Covered', icon: 'MapPin' },
     { value: '100+', label: 'Travel Guides', icon: 'BookOpen' },
     { value: '10K+', label: 'Monthly Readers', icon: 'Users' },
-    { value: '5★', label: 'Reader Rating', icon: 'Star' },
   ],
   about_stats: [
     { value: '50+', label: 'Destinations Covered' },

@@ -23,11 +23,11 @@ and tour enquiries. Founder/owner: Ahmad Faraz.
   social queue in `social_forge_runs`; CMS copy in `site_settings`; media in `media_files`.
 - Tailwind. Admin = Outfit + Playfair; site = Aureate stack (Playfair / Source Serif 4 / Montserrat).
 
-## Current live state (2026-06-14)
-- **Content:** 10 destinations, 18 posts. Destinations: Hunza, Skardu, Fairy Meadows, Naltar,
-  Lahore, Swat, Naran Kaghan, Islamabad, Gilgit, Chitral & Kalash. Posts include per-destination
-  guides + clusters (things-to-do, trip-cost) + connective pillars (best-time, itinerary) +
-  comparisons (Hunza vs Skardu, Naran vs Swat).
+## Current live state (2026-06-16)
+- **Content:** 11 destinations, 19 posts. Destinations: Hunza, Skardu, Fairy Meadows, Naltar,
+  Lahore, Swat, Naran Kaghan, Islamabad, Gilgit, Chitral & Kalash, Murree & Galiyat. Posts include
+  per-destination guides + clusters (things-to-do, trip-cost) + connective pillars (best-time,
+  itinerary) + comparisons (Hunza vs Skardu, Naran vs Swat).
 - **Admin:** fully redesigned to the approved Stitch design — responsive (mobile drawer sidebar),
   serif wordmark, real dashboard/analytics, posts/destinations/media/social/settings, /profile,
   /help. "No decorative chrome" rule: every element real or removed.
@@ -59,12 +59,11 @@ and the actual travel + food blogging. **Zero tolerance for blunders.**
 - Map every content/SEO change to a pillar + phase in `SEO-STRATEGY.md`.
 
 ## Roadmap (next)
-1. Finish Phase 1 breadth: **Murree & Galiyat**.
-2. **Food vertical** (Phase 2.5): "Pakistani food" pillar + regional + dish guides, cross-linked.
-3. Phase 2 commercial: more itineraries/comparisons + a "Pakistan trip cost" pillar + enquiry CTA.
-4. Depth: cluster posts for the newer destinations.
-5. Data-led iteration once ~2 weeks of GSC/GA4 data lands.
-6. Off-page/E-E-A-T (GBP, citations, backlinks), GEO hardening, social scaling (native short-form
+1. **Food vertical** (Phase 2.5): "Pakistani food" pillar + regional + dish guides, cross-linked.
+2. Phase 2 commercial: more itineraries/comparisons + a "Pakistan trip cost" pillar + enquiry CTA.
+3. Depth: cluster posts for the newer destinations.
+4. Data-led iteration once ~2 weeks of GSC/GA4 data lands.
+5. Off-page/E-E-A-T (GBP, citations, backlinks), GEO hardening, social scaling (native short-form
    is the gap — needs raw video or a generator).
 
 ## Owner-only / open items
