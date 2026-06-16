@@ -1,3 +1,49 @@
+# Activity log
+
+Reverse-chronological record of meaningful project activity per `AGENTS.md`.
+
+---
+
+## 2026-06-16 — Thin-content expansion (GSC "Crawled, currently not indexed")
+
+**Context / diagnosis.** GSC flagged 12 pages "Crawled, currently not indexed." Verified live:
+robots.txt, sitemap (34 URLs), per-page indexability (all real pages 200, `index,follow`,
+self-canonical) — no technical blocker. Pulled real word counts from `blog_posts` (service-role
+read): 8 affected blog posts were thin (~550-700 words), the primary fixable cause.
+
+**Standard set.** Expand the 8 thin posts to a 2,000-word minimum with researched content.
+Research method: SerpApi (`gl=pk`) for keywords + People-Also-Ask + top organic URLs, then scrape
+>=10 of those sources, then write. Slugs/URLs unchanged (preserve crawl history). 2,000-word floor
++ no em/en dashes + title 30-62 / meta 70-160 enforced by the publisher script.
+
+**Live-data change.** Content edited directly in Supabase `blog_posts` via PostgREST PATCH
+(service-role): `content`, `meta_title`, `meta_description`, `updated_at`; `published`/`status`
+untouched. No schema change.
+
+**Published (live + revalidated + verified 200 + title):**
+- `best-time-to-visit-pakistan`: 618 -> 2,028 words.
+- `hunza-vs-skardu`: 566 -> 2,048 words.
+- `naran-vs-swat`: 629 -> 2,182 words (10 sources scraped).
+- `northern-pakistan-itinerary`: 551 -> 2,062 words (SerpApi-driven; 6 itineraries scraped + search).
+
+**Pending (same method):** `naran-kaghan-travel-guide` (599), `things-to-do-in-skardu` (557),
+`lahore-travel-guide` (693), `swat-valley-travel-guide` (635).
+
+**Owner blocker:** GSC "Request indexing" for the expanded URLs is manual/owner-side.
+
+---
+
+## 2026-06-15/16 — Reels automation (admin repo, mysrz-admin PRs #45-62)
+
+Built scheduled Reel Studio automation: `reel_jobs` queue (migration 0020) + state machine,
+headless pipeline + shared scheduler, on-publish destination trigger, weekly blog-digest reels
+(migration 0022, Wed+Sun), dedicated reels n8n dispatch, cron routes (migration 0021), and the
+`/reels` Scheduled tab (queue, Run now, digest, voice/speed, manual Post now, auto-advance).
+`tsc` + build green before each PR; a Hunza reel rendered end-to-end on the VPS. Owner activation
+pending (migrations, `REELS_CRON_SECRET`, `N8N_REELS_WEBHOOK_URL`/`_SECRET`, reels n8n workflow).
+VPS render box + production Traefik/n8n untouched.
+
+---
 
 ## 2025-06 — Real-data stats (live-stats consolidation)
 
