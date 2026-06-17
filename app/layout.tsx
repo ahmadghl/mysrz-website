@@ -156,6 +156,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           settings.instagram_url,
           settings.twitter_url,
           settings.facebook_url,
+          'https://share.google/MRydHmdqw7uJlTYbn',
         ].filter(Boolean),
       },
       {

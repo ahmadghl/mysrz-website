@@ -26,6 +26,7 @@ export const SITE = {
     instagram: 'https://www.instagram.com/mysrzpakistan/',
     twitter: 'https://x.com/mysrzpakistan',
     facebook: 'https://www.facebook.com/profile.php?id=61570708703617',
+    googleBusiness: 'https://share.google/MRydHmdqw7uJlTYbn',
   },
   contactWebhook: 'https://n8n.mysrztourism.com/webhook/contact_form',
   newsletterWebhook: 'https://n8n.mysrztourism.com/webhook/newsletter_form',
