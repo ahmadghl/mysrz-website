@@ -4,6 +4,23 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-18 — "Pakistan trip cost" pillar (linkable asset #1)
+
+Published the **Pakistan trip cost** pillar (`/blog/pakistan-trip-cost`, slug `pakistan-trip-cost`)
+via `scripts/publish-trip-cost.mjs`: the top off-page linkable asset (OFF-PAGE-PLAN §5) + a high-intent
+commercial page. SerpApi (`gl=pk`) + 10 sources (amigosim, adventureplanners/BudgetYourTrip, tourradar,
+pakistantravelplaces, naturehikepakistan, pakistantourntravel, brokebackpacker, lostwithpurpose, etc.)
+for real 2026 PKR/USD figures. 2,520 words, dash-clean, meta 46/149, 6 FAQs. Targets the trending
+"how much does a Pakistan tour cost", "budget for a trip", "cheapest", "from Lahore/Islamabad/Karachi"
+and "7/10/15 day / family" keyword variants. Covers budget tiers (13-28 / 50-70 / 100+ USD/day), full
+cost breakdown (flights, e-Visa, domestic flights, hotels, food, transport, SIM, insurance), 7/10/15-day
+totals, a full local PKR tour-package ladder (group + private/luxury), cost by region, family cost,
+money-saving tips, season-vs-cost, 3 worked budgets. Hero: Karakoram Highway, David Stanley (Flickr) CC BY 2.0,
+self-hosted (1920x1440). Internally linked to best-time / itinerary / Naran-vs-Swat / destinations.
+Revalidated + verified live (200, title/meta/og-image/FAQPage/credit all present).
+
+---
+
 ## 2026-06-18 — Off-page / authority campaign + Neelum Valley
 
 **Neelum Valley** (12th destination) published: destination hub + 2,040-word guide via
