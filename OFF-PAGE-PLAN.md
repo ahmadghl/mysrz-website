@@ -13,12 +13,13 @@ now is **authority (backlinks) + brand entity signals + time**. This is the exec
 Copy-paste this exact block into every profile, directory and citation so the entity is
 consistent (consistency is what Google rewards):
 
-- **Name:** mySRZ Travel & Tourism
+- **Name:** mySRZ Tourism  (use this exact name everywhere — it matches the Google Business Profile and the site schema)
 - **Website:** https://www.mysrztourism.com
 - **Founder:** Ahmad Faraz
-- **Email:** (the brand contact email)
-- **Phone / WhatsApp:** (owner to provide one consistent number)
-- **Based in:** Pakistan (city the owner wants public)
+- **Email:** mysrzpakistan@gmail.com
+- **Phone:** +92 301 2432222  (0301 2432222)
+- **Category:** Tourist information center / Travel agency
+- **Based in:** Pakistan (service area; the city the owner wants public)
 - **Description (short):** Independent Pakistan travel guides with real prices and first-hand detail: destinations, itineraries and trip planning.
 - **Socials:** instagram.com/mysrzpakistan · x.com/mysrzpakistan · facebook.com/profile.php?id=61570708703617
 
