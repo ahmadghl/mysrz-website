@@ -20,7 +20,11 @@ hardcode hex/rgb. Long-form content renders through `.prose` / `.markdown-body`;
 existing typographic styles rather than inventing new ones.
 
 ## Content operating rules (non-negotiable — mirrors SEO-STRATEGY.md §2)
-- **Research first.** Every fact/number traceable to a real source.
+- **Research first.** Use SerpApi (`gl=pk`) for keyword intent, People-Also-Ask and the top
+  organic URLs, then scrape **at least 10** of those trending sources before writing. Every
+  fact/number traceable to a real source.
+- **Minimum length: 2,000 words** per post or guide. Thin content does not get indexed on a
+  young domain, so the publisher hard-guards this (it refuses drafts under 2,000 words).
 - **No em/en dashes** in any published copy. Use commas, colons, or periods. Hard-guard
   the payload before insert.
 - **One globally-unique, self-hosted image per surface.** Never reuse an image across

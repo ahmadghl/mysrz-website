@@ -41,7 +41,10 @@ and enquiry/contact conversions from organic.
 
 These are non-negotiable and already proven. See linked memory pipelines.
 
-- **Research first:** WebSearch 2-3 angles + scrape 3-4 rich blogs for hard facts. Every
+- **Minimum length: 2,000 words** per post or guide (publisher hard-guards it). Thin content
+  does not get indexed on a young domain.
+- **Research first:** use SerpApi (`gl=pk`) for keyword intent + People-Also-Ask + top organic
+  URLs, then scrape **at least 10** of those trending sources for hard facts. Every
   number traceable to a source. (See `destination-content-pipeline`.)
 - **No em/en dashes** — hard-guard the payload before insert. (See `no-em-dashes-in-content`.)
 - **One globally-unique, self-hosted image per surface** — never reuse, never hotlink; upload

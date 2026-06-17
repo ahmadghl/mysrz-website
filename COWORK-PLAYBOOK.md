@@ -36,9 +36,11 @@ These are the exact issues that have already cost a round. Run this checklist FI
 
 ## 2. The content pipeline (every destination or post)
 Follow `SEO-STRATEGY.md` §2 and `CONTENT.md`. In short:
-1. **Research** real sources; every fact/number traceable.
-2. **Write** original prose. **No em/en dashes anywhere** (hard-guard the payload). SEO title
-   30-60, meta description 70-160, clean slug, keyworded H2s. 5-6 FAQs as <=60-word answers.
+1. **Research** via SerpApi (`gl=pk`) for keyword intent + People-Also-Ask + top organic URLs,
+   then scrape **at least 10** of those trending sources. Every fact/number traceable.
+2. **Write** original prose, **minimum 2,000 words** (the publisher refuses thinner drafts).
+   **No em/en dashes anywhere** (hard-guard the payload). SEO title 30-60, meta description
+   70-160, clean slug, keyworded H2s. 5-6 FAQs as <=60-word answers.
    Dense citable specifics (PKR, km, elevation, months, hours). Cross-link pillar <-> destination
    <-> related. Include an honest, real detail (safety, caveats) for E-E-A-T.
 3. **Image** — one real, properly-licensed (CC/PD) photo PER surface, globally unique, never
