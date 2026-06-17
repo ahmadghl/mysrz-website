@@ -4,6 +4,21 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-18 — Off-page / authority campaign + Neelum Valley
+
+**Neelum Valley** (12th destination) published: destination hub + 2,040-word guide via
+`scripts/publish-neelum-valley.mjs` (SerpApi + 6 sources, 2 distinct CC BY-SA Wikimedia
+images self-hosted), live + verified.
+
+**Off-page (Pillar 8 / Phase 4) kicked off.** Confirmed on-site entity signals already solid
+(homepage emits Organization + TravelAgency + WebSite + founder Person JSON-LD with `sameAs`
+to the 3 real socials). Added `OFF-PAGE-PLAN.md`: the execution playbook (NAP block, Google
+Business Profile, directory/citation list, outreach targets + templates, genuine Reddit/Quora
+strategy, linkable assets, cadence, and what-not-to-do). Off-page is owner-executed (accounts/
+identity); Claude does on-site entity work + builds linkable assets (trip-cost pillar next).
+
+---
+
 ## 2026-06-16 — Thin-content expansion (GSC "Crawled, currently not indexed")
 
 **Context / diagnosis.** GSC flagged 12 pages "Crawled, currently not indexed." Verified live:
