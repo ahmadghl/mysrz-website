@@ -33,7 +33,13 @@ untouched. No schema change.
 All 8 thin posts now exceed 2,000 words, each researched via SerpApi (`gl=pk`) keyword
 intent + >=10 scraped sources, slugs unchanged, retitled/re-metaed for trending terms.
 
-**Owner action:** GSC "Request indexing" (URL Inspection) for the 8 expanded URLs to prompt
+**Follow-up (same day):** expanded the other 2 sub-2,000 not-indexed posts too -
+`skardu-travel-guide` (1,238 -> 2,011, planning-focused, distinct from things-to-do) and
+`things-to-do-in-hunza-valley` (1,034 -> 2,002). Every not-indexed blog post is now 2,000+.
+Codified the standard into `AGENTS.md`, `SEO-STRATEGY.md` §2 and `COWORK-PLAYBOOK.md`:
+SerpApi research + >=10 sources + 2,000-word minimum for all posts.
+
+**Owner action:** GSC "Request indexing" (URL Inspection) for the 10 expanded URLs to prompt
 a re-crawl now that they are substantial.
 
 ---
