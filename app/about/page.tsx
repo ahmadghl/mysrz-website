@@ -51,6 +51,7 @@ export default async function AboutPage() {
     settings.instagram_url || SITE.social.instagram,
     settings.twitter_url || SITE.social.twitter,
     settings.facebook_url || SITE.social.facebook,
+    SITE.social.googleBusiness,
   ].filter(Boolean);
 
   // Canonical Person JSON-LD referenced from every BlogPosting on
