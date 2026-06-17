@@ -4,6 +4,21 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-18 — Kumrat Valley cluster (13th destination)
+
+**Kumrat Valley** published: destination hub (`/destinations/kumrat-valley`) + 2,130-word travel
+guide (`/blog/kumrat-valley-travel-guide`) via `scripts/publish-kumrat-valley.mjs`. SerpApi/WebSearch
++ multiple sources (saiyah, natureadventureclub, tripmaker, naturehikepakistan, kumrattourism,
+apricottours, pakistantourmaker) for real figures: route from Islamabad (Swat Motorway → Chakdara →
+N-45 → Timergara → Dir → Thal, ~370-385 km / 8-9 hrs, 4x4 above Thal), attractions (Kumrat Waterfall,
+Jahaz Banda 3,100 m, Katora Lake 4,000 m / Spindhor Peak, Kala Chashma, Panjkora deodar forest), best
+time (May-Sep), package PKR ladder (3-day group 14.5-16.5k pp, family 35-65k, private Katora 85-150k),
+camping rates. Two distinct self-hosted CC BY-SA Wikimedia images (Mafu75 3.0 dest, Zsyed2008 4.0 post),
+dash-clean, meta 52/55 + 150/157, 6 FAQs. Internally linked to trip-cost / best-time / itinerary /
+Naran-vs-Swat. Revalidated + verified live (both 200, titles/images/FAQPage+TouristAttraction present).
+
+---
+
 ## 2026-06-18 — "Pakistan trip cost" pillar (linkable asset #1)
 
 Published the **Pakistan trip cost** pillar (`/blog/pakistan-trip-cost`, slug `pakistan-trip-cost`)
