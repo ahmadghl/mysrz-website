@@ -25,7 +25,10 @@ interface Props {
  * unchanged.
  */
 export function PostCard({ post, showMeta = true, priority = false }: Props) {
-  const Icon = CATEGORY_ICONS[post.category];
+  // Fall back to a default icon if a post ever carries an unexpected category.
+  // A missing entry must never render `undefined` as a component, which would
+  // throw React error #130 and crash the whole blog list.
+  const Icon = CATEGORY_ICONS[post.category] ?? Mountain;
 
   return (
     <Link

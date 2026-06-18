@@ -95,6 +95,8 @@ async function main() {
   scanDashes(post, 'post');
   const words = post.content.replace(/[#*_>\-|]/g, ' ').split(/\s+/).filter(Boolean).length;
   line(`dash guard: clean | words: ${words} | meta_title=${post.meta_title.length} meta_desc=${post.meta_description.length} | faqs=${post.faqs.length}`);
+  const VALID_CATEGORIES = ['Adventure', 'Culture', 'Food', 'Nature'];
+  if (!VALID_CATEGORIES.includes(post.category)) throw new Error(`invalid category "${post.category}" — must be one of ${VALID_CATEGORIES.join(', ')} (an unknown category crashes the blog list)`);
   if (words < 2000) throw new Error(`post under 2000 words (${words})`);
   if (post.meta_title.length < 30 || post.meta_title.length > 62) throw new Error('meta_title out of range (30-62)');
   if (post.meta_description.length < 70 || post.meta_description.length > 160) throw new Error('meta_description out of range (70-160)');
