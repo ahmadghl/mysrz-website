@@ -34,6 +34,20 @@ const ALLOWED_EVENTS = new Set(['page_view', 'page_exit', 'click', 'conversion']
 // agents only (no bare "bot" match), so device brands like "Cubot" are safe.
 const BOT_UA = /facebookexternalhit|facebot|headless|googlebot|google-extended|bingbot|applebot|yandex|baiduspider|duckduckbot|petalbot|bytespider|ahrefsbot|semrushbot|mj12bot|dotbot|dataforseo|gptbot|ccbot|claudebot|claude-web|anthropic-ai|perplexitybot|oai-searchbot|amazonbot|lighthouse|gtmetrix|pingdom|uptimerobot|statuscake|site24x7|phantomjs|puppeteer|playwright|selenium|cypress|python-requests|python-urllib|scrapy|wget|go-http-client|node-fetch|okhttp|libwww|java\/|whatsapp|telegrambot|slackbot|discordbot|twitterbot|linkedinbot|pinterest|redditbot|embedly|quora|w3c_validator|vkshare|skypeuripreview|crawler|spider|scraper|crawling|curl\//i;
 
+// Hyperscaler data-center towns (Meta / Google / Microsoft / AWS / Apple). Modern
+// social link unfurlers and link-safety scanners render JS with a real browser
+// user-agent, so BOT_UA cannot catch them — but they geolocate to these tiny
+// purpose-built data-center towns, where a Pakistan travel site has no genuine
+// audience. They arrive in a burst the instant a social post publishes. Match is
+// exact (lowercased city), so real cities (Lahore, Islamabad, London, even big
+// data-center-adjacent cities like Fort Worth or Ashburn) are never affected.
+const DATACENTER_CITY = new Set([
+  'prineville', 'clonee', 'forest city', 'boydton', 'altoona', 'council bluffs',
+  'the dalles', 'lulea', 'luleå', 'new albany', 'papillion', 'eagle mountain',
+  'los lunas', 'kapolei', 'gallatin', 'huntsville', 'midlothian', 'lockport',
+  'odense', 'hamina', 'st. ghislain', 'saint-ghislain',
+]);
+
 // Always answer 204 so a failed insert never surfaces an error to the visitor
 // or the sendBeacon call. Tracking is best-effort and must never break a page.
 const noContent = () => new NextResponse(null, { status: 204 });
@@ -66,12 +80,17 @@ export async function POST(req: Request) {
     try { return decodeURIComponent(v); } catch { return v; }
   };
 
+  const city = dec(h.get('x-vercel-ip-city'));
+  // Drop JS-rendering social unfurlers / scanners that spoof a browser UA but
+  // resolve to a hyperscaler data-center town. This is the post-time spike.
+  if (city && DATACENTER_CITY.has(city.toLowerCase())) return noContent();
+
   const row = {
     event,
     session_id: b.session_id,
     country: h.get('x-vercel-ip-country') || null,
     region: dec(h.get('x-vercel-ip-country-region')),
-    city: dec(h.get('x-vercel-ip-city')),
+    city,
     returning_visitor: b.returning_visitor ?? null,
     page_url: b.page?.url ?? null,
     page_path: b.page?.path ?? b.path ?? null,
