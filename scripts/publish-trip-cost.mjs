@@ -41,7 +41,7 @@ const CONTENT = readFileSync('/tmp/trip-cost.md', 'utf8').trim();
 const post = {
   title: 'Pakistan Trip Cost 2026: Real Budget Breakdown',
   slug: POST_SLUG,
-  category: 'Other',
+  category: 'Adventure',
   author: 'Ahmad Faraz',
   read_time: 12,
   excerpt:
