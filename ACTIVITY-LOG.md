@@ -4,6 +4,20 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-18 — Thin-content remediation complete (all 8 remaining posts)
+
+Brought the last 8 sub-2,000-word posts up to standard, SerpApi-first each: `skardu-trip-cost`
+(496→2,100), `naltar-valley-travel-guide` (775→2,072), `hunza-trip-cost` (926→2,062),
+`gilgit-travel-guide` (951→2,146), `chitral-kalash-travel-guide` (972→2,120),
+`fairy-meadows-travel-guide` (997→2,017), `islamabad-travel-guide` (1,298→2,020),
+`murree-galiyat-travel-guide` (1,366→2,123). Each: SerpApi (`gl=pk`) PAA + related-search targeting,
+3 scraped sources for real PKR/distance/elevation facts, dash-clean, meta in range, internal
+cross-links, content-only PATCH via /tmp/pub.mjs, revalidated + verified live. **Result: all 22
+blog posts now ≥2,000 words, zero thin.** This closes the GSC "Crawled, currently not indexed"
+root cause identified 2026-06-16.
+
+---
+
 ## 2026-06-18 — Kumrat Valley cluster (13th destination)
 
 **Kumrat Valley** published: destination hub (`/destinations/kumrat-valley`) + 2,130-word travel
