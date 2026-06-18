@@ -66,7 +66,9 @@ These are non-negotiable and already proven. See linked memory pipelines.
 ### Phase 1 — Topical authority breadth  🟡 active
 Goal: a destination + pillar guide for every major Pakistan region, plus connective hubs.
 
-Done: Hunza (full cluster), Skardu (full cluster), Fairy Meadows, Naltar, Lahore, Swat, Naran Kaghan, Islamabad, Gilgit, Chitral & Kalash, Murree & Galiyat. **Phase 1 breadth complete.**
+Done: Hunza (full cluster), Skardu (full cluster), Fairy Meadows, Naltar, Lahore, Swat, Naran Kaghan, Islamabad, Gilgit, Chitral & Kalash, Murree & Galiyat, Neelum Valley, Kumrat Valley. **Phase 1 breadth complete — 13 destinations.**
+
+**Content-quality remediation (2026-06-18): COMPLETE.** All 22 blog posts now ≥2,000 words (was 8 thin, down to 0), SerpApi-researched. This closes the GSC "Crawled, currently not indexed" root cause.
 
 - [x] Islamabad / Rawalpindi destination + guide (gateway hub) (2026-06-13)
 - [x] Gilgit destination + guide (route hub for the north) (2026-06-13)
@@ -133,7 +135,8 @@ defaulted in code, so no env var is required either. Both are live with zero Ver
 
 ## 5. Current focus
 
-**Active phase:** Phase 1 breadth complete (Murree & Galiyat published 2026-06-14); rolling into Phase 2 (commercial) and the new Phase 2.5 food vertical.
+**Active phase:** Phase 1 breadth complete (13 destinations; Neelum + Kumrat added 2026-06-18). Content-quality remediation complete (all 22 posts ≥2,000 words, 2026-06-18). The trip-cost pillar is live (off-page linkable asset #1). Now rolling into the rest of Phase 2 (more itineraries/comparisons, seasonal pages) and the untouched Phase 2.5 food vertical.
+**Off-page (Phase 4):** GBP live + in sameAs, OFF-PAGE-PLAN.md built, trip-cost linkable asset published; directories/outreach are owner-executed.
 **Measurement:** Phase 3 connected (GSC + GA4 live, 2026-06-14) — let ~2 weeks of data accumulate, then iterate on real queries.
 **Monetization:** Google AdSense submitted and in review (`ca-pub-6248382237982919`); loader + ads.txt live.
 **Live footprint:** 11 destinations, 19 posts, all images unique + self-hosted, 0 hotlinks.
