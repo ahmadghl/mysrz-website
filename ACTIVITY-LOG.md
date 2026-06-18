@@ -4,6 +4,26 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-18 — Phase 2 commercial layer complete (8 posts + Deosai hub)
+
+Cleared the entire open Phase 2 commercial backlog, SerpApi-first each, all live + verified ≥2,000
+words with unique self-hosted CC images (verified author/license via the en.wikipedia imageinfo API,
+since the Commons API is blocked from this env):
+
+- **Deosai National Park** destination hub (14th destination) — so the comparison links to a real hub.
+- **Comparisons:** `fairy-meadows-vs-deosai`, `kalam-vs-naran`.
+- **Itineraries:** `skardu-itinerary-7-days`, `swat-kalam-itinerary`, `naran-kaghan-itinerary`.
+- **Seasonal:** `hunza-cherry-blossom-season`, `autumn-in-hunza`, `skiing-in-pakistan`.
+
+Built two reusable publishers: `scripts/publish-blog.mjs` (generic config-driven blog publisher,
+one CC image, full guards) and `scripts/publish-deosai.mjs` (destination-only). New tooling note:
+the **en.wikipedia.org `action=query&prop=imageinfo&iiprop=extmetadata|url` API returns verified
+Artist + LicenseShortName + canonical URL for any Commons file** — the authoritative attribution
+source now that the Commons API is blocked here. Site totals: **30 published posts (0 thin), 14
+destinations.** Phase 2 core marked complete in SEO-STRATEGY.md.
+
+---
+
 ## 2026-06-18 — Thin-content remediation complete (all 8 remaining posts)
 
 Brought the last 8 sub-2,000-word posts up to standard, SerpApi-first each: `skardu-trip-cost`

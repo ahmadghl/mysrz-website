@@ -77,16 +77,16 @@ Done: Hunza (full cluster), Skardu (full cluster), Fairy Meadows, Naltar, Lahore
 - [x] **Connective pillar:** "Best time to visit Pakistan" (links every destination) (2026-06-11)
 - [x] **Connective pillar:** "How to plan a Pakistan trip / itinerary" hub → Northern Pakistan itinerary (2026-06-11)
 
-### Phase 2 — Commercial-intent layer  🟡 active (highest ROI)
+### Phase 2 — Commercial-intent layer  ✅ core complete (2026-06-18)
 Goal: capture planning + buying intent, where revenue and high-value traffic live.
 
 - [x] Northern Pakistan 10-day itinerary (2026-06-11)
 - [x] "Hunza vs Skardu" comparison (2026-06-11)
-- [ ] More itineraries: Skardu-focused, Swat/Kalam, Naran loop
+- [x] More itineraries: Skardu-focused, Swat/Kalam, Naran loop (2026-06-18)
 - [x] "Naran vs Swat" comparison (2026-06-12)
-- [ ] More comparisons: "Fairy Meadows vs Deosai", "Kalam vs Naran"
-- [ ] "Pakistan tour packages / costs" overview tying to contact/enquiry
-- [ ] Seasonal pages ("Cherry blossom in Hunza", "Autumn in Hunza", "Skiing in Pakistan")
+- [x] More comparisons: "Fairy Meadows vs Deosai", "Kalam vs Naran" (2026-06-18; added Deosai destination hub for the former)
+- [x] "Pakistan tour packages / costs" overview tying to contact/enquiry (trip-cost pillar, 2026-06-18)
+- [x] Seasonal pages: "Cherry blossom in Hunza", "Autumn in Hunza", "Skiing in Pakistan" (2026-06-18)
 - [ ] Strong contact/enquiry CTA woven into commercial posts
 
 ### Phase 2.5 — Food vertical  🟡 new (2026-06-14)
