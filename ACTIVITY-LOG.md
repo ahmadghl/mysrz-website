@@ -4,6 +4,24 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-18 — Phase 2.5 food vertical generated as DRAFTS (9 posts)
+
+Generated the full food vertical, SerpApi-first each, and stored them as **drafts**
+(published=false, status='draft') for Ahmad to publish from the admin at his own pace (paced,
+not dumped — we'd already published ~8 today). All 9 are ≥2,000 words, dash-clean, meta in range,
+6 FAQs each, internally cross-linked into a hub-and-spoke, with **real-photo CC images** (per the
+image policy: AI images social-only) verified via the en.wikipedia imageinfo API:
+- **Pillar:** `pakistani-food-guide`
+- **Regional:** `lahore-food-guide`, `hunza-food-guide`, `peshawar-food-guide`, `karachi-food-guide`
+- **Dishes:** `nihari`, `chapli-kabab`, `pakistani-biryani`, `haleem`
+
+Added a `--draft` mode to `scripts/publish-blog.mjs` (published=false, status='draft', no revalidate).
+Category 'Food'. Nothing went live — site live count unchanged at 30 posts. To publish: flip
+published=true + status='published' from the admin (or PATCH) and revalidate; the existing blog_posts
+webhook handles revalidation and the social auto-gen fires one hook-led post per publish.
+
+---
+
 ## 2026-06-18 — Phase 2 commercial layer complete (8 posts + Deosai hub)
 
 Cleared the entire open Phase 2 commercial backlog, SerpApi-first each, all live + verified ≥2,000
