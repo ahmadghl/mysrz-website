@@ -15,6 +15,9 @@ import { execSync } from 'node:child_process';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const COMMIT = args.includes('--commit');
+// --draft stores the post unpublished (published=false, status='draft') so it
+// is saved but not live; publish later from the admin. Guards still run.
+const DRAFT = args.includes('--draft');
 const cfgPath = args.find((a) => !a.startsWith('--'));
 if (!cfgPath) { console.error('usage: publish-blog.mjs <config.json> [--commit]'); process.exit(1); }
 
@@ -108,9 +111,10 @@ async function main() {
   const postRow = await pgInsert('blog_posts', {
     title: post.title, slug: post.slug, excerpt: post.excerpt, content: post.content, image_url: publicUrl,
     category: post.category, author: post.author, read_time: post.read_time, meta_title: post.meta_title, meta_description: post.meta_description,
-    published: true, status: 'published', views: 0, image_credit_name: post.image_credit_name, image_credit_website: post.image_credit_website, faqs: post.faqs,
+    published: !DRAFT, status: DRAFT ? 'draft' : 'published', views: 0, image_credit_name: post.image_credit_name, image_credit_website: post.image_credit_website, faqs: post.faqs,
   });
-  line(`post id=${postRow.id}`);
-  line(`\nINSERT COMPLETE. Operator: revalidate /blog /blog/${post.slug} / and curl the live URL.`);
+  line(`post id=${postRow.id} (${DRAFT ? 'DRAFT — not live' : 'PUBLISHED'})`);
+  if (DRAFT) line(`\nDRAFT SAVED. Publish later from the admin (or flip published=true + status=published) and revalidate.`);
+  else line(`\nINSERT COMPLETE. Operator: revalidate /blog /blog/${post.slug} / and curl the live URL.`);
 }
 main().catch((e) => { line(`\nERROR: ${e.message}`); process.exit(1); });
