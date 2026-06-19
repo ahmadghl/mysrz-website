@@ -43,8 +43,41 @@ const envFile = loadEnvLocal();
 const SB = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
+// The website /blog page renders content as Tiptap-style HTML (the `prose`
+// branch); raw markdown shows literal ## and **. So convert the authored
+// markdown to HTML before storing. The in-body "Frequently asked questions"
+// section is stripped because the page renders post.faqs via <FaqSection>.
+const escHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function inlineMd(s) {
+  return escHtml(s)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, u) => `<a href="${u}">${t}</a>`)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+function mdToHtml(md) {
+  const faqIdx = md.search(/^##\s*Frequently asked questions\s*$/im);
+  if (faqIdx >= 0) md = md.slice(0, faqIdx);
+  const out = [];
+  for (let b of md.trim().split(/\n\s*\n/)) {
+    b = b.trim(); if (!b) continue;
+    const lines = b.split('\n').map((l) => l.replace(/\s+$/, ''));
+    if (lines.every((l) => /^[-*]\s+/.test(l.trim()))) {
+      out.push('<ul>' + lines.map((l) => `<li>${inlineMd(l.trim().replace(/^[-*]\s+/, ''))}</li>`).join('') + '</ul>');
+    } else if (/^###\s+/.test(lines[0])) {
+      out.push(`<h3>${inlineMd(lines[0].replace(/^###\s+/, ''))}</h3>`);
+      if (lines.length > 1) out.push(`<p>${inlineMd(lines.slice(1).join(' '))}</p>`);
+    } else if (/^##\s+/.test(lines[0])) {
+      out.push(`<h2>${inlineMd(lines[0].replace(/^##\s+/, ''))}</h2>`);
+      if (lines.length > 1) out.push(`<p>${inlineMd(lines.slice(1).join(' '))}</p>`);
+    } else {
+      out.push(`<p>${inlineMd(lines.join(' '))}</p>`);
+    }
+  }
+  return out.join('\n');
+}
+
 const cfg = JSON.parse(readFileSync(resolve(cfgPath), 'utf8'));
-const content = readFileSync(resolve(cfg.contentFile), 'utf8').trim();
+const contentMd = readFileSync(resolve(cfg.contentFile), 'utf8').trim();
+const content = mdToHtml(contentMd);
 const post = {
   title: cfg.title, slug: cfg.slug, category: cfg.category || 'Adventure', author: cfg.author || 'Ahmad Faraz',
   read_time: cfg.read_time || 11, excerpt: cfg.excerpt, meta_title: cfg.meta_title, meta_description: cfg.meta_description,
@@ -93,7 +126,7 @@ const line = (s = '') => process.stdout.write(s + '\n');
 async function main() {
   line(`\nmySRZ blog publisher: ${post.slug}\nmode: ${COMMIT ? 'COMMIT' : 'DRY RUN'}\nenv: ${envFile || '(none)'}`);
   scanDashes(post, 'post');
-  const words = post.content.replace(/[#*_>\-|]/g, ' ').split(/\s+/).filter(Boolean).length;
+  const words = contentMd.replace(/[#*_>\-|]/g, ' ').split(/\s+/).filter(Boolean).length;
   line(`dash guard: clean | words: ${words} | meta_title=${post.meta_title.length} meta_desc=${post.meta_description.length} | faqs=${post.faqs.length}`);
   const VALID_CATEGORIES = ['Adventure', 'Culture', 'Food', 'Nature'];
   if (!VALID_CATEGORIES.includes(post.category)) throw new Error(`invalid category "${post.category}" — must be one of ${VALID_CATEGORIES.join(', ')} (an unknown category crashes the blog list)`);

@@ -4,6 +4,26 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-18 — CRITICAL FIX: blog content was raw Markdown, not HTML (all 38 posts)
+
+**Incident.** The `/blog/[slug]` page renders `content` as Tiptap HTML; if it is not HTML it dumps
+the whole string into one `<p>` as plain text. Every post I created or expanded was stored as raw
+**Markdown**, so all 38 rendered as walls of literal `##` and `**` (the 1 untouched original,
+`hunza-valley-travel-guide`, was fine). I had only verified text was present via curl, never that it
+rendered. My blunder.
+
+**Fix.** Built a markdown→HTML converter (`/tmp/md2html.mjs`) and migrated all 38 posts' `content`
+to HTML (h2/h3, ul/li, p, strong, links); stripped the in-body "Frequently asked questions" section
+since the page renders `post.faqs` via `<FaqSection>`. Revalidated /blog + all 30 live posts; verified
+live pages now render real `<h2>`/`<strong>` with zero literal `##`/`**`.
+
+**Hardening.** `scripts/publish-blog.mjs` now converts authored markdown → HTML before insert, so
+future posts can't regress. Word-count guard runs on the raw markdown. Recorded the rule in memory
+(blog-content-must-be-html) and AGENTS.md. NOTE: the destination cluster publishers still emit
+markdown for blog_posts content — convert before reuse.
+
+---
+
 ## 2026-06-18 — Phase 2.5 food vertical generated as DRAFTS (9 posts)
 
 Generated the full food vertical, SerpApi-first each, and stored them as **drafts**
