@@ -4,6 +4,18 @@ Reverse-chronological record of meaningful project activity per `AGENTS.md`.
 
 ---
 
+## 2026-06-20 — "Is Pakistan safe for tourists" pillar (live)
+
+Published `/blog/is-pakistan-safe-for-tourists` (2,079 words), the highest-demand informational
+gap and a direct counter to competitors' blanket travel-advisory framing. SerpApi-first (gl=us)
++ 2 balanced sources. Honest, balanced coverage: safe regions vs off-limits zones (Balochistan,
+tribal belt, LoC, NOC areas), Americans/Western + women/solo guidance, the real risks (roads,
+altitude, water, crowds, not terrorism), how to read govt advisories, hospitality. Real-photo CC
+image (Baltit Fort, mhtoori, CC BY-SA 4.0) verified via en.wikipedia imageinfo API. Published via
+publish-blog.mjs (md->HTML), revalidated, FULLY verified live (26 h2, 48 strong, no literal ##/**,
+FAQPage, /blog list intact). Reinforces the safety Q&A in OFF-PAGE-ASSETS.md.
+
+
 ## 2026-06-18 — CRITICAL FIX: blog content was raw Markdown, not HTML (all 38 posts)
 
 **Incident.** The `/blog/[slug]` page renders `content` as Tiptap HTML; if it is not HTML it dumps
