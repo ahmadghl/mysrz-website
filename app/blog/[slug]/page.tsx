@@ -8,6 +8,7 @@ import { getAllPosts, getPostBySlug, getPostSlugs, getRelatedPosts } from '@/lib
 import { SharePost } from '@/components/SharePost';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { FaqSection } from '@/components/FaqSection';
+import { TripCta } from '@/components/TripCta';
 import { AuthorCard } from '@/components/AuthorCard';
 import { SITE } from '@/lib/utils';
 import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
@@ -281,6 +282,7 @@ export default async function PostPage({ params }: Props) {
 
           <SharePost title={post.title} slug={post.slug} />
           <FaqSection faqs={post.faqs ?? []} />
+          <TripCta />
           <AuthorCard name={post.author} />
         </div>
 
