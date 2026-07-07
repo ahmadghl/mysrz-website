@@ -4,13 +4,23 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   images: {
-    formats: ['image/avif', 'image/webp'],
-    // Cache optimized images for 1 day. Safe even if admin replaces an
-    // image at the same URL — Next/image keys on URL+query, so a new
-    // upload (different URL) or a busted `?v=` query gets a fresh
-    // optimized output immediately. Default is 60s which re-runs the
-    // optimizer on every CDN miss.
-    minimumCacheTTL: 86400,
+    // WebP only. Dropping AVIF halves Image Optimization "cache writes"
+    // (each format is optimized+cached separately per size), which is the
+    // Vercel free-tier metric we were burning through. WebP is universally
+    // supported and the size difference vs AVIF is marginal for photos.
+    formats: ['image/webp'],
+    // Trim the generated size variants. Next's defaults produce ~8 device
+    // sizes + ~8 image sizes, and every variant is a separate cache write.
+    // These cover every real viewport without the wasteful 2048/3840 (4K)
+    // and tiny breakpoints, cutting writes-per-image several times over.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [256, 384],
+    // Cache optimized images for 31 days (was 1 day). Images almost never
+    // change at the same URL — Next/image keys on URL+query, so a new upload
+    // (different URL) or a busted `?v=` query still gets a fresh output
+    // immediately. A long TTL stops the optimizer re-writing the same variant
+    // on every CDN miss, the main driver of cache-write usage.
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       // Wikimedia Commons CDN — homepage hero slideshow images
       // (lib/hero-slides.ts). Freely licensed landmark photos.
