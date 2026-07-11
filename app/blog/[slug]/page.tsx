@@ -10,6 +10,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { FaqSection } from '@/components/FaqSection';
 import { TripCta } from '@/components/TripCta';
 import { AuthorCard } from '@/components/AuthorCard';
+import { getSiteSettings } from '@/lib/site-settings';
 import { SITE } from '@/lib/utils';
 import { RevealOnScroll } from '@/components/aureate/RevealOnScroll';
 
@@ -88,9 +89,10 @@ export default async function PostPage({ params }: Props) {
   // Parallelize the post lookup and the all-posts list (used for
   // related). Both share the data cache underneath, but Promise.all
   // hides the round-trip latency when caches are cold.
-  const [post, allPosts] = await Promise.all([
+  const [post, allPosts, settings] = await Promise.all([
     getPostBySlug(slug),
     getAllPosts(),
+    getSiteSettings(),
   ]);
   if (!post) notFound();
 
@@ -283,7 +285,12 @@ export default async function PostPage({ params }: Props) {
           <SharePost title={post.title} slug={post.slug} />
           <FaqSection faqs={post.faqs ?? []} />
           <TripCta />
-          <AuthorCard name={post.author} />
+          <AuthorCard
+            name={post.author}
+            bio={settings.founder_bio}
+            role={settings.founder_role}
+            imageUrl={settings.founder_image_url}
+          />
         </div>
 
         {/* ───── RELATED ───── */}

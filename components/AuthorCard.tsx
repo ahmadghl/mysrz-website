@@ -7,22 +7,24 @@ interface Props {
   name?: string;
   /** Short bio sentence. Defaults to the founder's role line. */
   bio?: string;
+  /** Author role/title, e.g. "Founder, mySRZ Tourism". */
+  role?: string;
+  /** Author photo URL. Falls back to initials avatar when null/empty. */
+  imageUrl?: string | null;
 }
 
 /**
  * Footer card on blog post pages signalling author authority for
  * E-E-A-T. The Person JSON-LD lives on `/about` (single canonical
  * entity, referenced from `BlogPosting.author` via `@id`). This
- * card is the human-facing equivalent.
- *
- * Aureate-restyled: surface-container card with antique-gold
- * eyebrow + left border accent. All data wiring preserved.
+ * card is the human-facing equivalent — a real named author with a
+ * real bio (and photo when available) is the strongest E-E-A-T signal.
  */
-export function AuthorCard({ name, bio }: Props = {}) {
+export function AuthorCard({ name, bio, role, imageUrl }: Props = {}) {
   const displayName = name ?? SITE.founder;
   const displayBio =
     bio ??
-    `Founder of ${SITE.name}. Pakistan travel writer with first-hand experience across every destination covered on this site.`;
+    `Founder of ${SITE.name}. Has explored Pakistan first-hand since 2014, by local bus, motorbike and car.`;
 
   const initials = displayName
     .split(' ')
@@ -36,12 +38,24 @@ export function AuthorCard({ name, bio }: Props = {}) {
       aria-label="About the author"
     >
       <div className="flex items-start gap-5 border-l-2 border-aureate-primary bg-aureate-surface-container-low p-8">
-        <div
-          className="flex h-14 w-14 flex-shrink-0 items-center justify-center bg-aureate-primary font-aureate-headline text-xl font-bold text-aureate-on-primary"
-          aria-hidden="true"
-        >
-          {initials}
-        </div>
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageUrl}
+            alt={displayName}
+            width={56}
+            height={56}
+            loading="lazy"
+            className="h-14 w-14 flex-shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <div
+            className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-aureate-primary font-aureate-headline text-xl font-bold text-aureate-on-primary"
+            aria-hidden="true"
+          >
+            {initials}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <p className="mb-2 font-aureate-label text-aureate-label-md uppercase tracking-widest text-aureate-primary">
             About the author
@@ -52,6 +66,11 @@ export function AuthorCard({ name, bio }: Props = {}) {
           >
             {displayName}
           </Link>
+          {role && (
+            <p className="mt-0.5 font-aureate-label text-aureate-label-md text-aureate-on-surface-variant">
+              {role}
+            </p>
+          )}
           <p className="mt-3 font-aureate-body text-aureate-body-md leading-relaxed text-aureate-on-surface-variant">
             {displayBio}
           </p>
