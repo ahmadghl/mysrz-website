@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer';
 import { Tracker } from '@/components/Tracker';
 import { Analytics } from '@/components/Analytics';
 import { AdSense } from '@/components/AdSense';
+import { FloatingWhatsApp } from '@/components/FloatingWhatsApp';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
@@ -211,6 +212,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <NavBar />
         <main className="flex-grow">{children}</main>
         <Footer />
+        <FloatingWhatsApp whatsappUrl={settings.whatsapp_url} />
         <Suspense fallback={null}>
           <Tracker />
         </Suspense>
