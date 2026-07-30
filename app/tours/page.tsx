@@ -94,8 +94,8 @@ export default function ToursPage() {
             <div className="mb-8 h-px w-24 bg-aureate-primary-container" />
             <p className="font-aureate-body text-aureate-body-lg text-aureate-on-surface-variant">
               Hand-built trips led by people who drive these valleys every
-              season. Open any tour for the full day-by-day itinerary, prices
-              and the downloadable PDF.
+              season. Open any tour for the full day-by-day itinerary, the
+              prices and exactly what is included.
             </p>
           </div>
         </RevealOnScroll>
