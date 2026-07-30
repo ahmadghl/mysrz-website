@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/posts';
 import { getAllDestinations } from '@/lib/destinations';
+import { TOURS } from '@/lib/tours';
 import { SITE } from '@/lib/utils';
 
 export const revalidate = 3600;
@@ -10,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE.url}/`, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
+    { url: `${SITE.url}/tours`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE.url}/destinations`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE.url}/blog`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
     { url: `${SITE.url}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
@@ -35,5 +37,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }));
 
-  return [...staticRoutes, ...destinationRoutes, ...postRoutes];
+  const tourRoutes: MetadataRoute.Sitemap = TOURS.map((t) => ({
+    url: `${SITE.url}/tours/${t.slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.85,
+  }));
+
+  return [...staticRoutes, ...tourRoutes, ...destinationRoutes, ...postRoutes];
 }
