@@ -70,9 +70,15 @@ async function fetchFromSupabase(slug?: string): Promise<Post[] | null> {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
   if (!url || !key) return null;
 
-  const select =
-    'id,slug,title,excerpt,content,image_url,category,author,created_at,updated_at,read_time,views,' +
-    'meta_title,meta_description,faqs,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
+  // The large `content` (full article HTML, now heavy after the photo
+  // retrofit) and `faqs` columns are only needed on a single post page.
+  // The list query (blog index, home, sitemap, related lookups) omits them
+  // so we don't drag every post's TOASTed body off disk on every render —
+  // this is the main lever against Supabase Disk IO.
+  const listSelect =
+    'id,slug,title,excerpt,image_url,category,author,created_at,updated_at,read_time,views,' +
+    'meta_title,meta_description,image_credit_name,image_credit_instagram,image_credit_twitter,image_credit_website';
+  const select = slug ? `${listSelect},content,faqs` : listSelect;
   const filter = slug
     ? `&slug=eq.${encodeURIComponent(slug)}`
     : '&order=created_at.desc&limit=200';
